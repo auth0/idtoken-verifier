@@ -1,0 +1,72 @@
+{
+  "name": "browser-jwt-verification",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "base64-js": "^1.2.0",
+    "crypto-js": "^3.1.9-1",
+    "jsbn": "^0.1.0",
+    "superagent": "^2.3.0",
+    "url-join": "^1.1.0"
+  },
+  "keywords": [
+    "auth0",
+    "auth",
+    "authentication",
+    "jwt",
+    "verification",
+    "RS256",
+    "browser"
+  ],
+  "scripts": {
+    "start": "gulp dev",
+    "build": "gulp build",
+    "test": "mocha test/**/*.test.js",
+    "test:watch": "mocha --watch  -R min test/*.test.js",
+    "test:coverage": "istanbul cover _mocha -R test/*.test.js",
+    "test:ci": "istanbul cover _mocha --report lcovonly -R test/*.test.js; codecov",
+    "lint": "eslint ./src",
+    "publish:cdn": "ccu",
+    "release": "scripts/release.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/auth0/browser-jwt-verification"
+  },
+  "devDependencies": {
+    "codecov": "^1.0.1",
+    "component-cdn-uploader": "auth0/component-cdn-uploader#1.1.0",
+    "eslint": "3.7.1",
+    "eslint-config-auth0-base": "6.0.0",
+    "eslint-plugin-import": "1.16.0",
+    "expect.js": "^0.2.0",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7",
+    "istanbul": "^0.4.5",
+    "jsdoc-to-markdown": "^2.0.1",
+    "mocha": "^3.1.2",
+    "semver": "^5.3.0",
+    "sinon": "^1.17.6",
+    "smart-banner-webpack-plugin": "^2.0.0",
+    "unminified-webpack-plugin": "^1.1.1",
+    "webpack": "^1.13.2",
+    "webpack-core": "^0.6.8",
+    "webpack-custom-var-library-name-plugin": "^1.0.0",
+    "webpack-dev-server": "^1.16.2",
+    "webpack-hot-middleware": "^2.13.2",
+    "webpack-stream": "^3.2.0"
+  },
+  "cdn-component": {
+    "name": "auth0",
+    "cdn": "https://cdn.auth0.com",
+    "mainBundleFile": "auth0.min.js",
+    "bucket": "assets.us.auth0.com",
+    "localPath": "build"
+  }
+}
