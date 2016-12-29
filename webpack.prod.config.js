@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '../build'),
     filename: '[name].min.js',
-    library: 'jwt-js-rsa-verification',
+    library: 'idtoken-verifier',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

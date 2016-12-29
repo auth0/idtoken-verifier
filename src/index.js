@@ -72,9 +72,9 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
       return cb(err);
     }
     if (rsaVerifier.verify(headAndPayload, signature)) {
-      cb(null, true);
+      cb(null, jwt.payload);
     } else {
-      cb(new error.TokenValidationError('Invalid signature.'), false);
+      cb(new error.TokenValidationError('Invalid signature.'));
     }
   });
 };
