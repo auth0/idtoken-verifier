@@ -13,7 +13,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '../build'),
     filename: '[name].js',
-    library: 'auth0',
+    library: 'jwt-js-rsa-verification',
     libraryTarget: 'var',
     publicPath: 'http://localhost:3000/'
   },

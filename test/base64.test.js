@@ -33,19 +33,7 @@ describe('helpers base64 url', function () {
 
   });
 
-  it('decode string', function () {
-
-    expect(base64.padding('')).to.eql('');
-    expect(base64.padding('a')).to.eql('a===');
-    expect(base64.padding('ab')).to.eql('ab==');
-    expect(base64.padding('abc')).to.eql('abc=');
-    expect(base64.padding('abcd')).to.eql('abcd');
-    expect(base64.padding('abced')).to.eql('abced===');
-    expect(base64.padding(base64.padding('abc'))).to.eql('abc=');
-
-  });
-
-  it('decode string', function () {
+  it('padding', function () {
 
     expect(base64.padding('')).to.eql('');
     expect(base64.padding('a')).to.eql('a===');

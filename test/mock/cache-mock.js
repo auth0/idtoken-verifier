@@ -46,7 +46,7 @@ function validKey() {
 
   var cache = new CacheMock({
     getResponse: {
-      'com.auth0.auth.jwks.https://wptest.auth0.com/QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg': pk
+      'https://wptest.auth0.com/QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg': pk
     }
   });
 
@@ -61,7 +61,7 @@ function invalidKey() {
 
   var cache = new CacheMock({
     getResponse: {
-      'com.auth0.auth.jwks.https://wptest.auth0.com/QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg': pk
+      'https://wptest.auth0.com/QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg': pk
     }
   });
 

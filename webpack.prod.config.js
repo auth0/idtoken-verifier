@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '../build'),
     filename: '[name].min.js',
-    library: 'auth0-js',
+    library: 'jwt-js-rsa-verification',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

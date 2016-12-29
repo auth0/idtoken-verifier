@@ -5,14 +5,13 @@ var error = require('./helpers/error');
 var DummyCache = require('./helpers/dummy-cache');
 var supportedAlgs = ['RS256'];
 
-function JWTVerifier(options) {
+function IdTokenVerifier(options) {
   options = options || {};
 
   this.jwksCache = options.jwksCache || new DummyCache();
-  this.cacheNameSpace = options.cacheNameSpace || 'com.auth0.auth.jwks.';
   this.expectedAlg = options.expectedAlg || 'RS256';
-  this.expectedIss = options.expectedIss;
-  this.expectedAud = options.expectedAud;
+  this.issuer = options.issuer;
+  this.audience = options.audience;
   this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
 
@@ -26,7 +25,7 @@ function JWTVerifier(options) {
   }
 }
 
-JWTVerifier.prototype.verify = function jwtVerify(token, nonce, cb) {
+IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   var jwt = this.decode(token);
 
   if (!jwt) {
@@ -45,11 +44,11 @@ JWTVerifier.prototype.verify = function jwtVerify(token, nonce, cb) {
   var iat = jwt.payload.iat;
   var tnonce = jwt.payload.nonce || null;
 
-  if (this.expectedIss !== iss) {
+  if (this.issuer !== iss) {
     return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
   }
 
-  if (this.expectedAud !== aud) {
+  if (this.audience !== aud) {
     return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
   }
 
@@ -80,7 +79,7 @@ JWTVerifier.prototype.verify = function jwtVerify(token, nonce, cb) {
   });
 };
 
-JWTVerifier.prototype.verifyExpAndIat = function jwtVerifyExpAndIat(exp, iat) {
+IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
   if (this.__disableExpirationCheck) {
     return null;
   }
@@ -105,9 +104,9 @@ JWTVerifier.prototype.verifyExpAndIat = function jwtVerifyExpAndIat(exp, iat) {
   return null;
 };
 
-JWTVerifier.prototype.getRsaVerifier = function jwtGetRsaVerifier(iss, kid, cb) {
+IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
   var _this = this;
-  var cachekey = this.cacheNameSpace + iss + kid;
+  var cachekey = iss + kid;
 
   if (!this.jwksCache.has(cachekey)) {
     jwks.getJWKS({
@@ -126,7 +125,7 @@ JWTVerifier.prototype.getRsaVerifier = function jwtGetRsaVerifier(iss, kid, cb) 
   }
 };
 
-JWTVerifier.prototype.decode = function jwtDecode(token) {
+IdTokenVerifier.prototype.decode = function (token) {
   var parts = token.split('.');
 
   if (parts.length !== 3) {
@@ -144,4 +143,4 @@ JWTVerifier.prototype.decode = function jwtDecode(token) {
   };
 };
 
-module.exports = JWTVerifier;
+module.exports = IdTokenVerifier;

@@ -4,14 +4,14 @@ var CacheMock = require('./mock/cache-mock');
 var helpers = require('./helper/token-validation');
 
 var error = require('../src/helpers/error');
-var JWTVerifier = require('../src/index');
+var IdTokenVerifier = require('../src/index');
 
 describe('jwt-verification', function () {
   it('should verify the signature using the public key in the cache', function (done) {
     helpers.assertTokenValid(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
         __disableExpirationCheck: true,
         jwksCache: CacheMock.validKey()
       },
@@ -23,8 +23,8 @@ describe('jwt-verification', function () {
   it('should fetch the public key and verify the token', function (done) {
     helpers.assertTokenValid(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
         __disableExpirationCheck: true
       },
       'asfd',
@@ -35,8 +35,8 @@ describe('jwt-verification', function () {
   it('should FAIL to verify the signature using the public key', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
         __disableExpirationCheck: true,
         jwksCache: CacheMock.invalidKey()
       },
@@ -80,8 +80,8 @@ describe('jwt-verification', function () {
   it('should fail if the nonce does not match', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
         __disableExpirationCheck: true,
         jwksCache: CacheMock.validKey()
       },
@@ -115,7 +115,7 @@ describe('jwt-verification', function () {
   it('should require to whitelist the audience', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
+        issuer: 'https://wptest.auth0.com/',
       },
       'asfd',
       'Audience gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt is not valid.',
@@ -127,8 +127,8 @@ describe('jwt-verification', function () {
   it('should require to whitelist the audience', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'Expired token.',
@@ -140,8 +140,8 @@ describe('jwt-verification', function () {
   it('should check the token expiration', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'Expired token.',
@@ -153,8 +153,8 @@ describe('jwt-verification', function () {
   it('should fail if the token alg is not the one expected', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'Algorithm HS256 is not supported. (Expected algs: [RS256])',
@@ -166,8 +166,8 @@ describe('jwt-verification', function () {
   it('should fail with missing claims', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'Issuer undefined is not valid.',
@@ -179,8 +179,8 @@ describe('jwt-verification', function () {
   it('should fail with corrupt token', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'Invalid signature.',
@@ -192,8 +192,8 @@ describe('jwt-verification', function () {
   it('should validate the iat claim', function (done) {
     helpers.assertTokenValidationError(
       {
-        expectedIss: 'https://wptest.auth0.com/',
-        expectedAud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
       },
       'asfd',
       'The token was issued in the future. Please check your computed clock.',
@@ -204,7 +204,7 @@ describe('jwt-verification', function () {
 
   it('should decode the token', function () {
     var id_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA';
-    var verifier = new JWTVerifier();
+    var verifier = new IdTokenVerifier();
     var result = verifier.decode(id_token);
 
     expect(result).to.eql({
