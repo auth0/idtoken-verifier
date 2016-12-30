@@ -96,7 +96,7 @@ describe('jwt-verification', function () {
     helpers.assertTokenValidationError(
       {},
       null,
-      'Invalid token.',
+      'Cannot decode a malformed JWT',
       'asjkdhfgakdsjhf',
       done
     );
@@ -227,5 +227,21 @@ describe('jwt-verification', function () {
         signature: 'PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA'
       }
     });
+  });
+
+  it('should return an error when trying to decode (not verify) a malformed token', function () {
+    var id_token = 'this.is.not.a.jwt';
+    var verifier = new IdTokenVerifier();
+    var result = verifier.decode(id_token);
+    expect(result).to.be.an(error.TokenValidationError);
+    expect(result.message).to.eql('Cannot decode a malformed JWT');
+  });
+
+  it('should return an error when trying to decode (not verify) a token with invalid JSON contents', function () {
+    var id_token = 'invalid.json.here';
+    var verifier = new IdTokenVerifier();
+    var result = verifier.decode(id_token);
+    expect(result).to.be.an(error.TokenValidationError);
+    expect(result.message).to.eql('Token header or payload is not valid JSON');
   });
 });
