@@ -28,8 +28,8 @@ function IdTokenVerifier(options) {
 IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   var jwt = this.decode(token);
 
-  if (!jwt) {
-    return cb(new error.TokenValidationError('Invalid token.'), false);
+  if (jwt instanceof Error) {
+    return cb(jwt, false);
   }
 
   var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
@@ -127,14 +127,23 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
 
 IdTokenVerifier.prototype.decode = function (token) {
   var parts = token.split('.');
+  var header;
+  var payload;
 
   if (parts.length !== 3) {
-    return null;
+    return new error.TokenValidationError('Cannot decode a malformed JWT');
+  }
+
+  try {
+    header = JSON.parse(base64.decodeToString(parts[0]));
+    payload = JSON.parse(base64.decodeToString(parts[1]));
+  } catch (e) {
+    return new error.TokenValidationError('Token header or payload is not valid JSON');
   }
 
   return {
-    header: JSON.parse(base64.decodeToString(parts[0])),
-    payload: JSON.parse(base64.decodeToString(parts[1])),
+    header: header,
+    payload: payload,
     encoded: {
       header: parts[0],
       payload: parts[1],
