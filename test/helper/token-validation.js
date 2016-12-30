@@ -33,7 +33,14 @@ function assertTokenValid(configuration, nonce, done) {
 
   verifier.verify(id_token, nonce, function(err, result) {
     expect(err).to.be(null);
-    expect(result).to.be.ok();
+    expect(result).to.eql({
+      iss: 'https://wptest.auth0.com/',
+      sub: 'auth0|55d48c57d5b0ad0223c408d7',
+      aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+      exp: 1482969031,
+      iat: 1482933031,
+      nonce: 'asfd'
+    });
     done();
   });
 }
