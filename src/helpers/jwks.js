@@ -22,11 +22,16 @@ function getJWKS(options, cb) {
         cb(err);
       }
 
-      var jwk = data.body.keys.find(function (key) {
-        return key.kid === options.kid;
-      });
+      var matchingKey = null;
 
-      cb(null, process(jwk));
+      for (var a = 0; a < data.body.keys.length && matchingKey === null; a ++) {
+        var key = data.body.keys[a];
+        if (key.kid === options.kid) {
+          matchingKey = key;
+        }
+      }
+
+      cb(null, process(matchingKey));
     });
 }
 
