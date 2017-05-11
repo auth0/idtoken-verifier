@@ -1,3 +1,4 @@
+var atob = require('./atob');
 var base64 = require('base64-js');
 
 function padding(str) {
@@ -44,15 +45,19 @@ function encodeString(str) {
       .replace(/\//g, '_'); // Convert '/' to '_'
 }
 
-
 function decodeToString(str) {
   str = padding(str)
     .replace(/\-/g, '+') // Convert '-' to '+'
     .replace(/_/g, '/'); // Convert '_' to '/'
 
-  return byteArrayToString(base64.toByteArray(str));
+  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
+    var code = p.charCodeAt(0).toString(16).toUpperCase();
+    if (code.length < 2) {
+      code = '0' + code;
+    }
+    return '%' + code;
+  }));
 }
-
 
 function decodeToHEX(str) {
   return byteArrayToHex(base64.toByteArray(padding(str)));

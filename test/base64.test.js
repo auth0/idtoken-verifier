@@ -30,6 +30,7 @@ describe('helpers base64 url', function () {
   it('decode string', function () {
 
     expect(base64.decodeToString('dGVzdA==')).to.eql('test');
+    expect(base64.decodeToString('w6XDhsOYw6XDqcO8w6bDmA==')).to.eql('åÆØåéüæØ');
 
   });
 
