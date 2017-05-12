@@ -33,6 +33,9 @@ describe('helpers base64 url', function () {
 
     expect(base64.decodeToString('dGVzdA==')).to.eql('test');
     expect(base64.decodeToString('w6XDhsOYw6XDqcO8w6bDmA==')).to.eql('åÆØåéüæØ');
+    
+    var tab = String.fromCharCode(9); // 9 = tab
+    expect(base64.decodeToString(tab)).to.eql('');
 
   });
 

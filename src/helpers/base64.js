@@ -40,8 +40,8 @@ function byteArrayToHex(raw) {
 
 function encodeString(str) {
   return base64.fromByteArray(stringToByteArray(str))
-      .replace(/\+/g, '-') // Convert '+' to '-'
-      .replace(/\//g, '_'); // Convert '/' to '_'
+    .replace(/\+/g, '-') // Convert '+' to '-'
+    .replace(/\//g, '_'); // Convert '/' to '_'
 }
 
 function decodeToString(str) {
@@ -50,11 +50,7 @@ function decodeToString(str) {
     .replace(/_/g, '/'); // Convert '_' to '/'
 
   return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
-    var code = p.charCodeAt(0).toString(16).toUpperCase();
-    if (code.length < 2) {
-      code = '0' + code;
-    }
-    return '%' + code;
+    return '%' + p.charCodeAt(0).toString(16).toUpperCase();
   }));
 }
 
