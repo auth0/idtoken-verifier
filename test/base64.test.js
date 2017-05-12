@@ -1,6 +1,8 @@
 var expect = require('expect.js');
+var atob = require('./helper/atob');
 
 var base64 = require('../src/helpers/base64');
+
 
 describe('helpers base64 url', function () {
 

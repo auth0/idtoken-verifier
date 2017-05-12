@@ -1,4 +1,3 @@
-var atob = require('./atob');
 var base64 = require('base64-js');
 
 function padding(str) {
