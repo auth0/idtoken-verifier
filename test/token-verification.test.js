@@ -7,6 +7,7 @@ var error = require('../src/helpers/error');
 var IdTokenVerifier = require('../src/index');
 
 describe('jwt-verification', function () {
+
   it('should verify the signature using the public key in the cache', function (done) {
     helpers.assertTokenValid(
       {

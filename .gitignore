@@ -45,3 +45,9 @@ jspm_packages
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Example folder
+example
+
+# Build folder
+Build

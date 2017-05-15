@@ -39,20 +39,22 @@ function byteArrayToHex(raw) {
 }
 
 function encodeString(str) {
-  return base64.fromByteArray(stringToByteArray(str))
-      .replace(/\+/g, '-') // Convert '+' to '-'
-      .replace(/\//g, '_'); // Convert '/' to '_'
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+    return String.fromCharCode('0x' + p1);
+  }))
+  .replace(/\+/g, '-') // Convert '+' to '-'
+  .replace(/\//g, '_'); // Convert '/' to '_';
 }
-
 
 function decodeToString(str) {
   str = padding(str)
     .replace(/\-/g, '+') // Convert '-' to '+'
     .replace(/_/g, '/'); // Convert '_' to '/'
 
-  return byteArrayToString(base64.toByteArray(str));
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 }
-
 
 function decodeToHEX(str) {
   return byteArrayToHex(base64.toByteArray(padding(str)));
