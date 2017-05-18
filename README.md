@@ -1,5 +1,11 @@
 # idtoken-verifier
 
+[![Build Status][circleci-image]][circleci-url]
+[![NPM version][npm-image]][npm-url]
+[![Coverage][codecov-image]][codecov-url]
+[![License][license-image]][license-url]
+[![Downloads][downloads-image]][downloads-url]
+
 A lightweight library to decode and verify RS JWT meant for the browser.
 
 ## Usage
@@ -72,3 +78,16 @@ If you have found a bug or if you have a feature request, please report them at 
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more info.
+
+<!-- Vaaaaarrrrsss -->
+
+[npm-image]: https://img.shields.io/npm/v/idtoken-verifier.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/idtoken-verifier
+[circleci-image]: http://img.shields.io/circleci/project/github/auth0/idtoken-verifier.svg?branch=master&style=flat-square
+[circleci-url]: https://circleci.com/gh/auth0/idtoken-verifier
+[codecov-image]: https://img.shields.io/codecov/c/github/auth0/idtoken-verifier/v8.svg?style=flat-square
+[codecov-url]: https://codecov.io/github/auth0/idtoken-verifier?branch=master
+[license-image]: http://img.shields.io/npm/l/idtoken-verifier.svg?style=flat-square
+[license-url]: #license
+[downloads-image]: http://img.shields.io/npm/dm/idtoken-verifier.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/idtoken-verifier
