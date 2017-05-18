@@ -5,8 +5,8 @@ var error = require('./helpers/error');
 var DummyCache = require('./helpers/dummy-cache');
 var supportedAlgs = ['RS256'];
 
-function IdTokenVerifier(options) {
-  options = options || {};
+function IdTokenVerifier(parameters) {
+  var options = parameters || {};
 
   this.jwksCache = options.jwksCache || new DummyCache();
   this.expectedAlg = options.expectedAlg || 'RS256';
@@ -32,6 +32,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(jwt, false);
   }
 
+  /* eslint-disable vars-on-top */
   var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
   var signature = base64.decodeToHEX(jwt.encoded.signature);
 
@@ -43,6 +44,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   var exp = jwt.payload.exp;
   var iat = jwt.payload.iat;
   var tnonce = jwt.payload.nonce || null;
+  /* eslint-enable vars-on-top */
 
   if (this.issuer !== iss) {
     return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
@@ -61,39 +63,38 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(new error.TokenValidationError('Nonce does not match.'), false);
   }
 
-  var expirationError = this.verifyExpAndIat(exp, iat);
+  var expirationError = this.verifyExpAndIat(exp, iat); // eslint-disable-line vars-on-top
 
   if (expirationError) {
     return cb(expirationError, false);
   }
 
-  this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
+  return this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
     if (err) {
       return cb(err);
     }
     if (rsaVerifier.verify(headAndPayload, signature)) {
-      cb(null, jwt.payload);
-    } else {
-      cb(new error.TokenValidationError('Invalid signature.'));
+      return cb(null, jwt.payload);
     }
+    return cb(new error.TokenValidationError('Invalid signature.'));
   });
 };
 
 IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
+  var now = new Date();
+  var expDate = new Date(0);
+  var iatDate = new Date(0);
+
   if (this.__disableExpirationCheck) {
     return null;
   }
 
-  var now = new Date();
-
-  var expDate = new Date(0);
   expDate.setUTCSeconds(exp + this.leeway);
 
   if (now > expDate) {
     return new error.TokenValidationError('Expired token.');
   }
 
-  var iatDate = new Date(0);
   iatDate.setUTCSeconds(iat - this.leeway);
 
   if (now < iatDate) {
@@ -120,7 +121,7 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
       cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
     });
   } else {
-    var keyInfo = this.jwksCache.get(cachekey);
+    var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
     cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
   }
 };

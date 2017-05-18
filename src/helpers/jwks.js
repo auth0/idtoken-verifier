@@ -18,14 +18,17 @@ function getJWKS(options, cb) {
   return request
     .get(url)
     .end(function (err, data) {
+      var matchingKey = null;
+      var a;
+      var key;
+
       if (err) {
         cb(err);
       }
 
-      var matchingKey = null;
-
-      for (var a = 0; a < data.body.keys.length && matchingKey === null; a ++) {
-        var key = data.body.keys[a];
+      // eslint-disable-next-line no-plusplus
+      for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
+        key = data.body.keys[a];
         if (key.kid === options.kid) {
           matchingKey = key;
         }
