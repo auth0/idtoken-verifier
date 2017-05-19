@@ -1,5 +1,11 @@
 # Change Log
 
+## [v1.0.2](https://github.com/auth0/auth0.js/tree/v1.0.2) (2017-05-08)
+[Full Changelog](https://github.com/auth0/auth0.js/compare/v1.0.1...v1.0.2)
+
+**Fixed**
+- FIX decode base64 string with special characters. [\#6](https://github.com/auth0/idtoken-verifier/pull/6) ([dctoon](https://github.com/dctoon))
+
 ## [v1.0.1](https://github.com/auth0/auth0.js/tree/v1.0.1) (2017-05-08)
 [Full Changelog](https://github.com/auth0/auth0.js/compare/v1.0.0...v1.0.1)
 
