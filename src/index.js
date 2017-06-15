@@ -42,7 +42,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   var aud = jwt.payload.aud;
   var iss = jwt.payload.iss;
   var exp = jwt.payload.exp;
-  var iat = jwt.payload.iat;
+  var nbf = jwt.payload.nbf;
   var tnonce = jwt.payload.nonce || null;
   /* eslint-enable vars-on-top */
 
@@ -63,7 +63,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(new error.TokenValidationError('Nonce does not match.'), false);
   }
 
-  var expirationError = this.verifyExpAndIat(exp, iat); // eslint-disable-line vars-on-top
+  var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
 
   if (expirationError) {
     return cb(expirationError, false);
@@ -80,10 +80,10 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   });
 };
 
-IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
+IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
   var now = new Date();
   var expDate = new Date(0);
-  var iatDate = new Date(0);
+  var nbfDate = new Date(0);
 
   if (this.__disableExpirationCheck) {
     return null;
@@ -95,10 +95,12 @@ IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
     return new error.TokenValidationError('Expired token.');
   }
 
-  iatDate.setUTCSeconds(iat - this.leeway);
-
-  if (now < iatDate) {
-    return new error.TokenValidationError('The token was issued in the future. ' +
+  if (typeof nbf === 'undefined') {
+    return null;
+  }
+  nbfDate.setUTCSeconds(nbf - this.leeway);
+  if (now < nbfDate) {
+    return new error.TokenValidationError('The token is not valid until later in the future. ' +
       'Please check your computed clock.');
   }
 
