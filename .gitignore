@@ -51,3 +51,8 @@ example
 
 # Build folder
 Build
+
+# Release process
+.release
+.release-tmp-*/
+out/
