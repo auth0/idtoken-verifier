@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 var SmartBannerPlugin = require('smart-banner-webpack-plugin');
 var UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
-var version = require('./src/version.js').raw;
+var version = require('./src/version.js').version;
 
 var CustomVarLibraryNamePlugin = require('webpack-custom-var-library-name-plugin');
 

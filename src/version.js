@@ -1,1 +1,1 @@
-module.exports = { raw: '1.0.1' };
+module.exports = { version: '1.0.1', name: 'idtoken-verifier' };

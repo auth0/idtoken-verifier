@@ -85,7 +85,7 @@ This project is licensed under the MIT license. See the [LICENSE](LICENSE) file 
 [npm-url]: https://npmjs.org/package/idtoken-verifier
 [circleci-image]: http://img.shields.io/circleci/project/github/auth0/idtoken-verifier.svg?branch=master&style=flat-square
 [circleci-url]: https://circleci.com/gh/auth0/idtoken-verifier
-[codecov-image]: https://img.shields.io/codecov/c/github/auth0/idtoken-verifier/v8.svg?style=flat-square
+[codecov-image]: https://img.shields.io/codecov/c/github/auth0/idtoken-verifier.svg?style=flat-square
 [codecov-url]: https://codecov.io/github/auth0/idtoken-verifier?branch=master
 [license-image]: http://img.shields.io/npm/l/idtoken-verifier.svg?style=flat-square
 [license-url]: #license

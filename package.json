@@ -11,7 +11,12 @@
     "test:coverage": "istanbul cover _mocha -R test/*.test.js",
     "ci:test": "istanbul cover _mocha --report lcovonly -R test/**/* -- -R mocha-multi --reporter-options spec=-,mocha-junit-reporter=-",
     "ci:coverage": "codecov",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "jsdoc:generate": "jsdoc --configure .jsdoc.json --verbose",
+    "release:clean": "node scripts/cleanup.js",
+    "preversion": "node scripts/prepare.js",
+    "version": "node scripts/changelog.js && node scripts/jsdocs.js && node scripts/telemetry.js",
+    "postversion": "npm run release:clean"
   },
   "author": "Auth0",
   "license": "MIT",
