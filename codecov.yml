@@ -11,4 +11,8 @@ coverage:
       default:
         target: auto
         if_no_uploads: error
+  ignore:
+    - src/helpers/rsa-verifier.js
+    - scripts/
+    - node_modules/
 comment: false
