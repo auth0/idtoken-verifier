@@ -1,5 +1,11 @@
 # Change Log
 
+## [v1.1.0](https://github.com/auth0/idtoken-verifier/tree/v1.1.0) (2017-06-15)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.0.2...v1.1.0)
+
+**Changed**
+- Replace iat check with nbf check. [\#7](https://github.com/auth0/idtoken-verifier/pull/7) ([nicosabena](https://github.com/nicosabena))
+
 ## [v1.0.2](https://github.com/auth0/auth0.js/tree/v1.0.2) (2017-05-08)
 [Full Changelog](https://github.com/auth0/auth0.js/compare/v1.0.1...v1.0.2)
 
