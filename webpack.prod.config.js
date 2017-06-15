@@ -2,14 +2,15 @@ var webpack = require('webpack');
 var path = require('path');
 var SmartBannerPlugin = require('smart-banner-webpack-plugin');
 var UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
-var version = require('./src/version.js').version;
+var telemetry = require('./src/telemetry');
+var version = telemetry.version;
 
 var CustomVarLibraryNamePlugin = require('webpack-custom-var-library-name-plugin');
 
 module.exports = {
   devtool: 'source-map',
   entry: {
-    auth0: './src/index.js'
+    'idtoken-verifier': './src/index.js'
   },
   output: {
     path: path.join(__dirname, '../build'),
@@ -36,7 +37,7 @@ module.exports = {
   },
   plugins: [
     new CustomVarLibraryNamePlugin({
-      name: 'auth0'
+      name: `${telemetry.name}`
     }),
     new webpack.DefinePlugin({
       'process.env': {

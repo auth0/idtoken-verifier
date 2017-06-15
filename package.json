@@ -16,7 +16,8 @@
     "release:clean": "node scripts/cleanup.js",
     "preversion": "node scripts/prepare.js",
     "version": "node scripts/changelog.js && node scripts/jsdocs.js && node scripts/telemetry.js",
-    "postversion": "npm run release:clean"
+    "postversion": "npm run release:clean",
+    "upload": "ccu build"
   },
   "author": "Auth0",
   "license": "MIT",
@@ -38,6 +39,7 @@
   ],
   "repository": "git@github.com:auth0/idtoken-verifier.git",
   "devDependencies": {
+    "@auth0/component-cdn-uploader": "^2.0.0",
     "codecov": "^1.0.1",
     "eslint": "3.7.1",
     "eslint-config-auth0-base": "6.0.0",
@@ -59,5 +61,11 @@
     "webpack-dev-server": "^1.16.2",
     "webpack-hot-middleware": "^2.13.2",
     "webpack-stream": "^3.2.0"
+  },
+  "ccu": {
+    "name": "idtoken-verifier",
+    "cdn": "https://cdn.auth0.com",
+    "mainBundleFile": "idtoken-verifier.min.js",
+    "bucket": "assets.us.auth0.com"
   }
 }
