@@ -9,11 +9,15 @@ var supportedAlgs = ['RS256'];
  * Creates a new id_token verifier
  * @constructor
  * @param {Object} parameters
- * @param {String} parameters.issuer name of the issuer of the token that should match the `iss` claim in the id_token
- * @param {String} parameters.audience identifies the recipients that the JWT is intended for and should match the `aud` claim
+ * @param {String} parameters.issuer name of the issuer of the token
+ * that should match the `iss` claim in the id_token
+ * @param {String} parameters.audience identifies the recipients that the JWT is intended for
+ * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
- * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed and will be used to validate
- * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync while validating expiration of the id_token
+ * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
+ * and will be used to validate
+ * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
+ * while validating expiration of the id_token
  */
 function IdTokenVerifier(parameters) {
   var options = parameters || {};
