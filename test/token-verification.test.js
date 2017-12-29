@@ -138,6 +138,19 @@ describe('jwt-verification', function () {
     );
   });
 
+  it('should allow multiple audiences in the token', function (done) {
+    helpers.assertTokenValidationError(
+      {
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+      },
+      ['gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'],
+      'Nonce does not match.',
+      null,
+      done
+    );
+  });
+
   it('should check the token expiration', function (done) {
     helpers.assertTokenValidationError(
       {

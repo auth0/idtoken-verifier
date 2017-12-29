@@ -84,7 +84,11 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
   }
 
-  if (this.audience !== aud) {
+  if (Array.isArray(aud)) {
+    if (!aud.includes(this.audience)) {
+      return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
+    }
+  } else if (this.audience !== aud) {
     return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
   }
 

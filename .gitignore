@@ -56,3 +56,6 @@ Build
 .release
 .release-tmp-*/
 out/
+
+# IDEA
+.idea
