@@ -1,5 +1,5 @@
-// Generated file by hernan on Thu Jun 15 2017 20:48:52 GMT-0300 (-03);
+// Generated file by luis on Mon Jan 15 2018 22:03:14 GMT-0200 (-02);
 module.exports = {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "idtoken-verifier"
 };

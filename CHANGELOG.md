@@ -1,5 +1,11 @@
 # Change Log
 
+## [v1.1.1](https://github.com/auth0/idtoken-verifier/tree/v1.1.1) (2018-01-15)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.1.0...v1.1.1)
+
+**Changed**
+- Upgrade superagent version [\#10](https://github.com/auth0/idtoken-verifier/pull/10) ([luisrudge](https://github.com/luisrudge))
+
 ## [v1.1.0](https://github.com/auth0/idtoken-verifier/tree/v1.1.0) (2017-06-15)
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.0.2...v1.1.0)
 
