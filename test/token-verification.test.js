@@ -2,9 +2,11 @@ var expect = require('expect.js');
 
 var CacheMock = require('./mock/cache-mock');
 var helpers = require('./helper/token-validation');
+var rewire = require('rewire');
+var sinon = require('sinon');
 
 var error = require('../src/helpers/error');
-var IdTokenVerifier = require('../src/index');
+var IdTokenVerifier = rewire('../src/index');
 
 describe('jwt-verification', function () {
 
@@ -244,5 +246,32 @@ describe('jwt-verification', function () {
     var result = verifier.decode(id_token);
     expect(result).to.be.an(error.TokenValidationError);
     expect(result.message).to.eql('Token header or payload is not valid JSON');
+  });
+  
+  describe('getRsaVerifier', function () {
+    it('should call callback once with error when an error is returned from jwks.getJWKS', function(){
+      var mockJwks = {
+          getJWKS: function(){}
+      };
+      var err = 'error';
+      sinon.stub(mockJwks, 'getJWKS', function(obj, cb) {
+        cb(err);
+      });
+      
+      var revert = IdTokenVerifier.__set__({jwks: mockJwks});
+      
+      var callback = sinon.spy();
+      
+      var verifier = new IdTokenVerifier({jwksCache: CacheMock.validKey()});
+      verifier.getRsaVerifier('iss', 'kid', callback);
+      
+      try {
+        sinon.assert.calledOnce(callback);      
+        expect(callback.calledWith(err)).to.be.ok();
+      }
+      finally {
+        revert();
+      }
+    });
   });
 });

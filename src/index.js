@@ -191,10 +191,10 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
       kid: kid
     }, function (err, keyInfo) {
       if (err) {
-        cb(err);
+        return cb(err);
       }
       _this.jwksCache.set(cachekey, keyInfo);
-      cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+      return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
     });
   } else {
     var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
