@@ -198,7 +198,7 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
     });
   } else {
     var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
-    return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+    cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
   }
 };
 
