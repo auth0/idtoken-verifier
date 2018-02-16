@@ -55,6 +55,7 @@
     "mocha-junit-reporter": "^1.13.0",
     "mocha-multi": "^0.11.0",
     "moment": "^2.18.1",
+    "rewire": "~3.0.2",
     "sinon": "^1.17.6",
     "smart-banner-webpack-plugin": "^2.0.0",
     "unminified-webpack-plugin": "^1.1.1",
