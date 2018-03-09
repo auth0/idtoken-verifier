@@ -6,7 +6,7 @@
 **Fixed**
 - Fixing issue with IdTokenVerifier.getRsaVerifier  [\#14](https://github.com/auth0/idtoken-verifier/pull/14) ([dfung](https://github.com/dfung))
 
-- Use base64-js methods instead of browser globals atob and btoa  [\#15](https://github.com/auth0/idtoken-verifier/pull/15) ([dfung](https://github.com/maxbeatty))
+- Use base64-js methods instead of browser globals atob and btoa  [\#15](https://github.com/auth0/idtoken-verifier/pull/15) ([maxbeatty](https://github.com/maxbeatty))
 
 ## [v1.1.1](https://github.com/auth0/idtoken-verifier/tree/v1.1.1) (2018-01-15)
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.1.0...v1.1.1)
