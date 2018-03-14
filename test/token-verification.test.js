@@ -275,3 +275,52 @@ describe('jwt-verification', function () {
     });
   });
 });
+describe('access_token validation', function() {
+  it('should throw an error with an invalid id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var id_token = "foobar_not_a_token";
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, id_token, function(err, status) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Cannot decode a malformed JWT');
+      expect(status).to.be(false);
+      done();
+    });
+  });
+  it('should throw an errr whith HS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var id_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGgwLXRlc3RzLWxvY2suYXV0aDAuY29tLyIsImlhdCI6MTUwOTA0MDk4MiwiZXhwIjoxNTQwNTc2OTgyLCJhdWQiOiJpeGVPSEZoRDdOU1B4RVFLNkNGY3N3alVzYTVZa2NYUyIsInN1YiI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJHaXZlbk5hbWUiOiJKb2hubnkiLCJTdXJuYW1lIjoiUm9ja2V0IiwiRW1haWwiOiJqcm9ja2V0QGV4YW1wbGUuY29tIiwiUm9sZSI6WyJNYW5hZ2VyIiwiUHJvamVjdCBBZG1pbmlzdHJhdG9yIl19._JvcLjX308NtT16oegF2wFeOcdEYKM3DqX-V4POwIeg";
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, id_token, function(err, status) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Algorithm HS256 is not supported. (Expected algs: [RS256])');
+      expect(status).to.be(false);
+      done();
+    });
+  });
+  it('should throw an error when access_token is invalid', function(done) {
+    var access_token = "not an access token";
+    var id_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik5FVkJOVU5CT1RneFJrRTVOa1F6UXpjNE9UQkVNRUZGUkRRNU4wUTJRamswUmtRMU1qRkdNUSJ9.eyJuaWNrbmFtZSI6ImpvaG5mb28iLCJuYW1lIjoiam9obmZvb0BnbWFpbC5jb20iLCJwaWN0dXJlIjoiaHR0cHM6Ly9zLmdyYXZhdGFyLmNvbS9hdmF0YXIvMzhmYTAwMjQyM2JkOGM5NDFjNmVkMDU4OGI2MGZmZWQ_cz00ODAmcj1wZyZkPWh0dHBzJTNBJTJGJTJGY2RuLmF1dGgwLmNvbSUyRmF2YXRhcnMlMkZqby5wbmciLCJ1cGRhdGVkX2F0IjoiMjAxOC0wMy0xNFQxNjozNDo1Ni40MjNaIiwiZW1haWwiOiJqb2huZm9vQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9icnVja2UuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVhMjA1NGZmNDUxNTc3MTFiZTgxODJmNCIsImF1ZCI6Ims1dTNvMmZpQUE4WHdlWEVFWDYwNEtDd0Nqemp0TVU2IiwiaWF0IjoxNTIxMDQ1Mjk2LCJleHAiOjE1MjEwODEyOTYsImF0X2hhc2giOiJjZHVrb2FVc3dNOWJvX3l6cmdWY3J3Iiwibm9uY2UiOiJsRkNuSTguY3JSVGRIZmRvNWsuek1YZlIzMTg1NmdLeiJ9.U4_F5Zw6xYVoHGiiem1wjz7i9eRaSOrt-L1e6hlu3wmqA-oNuVqf1tEYD9u0z5AbXXbQSr491A3VvUbLKjws13XETcljhaqigZ9q4HBpmzPlrUGmPreBLVQgGOaq5NVAViFTvORxYCMFLlc-SE6QI6xWF0AhFpoW7-hkOcOzXWAXqhkMgwAfjJ9aeOzSBgblmtx4duyNESBRefd3XPQrakWjGIqH3dFdc-lDFbY76eSLYfBi4AH-yim4egzB6LYOC-e2huZcHdmRAmEQaKZ7D7COBiGsgAPVGyjZtqfSQ2CRwNrAbxDwi8BqlLhQePOs6d3hqV-3OPLfdE6dUFh2DQ";
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, id_token, function(err, status) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Invalid access_token');
+      expect(status).to.be(false);
+      done();
+    });
+  });
+  it('should validate access_token with RS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var id_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik5FVkJOVU5CT1RneFJrRTVOa1F6UXpjNE9UQkVNRUZGUkRRNU4wUTJRamswUmtRMU1qRkdNUSJ9.eyJuaWNrbmFtZSI6ImpvaG5mb28iLCJuYW1lIjoiam9obmZvb0BnbWFpbC5jb20iLCJwaWN0dXJlIjoiaHR0cHM6Ly9zLmdyYXZhdGFyLmNvbS9hdmF0YXIvMzhmYTAwMjQyM2JkOGM5NDFjNmVkMDU4OGI2MGZmZWQ_cz00ODAmcj1wZyZkPWh0dHBzJTNBJTJGJTJGY2RuLmF1dGgwLmNvbSUyRmF2YXRhcnMlMkZqby5wbmciLCJ1cGRhdGVkX2F0IjoiMjAxOC0wMy0xNFQxNjozNDo1Ni40MjNaIiwiZW1haWwiOiJqb2huZm9vQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9icnVja2UuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVhMjA1NGZmNDUxNTc3MTFiZTgxODJmNCIsImF1ZCI6Ims1dTNvMmZpQUE4WHdlWEVFWDYwNEtDd0Nqemp0TVU2IiwiaWF0IjoxNTIxMDQ1Mjk2LCJleHAiOjE1MjEwODEyOTYsImF0X2hhc2giOiJjZHVrb2FVc3dNOWJvX3l6cmdWY3J3Iiwibm9uY2UiOiJsRkNuSTguY3JSVGRIZmRvNWsuek1YZlIzMTg1NmdLeiJ9.U4_F5Zw6xYVoHGiiem1wjz7i9eRaSOrt-L1e6hlu3wmqA-oNuVqf1tEYD9u0z5AbXXbQSr491A3VvUbLKjws13XETcljhaqigZ9q4HBpmzPlrUGmPreBLVQgGOaq5NVAViFTvORxYCMFLlc-SE6QI6xWF0AhFpoW7-hkOcOzXWAXqhkMgwAfjJ9aeOzSBgblmtx4duyNESBRefd3XPQrakWjGIqH3dFdc-lDFbY76eSLYfBi4AH-yim4egzB6LYOC-e2huZcHdmRAmEQaKZ7D7COBiGsgAPVGyjZtqfSQ2CRwNrAbxDwi8BqlLhQePOs6d3hqV-3OPLfdE6dUFh2DQ";
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, id_token, function(err, status) {
+      expect(err).to.be(null);
+      expect(status).to.be(true);
+      done();
+    });
+  });
+});
