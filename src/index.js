@@ -275,8 +275,8 @@ IdTokenVerifier.prototype.validateAccessToken = function (accessToken, idToken, 
   }
   var sha256AccessToken = sha256(accessToken);
   var hashToHex = cryptoHex.stringify(sha256AccessToken);
-  var hashToHextFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
-  var hashFirstHalfWordArray = cryptoHex.parse(hashToHextFirstHalf);
+  var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
+  var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
   var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
   var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
   var atHash = decodedIdToken.payload.at_hash;
