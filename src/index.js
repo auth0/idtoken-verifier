@@ -251,8 +251,8 @@ IdTokenVerifier.prototype.decode = function (token) {
 
 /**
  * @callback validateAccessTokenCallback
- * @param {Error} [err] error returned if the validation cannot be performed
- * @param {boolean} [status] if the access token is valid or not
+ * @param {Error} [err] error returned if the validation cannot be performed or the token is invalid.
+ * If there is no error, then the access_token is valid
  */
 
 /**
@@ -261,17 +261,17 @@ IdTokenVerifier.prototype.decode = function (token) {
  * @method validateAccessToken
  * @param {String} access_token the access_token
  * @param {String} id_token the id_token
- * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation
+ * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
  */
 IdTokenVerifier.prototype.validateAccessToken = function (accessToken, idToken, cb) {
   var decodedIdToken = this.decode(idToken);
   // if it has a `name` property, it's an error
   if (decodedIdToken.name) {
-    return cb(decodedIdToken, false);
+    return cb(decodedIdToken);
   }
   if (supportedAlgs.indexOf(decodedIdToken.header.alg) === -1) {
     return cb(new error.TokenValidationError('Algorithm ' + decodedIdToken.header.alg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
+      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'));
   }
   var sha256AccessToken = sha256(accessToken);
   var hashToHex = cryptoHex.stringify(sha256AccessToken);
@@ -281,9 +281,9 @@ IdTokenVerifier.prototype.validateAccessToken = function (accessToken, idToken, 
   var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
   var atHash = decodedIdToken.payload.at_hash;
   if (hashFirstHalfBase64SafeUrl !== atHash) {
-    return cb(new error.TokenValidationError('Invalid access_token'), false);
+    return cb(new error.TokenValidationError('Invalid access_token'));
   }
-  return cb(null, true);
+  return cb(null);
 };
 
 module.exports = IdTokenVerifier;
