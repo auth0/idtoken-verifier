@@ -251,8 +251,8 @@ IdTokenVerifier.prototype.decode = function (token) {
 
 /**
  * @callback validateAccessTokenCallback
- * @param {Error} [err] error returned if the validation cannot be performed or the token is invalid.
- * If there is no error, then the access_token is valid
+ * @param {Error} [err] error returned if the validation cannot be performed
+ * or the token is invalid. If there is no error, then the access_token is valid.
  */
 
 /**
