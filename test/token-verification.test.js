@@ -276,6 +276,17 @@ describe('jwt-verification', function () {
   });
 });
 describe('access_token validation', function() {
+  it.only('should handle empty/null access tokens', function(done) {
+    var access_token = null;
+    var id_token = "foobar_not_a_token";
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, id_token, function(err) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Cannot decode a malformed JWT');
+      done();
+    });
+  });
   it('should throw an error with an invalid id_token', function(done) {
     var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
     var id_token = "foobar_not_a_token";
