@@ -13,7 +13,7 @@ function process(jwks) {
 }
 
 function getJWKS(options, cb) {
-  var url = urljoin(options.iss, '.well-known', 'jwks.json');
+  var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
 
   return request
     .get(url)
@@ -23,7 +23,7 @@ function getJWKS(options, cb) {
       var key;
 
       if (err) {
-        cb(err);
+        return cb(err);
       }
 
       // eslint-disable-next-line no-plusplus
@@ -34,7 +34,7 @@ function getJWKS(options, cb) {
         }
       }
 
-      cb(null, process(matchingKey));
+      return cb(null, process(matchingKey));
     });
 }
 
