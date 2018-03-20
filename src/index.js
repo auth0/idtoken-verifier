@@ -14,7 +14,7 @@ var supportedAlgs = ['RS256'];
  * @param {String} parameters.audience identifies the recipients that the JWT is intended for
  * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
- * @param {String} [parameters.jwksURI] Endpoint to fetch the jwks.json file
+ * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
  * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
  * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
