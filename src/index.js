@@ -259,21 +259,18 @@ IdTokenVerifier.prototype.decode = function (token) {
  */
 
 /**
- * Validates an access token based on {@link http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation}
+ * Validates an access token based on {@link http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation}.
+ * The id_token should be decoded and verified before using this function
  *
  * @method validateAccessToken
  * @param {String} access_token the access_token
- * @param {String} id_token the id_token
+ * @param {String} alg the algorithm used to hash the id_token.
+ * @param {String} atHash the `at_hash` value of the id_token
  * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
  */
-IdTokenVerifier.prototype.validateAccessToken = function (accessToken, idToken, cb) {
-  var decodedIdToken = this.decode(idToken);
-  // if it has a `name` property, it's an error
-  if (decodedIdToken.name) {
-    return cb(decodedIdToken);
-  }
-  if (supportedAlgs.indexOf(decodedIdToken.header.alg) === -1) {
-    return cb(new error.TokenValidationError('Algorithm ' + decodedIdToken.header.alg +
+IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash, cb) {
+  if (supportedAlgs.indexOf(alg) === -1) {
+    return cb(new error.TokenValidationError('Algorithm ' + alg +
       ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'));
   }
   var sha256AccessToken = sha256(accessToken);
@@ -282,7 +279,6 @@ IdTokenVerifier.prototype.validateAccessToken = function (accessToken, idToken, 
   var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
   var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
   var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
-  var atHash = decodedIdToken.payload.at_hash;
   if (hashFirstHalfBase64SafeUrl !== atHash) {
     return cb(new error.TokenValidationError('Invalid access_token'));
   }
