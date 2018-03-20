@@ -289,19 +289,23 @@ describe('jwt-verification', function () {
   });
 });
 describe('access_token validation', function() {
-  it('should handle empty/null access tokens', function(done) {
-    var access_token = null;
-    var alg = 'RS256';
-    var at_hash = 'at_hash';
-
-    var itv = new IdTokenVerifier();
-    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
-      expect(err.name).to.be('TokenValidationError');
-      expect(err.message).to.be('Invalid access_token');
-      done();
+  describe('With empty access_tokens', function() {
+    [null, undefined, ''].forEach(function(at) {
+      it('should throw when access_token is `' + at + '`', function(done) {
+        var access_token = at;
+        var alg = 'RS256';
+        var at_hash = 'at_hash';
+    
+        var itv = new IdTokenVerifier();
+        itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+          expect(err.name).to.be('TokenValidationError');
+          expect(err.message).to.be('Invalid access_token');
+          done();
+        });
+      });
     });
   });
-  it('should throw an errr whith HS256 id_token', function(done) {
+  it('should throw an error with HS256 id_token', function(done) {
     var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
     var alg = 'HS256';
     var at_hash = 'at_hash';
@@ -309,7 +313,7 @@ describe('access_token validation', function() {
     var itv = new IdTokenVerifier();
     itv.validateAccessToken(access_token, alg, at_hash, function(err) {
       expect(err.name).to.be('TokenValidationError');
-      expect(err.message).to.be('Algorithm HS256 is not supported. (Expected algs: [RS256])');
+      expect(err.message).to.be('Algorithm HS256 is not supported. (Expected alg: RS256)');
       done();
     });
   });
