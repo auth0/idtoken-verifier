@@ -249,6 +249,19 @@ describe('jwt-verification', function () {
   });
   
   describe('getRsaVerifier', function () {
+    it('should pass options.jwksURI through ', function(done){
+      var mockJwks = {
+          getJWKS: function(options){
+            expect(options.jwksURI).to.be('https://example.com/');
+            done();
+          }
+      };
+      var revert = IdTokenVerifier.__set__({jwks: mockJwks});
+      
+      var verifier = new IdTokenVerifier({jwksURI: 'https://example.com/'});
+      verifier.getRsaVerifier('iss', 'kid');
+      revert();
+    });
     it('should call callback once with error when an error is returned from jwks.getJWKS', function(){
       var mockJwks = {
           getJWKS: function(){}

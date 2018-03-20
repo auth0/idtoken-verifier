@@ -18,6 +18,7 @@ var supportedAlgs = ['RS256'];
  * @param {String} parameters.audience identifies the recipients that the JWT is intended for
  * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
+ * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
  * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
  * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
@@ -32,6 +33,7 @@ function IdTokenVerifier(parameters) {
   this.audience = options.audience;
   this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
+  this.jwksURI = options.jwksURI;
 
   if (this.leeway < 0 || this.leeway > 60) {
     throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
@@ -191,6 +193,7 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
 
   if (!this.jwksCache.has(cachekey)) {
     jwks.getJWKS({
+      jwksURI: this.jwksURI,
       iss: iss,
       kid: kid
     }, function (err, keyInfo) {
