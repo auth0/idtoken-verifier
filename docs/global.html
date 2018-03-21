@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IdTokenVerifier.html">IdTokenVerifier</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#decode">decode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verify">verify</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndIat">verifyExpAndIat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndNbf">verifyExpAndNbf</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IdTokenVerifier.html">IdTokenVerifier</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#decode">decode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validateAccessToken">validateAccessToken</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verify">verify</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndIat">verifyExpAndIat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndNbf">verifyExpAndNbf</a></span></li>
 </nav>
 
 <div id="main">
@@ -160,7 +160,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line214">line 214</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -277,6 +277,223 @@
 
     
 
+    <h4 class="name" id="validateAccessToken"><span class="type-signature"></span>validateAccessToken<span class="signature">(access_token, alg, atHash, cb)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Validates an access_token based on <a href="http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation">http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation</a>.
+The id_token from where the alg and atHash parameters are taken,
+should be decoded and verified before using thisfunction</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line261">line 261</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>access_token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>String</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>the access_token</p>
+                
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>alg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>String</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The algorithm defined in the header of the
+previously verified id_token under the &quot;alg&quot; claim.</p>
+                
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>atHash</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>String</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The &quot;at_hash&quot; value included in the payload
+of the previously verified id_token.</p>
+                
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code><a href="global.html#validateAccessTokenCallback">validateAccessTokenCallback</a></code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>callback used to notify the results of the validation.</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+        
+            
+<div class="section-method">
+
+    
+
     <h4 class="name" id="verify"><span class="type-signature"></span>verify<span class="signature">(token, nonce<span class="signature-attributes">opt</span>, cb)</span><span class="type-signature"></span></h4>
 
     
@@ -327,7 +544,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line48">line 48</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -542,7 +759,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line152">line 152</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -728,7 +945,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line117">line 117</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -1016,7 +1233,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line206">line 206</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -1045,6 +1262,150 @@
 
 </div>
 
+            
+                
+<div class="section-method">
+
+    
+
+    <h4 class="name" id="validateAccessTokenCallback"><span class="type-signature"></span>validateAccessTokenCallback<span class="signature">(err<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line255">line 255</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Error</code></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <p>error returned if the validation cannot be performed
+or the token is invalid. If there is no error, then the access_token is valid.</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
             
                 
 <div class="section-method">
@@ -1090,7 +1451,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line42">line 42</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line48">line 48</a>
     </li></ul></dd>
     
 
@@ -1240,7 +1601,7 @@
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.0</a> on Thu Mar 01 2018 16:29:27 GMT-0300 (-03) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.0</a> on Wed Mar 21 2018 14:58:11 GMT-0300 (-03) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

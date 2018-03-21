@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.2.0](https://github.com/auth0/idtoken-verifier/tree/v1.2.0) (2018-03-21)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.1.2...v1.2.0)
+
+**Added**
+- Add option to set the endpoint to fetch the jwks.json file [\#19](https://github.com/auth0/idtoken-verifier/pull/19) ([luisrudge](https://github.com/luisrudge))
+- Adding access_token validation method `validateAccessToken` [\#17](https://github.com/auth0/idtoken-verifier/pull/17) ([luisrudge](https://github.com/luisrudge))
+
 ## [v1.1.2](https://github.com/auth0/idtoken-verifier/tree/v1.1.2) (2018-03-01)
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.1.1...v1.1.2)
 
