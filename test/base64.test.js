@@ -54,4 +54,8 @@ describe('helpers base64 url', function () {
 
   });
 
+  it('base64ToBase64Url', function() {
+    expect(base64.base64ToBase64Url('aa/bb+cc=')).to.eql('aa_bb-cc');
+  });
+
 });

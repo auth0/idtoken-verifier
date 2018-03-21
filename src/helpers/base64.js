@@ -60,6 +60,18 @@ function decodeToHEX(str) {
   return byteArrayToHex(base64.toByteArray(padding(str)));
 }
 
+function base64ToBase64Url(base64String) {
+  var SAFE_URL_ENCODING_MAPPING = {
+    "+": "-",
+    "/": "_",
+    "=": ""
+  };
+
+  return base64String.replace(/[+/=]/g, function(m) {
+    return SAFE_URL_ENCODING_MAPPING[m];
+  });
+}
+
 module.exports = {
   encodeString: encodeString,
   decodeToString: decodeToString,
@@ -67,5 +79,6 @@ module.exports = {
   stringToByteArray: stringToByteArray,
   padding: padding,
   byteArrayToHex: byteArrayToHex,
-  decodeToHEX: decodeToHEX
+  decodeToHEX: decodeToHEX,
+  base64ToBase64Url: base64ToBase64Url
 };

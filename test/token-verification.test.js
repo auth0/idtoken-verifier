@@ -288,3 +288,56 @@ describe('jwt-verification', function () {
     });
   });
 });
+describe('access_token validation', function() {
+  describe('With empty access_tokens', function() {
+    [null, undefined, ''].forEach(function(at) {
+      it('should throw when access_token is `' + at + '`', function(done) {
+        var access_token = at;
+        var alg = 'RS256';
+        var at_hash = 'at_hash';
+    
+        var itv = new IdTokenVerifier();
+        itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+          expect(err.name).to.be('TokenValidationError');
+          expect(err.message).to.be('Invalid access_token');
+          done();
+        });
+      });
+    });
+  });
+  it('should throw an error with HS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var alg = 'HS256';
+    var at_hash = 'at_hash';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Algorithm HS256 is not supported. (Expected alg: RS256)');
+      done();
+    });
+  });
+  it('should throw an error when access_token is invalid', function(done) {
+    var access_token = "not an access token";
+    var alg = 'RS256';
+    var at_hash = 'cdukoaUswM9bo_yzrgVcrw';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Invalid access_token');
+      done();
+    });
+  });
+  it('should validate access_token with RS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var alg = 'RS256';
+    var at_hash = 'cdukoaUswM9bo_yzrgVcrw';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err).to.be(null);
+      done();
+    });
+  });
+});

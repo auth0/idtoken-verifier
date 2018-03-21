@@ -1,3 +1,7 @@
+var sha256 = require('crypto-js/sha256');
+var cryptoBase64 = require('crypto-js/enc-base64');
+var cryptoHex = require('crypto-js/enc-hex');
+
 var RSAVerifier = require('./helpers/rsa-verifier');
 var base64 = require('./helpers/base64');
 var jwks = require('./helpers/jwks');
@@ -246,6 +250,42 @@ IdTokenVerifier.prototype.decode = function (token) {
       signature: parts[2]
     }
   };
+};
+
+/**
+ * @callback validateAccessTokenCallback
+ * @param {Error} [err] error returned if the validation cannot be performed
+ * or the token is invalid. If there is no error, then the access_token is valid.
+ */
+
+/**
+ * Validates an access_token based on {@link http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation}.
+ * The id_token from where the alg and atHash parameters are taken,
+ * should be decoded and verified before using thisfunction
+ *
+ * @method validateAccessToken
+ * @param {String} access_token the access_token
+ * @param {String} alg The algorithm defined in the header of the
+ * previously verified id_token under the "alg" claim.
+ * @param {String} atHash The "at_hash" value included in the payload
+ * of the previously verified id_token.
+ * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
+ */
+IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash, cb) {
+  if (this.expectedAlg !== alg) {
+    return cb(new error.TokenValidationError('Algorithm ' + alg +
+      ' is not supported. (Expected alg: ' + this.expectedAlg + ')'));
+  }
+  var sha256AccessToken = sha256(accessToken);
+  var hashToHex = cryptoHex.stringify(sha256AccessToken);
+  var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
+  var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
+  var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
+  var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
+  if (hashFirstHalfBase64SafeUrl !== atHash) {
+    return cb(new error.TokenValidationError('Invalid access_token'));
+  }
+  return cb(null);
 };
 
 module.exports = IdTokenVerifier;
