@@ -12,7 +12,7 @@ function process(jwks) {
   };
 }
 
-function getJWKS(options, cb) {
+function getJWKS(options) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
 
   return request
@@ -23,7 +23,7 @@ function getJWKS(options, cb) {
       var key;
 
       if (err) {
-        return cb(err);
+        return Promise.reject(err);
       }
 
       // eslint-disable-next-line no-plusplus
@@ -34,7 +34,7 @@ function getJWKS(options, cb) {
         }
       }
 
-      return cb(null, process(matchingKey));
+      return Promise.resolve(process(matchingKey));
     });
 }
 
