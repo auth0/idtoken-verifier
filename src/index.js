@@ -25,28 +25,27 @@ var supportedAlgs = ['RS256'];
  * while validating expiration of the id_token
  */
 function IdTokenVerifier(parameters) {
-  var options = parameters || {};
+    var options = parameters || {};
 
-  this.jwksCache = options.jwksCache || new DummyCache();
-  this.expectedAlg = options.expectedAlg || 'RS256';
-  this.issuer = options.issuer;
-  this.audience = options.audience;
-  this.leeway = options.leeway || 0;
-  this.__disableExpirationCheck = options.__disableExpirationCheck || false;
-  this.jwksURI = options.jwksURI;
+    this.jwksCache = options.jwksCache || new DummyCache();
+    this.expectedAlg = options.expectedAlg || 'RS256';
+    this.issuer = options.issuer;
+    this.audience = options.audience;
+    this.leeway = options.leeway || 0;
+    this.__disableExpirationCheck = options.__disableExpirationCheck || false;
+    this.jwksURI = options.jwksURI;
 
-  if (this.leeway < 0 || this.leeway > 60) {
-    throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
-  }
+    if (this.leeway < 0 || this.leeway > 60) {
+        throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
+    }
 
-  if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
-    throw new error.ConfigurationError('Algorithm ' + this.expectedAlg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])');
-  }
+    if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
+        throw new error.ConfigurationError('Algorithm ' + this.expectedAlg +
+            ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])');
+    }
 }
 
 /**
- * @callback verifyCallback
  * @param {Error} [err] error returned if the verify cannot be performed
  * @param {boolean} [status] if the token is valid or not
  */
@@ -63,61 +62,61 @@ function IdTokenVerifier(parameters) {
  * @method verify
  * @param {String} token id_token to verify
  * @param {String} [nonce] nonce value that should match the one in the id_token claims
- * @param {verifyCallback} cb callback used to notify the results of the validation
  */
-IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
-  var jwt = this.decode(token);
+IdTokenVerifier.prototype.verify = function (token, nonce) {
+    var jwt = this.decode(token);
 
-  if (jwt instanceof Error) {
-    return cb(jwt, false);
-  }
-
-  /* eslint-disable vars-on-top */
-  var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
-  var signature = base64.decodeToHEX(jwt.encoded.signature);
-
-  var alg = jwt.header.alg;
-  var kid = jwt.header.kid;
-
-  var aud = jwt.payload.aud;
-  var iss = jwt.payload.iss;
-  var exp = jwt.payload.exp;
-  var nbf = jwt.payload.nbf;
-  var tnonce = jwt.payload.nonce || null;
-  /* eslint-enable vars-on-top */
-
-  if (this.issuer !== iss) {
-    return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
-  }
-
-  if (this.audience !== aud) {
-    return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
-  }
-
-  if (this.expectedAlg !== alg) {
-    return cb(new error.TokenValidationError('Algorithm ' + alg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
-  }
-
-  if (tnonce !== nonce) {
-    return cb(new error.TokenValidationError('Nonce does not match.'), false);
-  }
-
-  var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
-
-  if (expirationError) {
-    return cb(expirationError, false);
-  }
-
-  return this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
-    if (err) {
-      return cb(err);
+    if (jwt instanceof Error) {
+        return Promise.reject(jwt);
     }
-    if (rsaVerifier.verify(headAndPayload, signature)) {
-      return cb(null, jwt.payload);
+
+    /* eslint-disable vars-on-top */
+    var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
+    var signature = base64.decodeToHEX(jwt.encoded.signature);
+
+    var alg = jwt.header.alg;
+    var kid = jwt.header.kid;
+
+    var aud = jwt.payload.aud;
+    var iss = jwt.payload.iss;
+    var exp = jwt.payload.exp;
+    var nbf = jwt.payload.nbf;
+    var tnonce = jwt.payload.nonce || null;
+    /* eslint-enable vars-on-top */
+
+    if (this.issuer !== iss) {
+        return Promise.reject(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
     }
-    return cb(new error.TokenValidationError('Invalid signature.'));
-  });
+
+    if (this.audience !== aud) {
+        return Promise.reject(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
+    }
+
+    if (this.expectedAlg !== alg) {
+        return Promise.reject(new error.TokenValidationError('Algorithm ' + alg +
+            ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
+    }
+
+    if (tnonce !== nonce) {
+        return Promise.reject(new error.TokenValidationError('Nonce does not match.'), false);
+    }
+
+    var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
+
+    if (expirationError) {
+        return expirationError, false;
+    }
+
+    return this.getRsaVerifier(iss, kid)
+        .then(rsaVerifier => {
+            if (rsaVerifier.verify(headAndPayload, signature)) {
+                return Promise.resolve(jwt.payload);
+            }
+            return Promise.reject(new error.TokenValidationError('Invalid signature.'));
+        })
+        .catch(e => {
+            return Promise.reject(e)
+        })
 };
 
 /**
@@ -129,30 +128,30 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
  * @return {boolean} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
-  var now = new Date();
-  var expDate = new Date(0);
-  var nbfDate = new Date(0);
+    var now = new Date();
+    var expDate = new Date(0);
+    var nbfDate = new Date(0);
 
-  if (this.__disableExpirationCheck) {
+    if (this.__disableExpirationCheck) {
+        return null;
+    }
+
+    expDate.setUTCSeconds(exp + this.leeway);
+
+    if (now > expDate) {
+        return new error.TokenValidationError('Expired token.');
+    }
+
+    if (typeof nbf === 'undefined') {
+        return null;
+    }
+    nbfDate.setUTCSeconds(nbf - this.leeway);
+    if (now < nbfDate) {
+        return new error.TokenValidationError('The token is not valid until later in the future. ' +
+            'Please check your computed clock.');
+    }
+
     return null;
-  }
-
-  expDate.setUTCSeconds(exp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
-  }
-
-  if (typeof nbf === 'undefined') {
-    return null;
-  }
-  nbfDate.setUTCSeconds(nbf - this.leeway);
-  if (now < nbfDate) {
-    return new error.TokenValidationError('The token is not valid until later in the future. ' +
-      'Please check your computed clock.');
-  }
-
-  return null;
 };
 
 /**
@@ -164,49 +163,50 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
  * @return {boolean} if token is valid according to `exp` and `iat`
  */
 IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
-  var now = new Date();
-  var expDate = new Date(0);
-  var iatDate = new Date(0);
+    var now = new Date();
+    var expDate = new Date(0);
+    var iatDate = new Date(0);
 
-  if (this.__disableExpirationCheck) {
+    if (this.__disableExpirationCheck) {
+        return null;
+    }
+
+    expDate.setUTCSeconds(exp + this.leeway);
+
+    if (now > expDate) {
+        return new error.TokenValidationError('Expired token.');
+    }
+
+    iatDate.setUTCSeconds(iat - this.leeway);
+
+    if (now < iatDate) {
+        return new error.TokenValidationError('The token was issued in the future. ' +
+            'Please check your computed clock.');
+    }
     return null;
-  }
-
-  expDate.setUTCSeconds(exp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
-  }
-
-  iatDate.setUTCSeconds(iat - this.leeway);
-
-  if (now < iatDate) {
-    return new error.TokenValidationError('The token was issued in the future. ' +
-      'Please check your computed clock.');
-  }
-  return null;
 };
 
-IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
-  var _this = this;
-  var cachekey = iss + kid;
+IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid) {
+    var _this = this;
+    var cachekey = iss + kid;
 
-  if (!this.jwksCache.has(cachekey)) {
-    jwks.getJWKS({
-      jwksURI: this.jwksURI,
-      iss: iss,
-      kid: kid
-    }, function (err, keyInfo) {
-      if (err) {
-        return cb(err);
-      }
-      _this.jwksCache.set(cachekey, keyInfo);
-      return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-    });
-  } else {
-    var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
-    cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-  }
+    if (!this.jwksCache.has(cachekey)) {
+        jwks.getJWKS({
+            jwksURI: this.jwksURI,
+            iss: iss,
+            kid: kid
+        })
+            .then(keyInfo => {
+                _this.jwksCache.set(cachekey, keyInfo);
+                return Promise.resolve(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+            })
+            .catch(e => {
+                Promise.reject(e)
+            })
+    } else {
+        var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
+        Promise.resolve(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+    }
 };
 
 
@@ -226,30 +226,30 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
  * @return {DecodedToken} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.decode = function (token) {
-  var parts = token.split('.');
-  var header;
-  var payload;
+    var parts = token.split('.');
+    var header;
+    var payload;
 
-  if (parts.length !== 3) {
-    return new error.TokenValidationError('Cannot decode a malformed JWT');
-  }
-
-  try {
-    header = JSON.parse(base64.decodeToString(parts[0]));
-    payload = JSON.parse(base64.decodeToString(parts[1]));
-  } catch (e) {
-    return new error.TokenValidationError('Token header or payload is not valid JSON');
-  }
-
-  return {
-    header: header,
-    payload: payload,
-    encoded: {
-      header: parts[0],
-      payload: parts[1],
-      signature: parts[2]
+    if (parts.length !== 3) {
+        return new error.TokenValidationError('Cannot decode a malformed JWT');
     }
-  };
+
+    try {
+        header = JSON.parse(base64.decodeToString(parts[0]));
+        payload = JSON.parse(base64.decodeToString(parts[1]));
+    } catch (e) {
+        return new error.TokenValidationError('Token header or payload is not valid JSON');
+    }
+
+    return {
+        header: header,
+        payload: payload,
+        encoded: {
+            header: parts[0],
+            payload: parts[1],
+            signature: parts[2]
+        }
+    };
 };
 
 /**
@@ -271,21 +271,21 @@ IdTokenVerifier.prototype.decode = function (token) {
  * of the previously verified id_token.
  * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
  */
-IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash, cb) {
-  if (this.expectedAlg !== alg) {
-    return cb(new error.TokenValidationError('Algorithm ' + alg +
-      ' is not supported. (Expected alg: ' + this.expectedAlg + ')'));
-  }
-  var sha256AccessToken = sha256(accessToken);
-  var hashToHex = cryptoHex.stringify(sha256AccessToken);
-  var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
-  var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
-  var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
-  var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
-  if (hashFirstHalfBase64SafeUrl !== atHash) {
-    return cb(new error.TokenValidationError('Invalid access_token'));
-  }
-  return cb(null);
+IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash) {
+    if (this.expectedAlg !== alg) {
+        return Promise.reject(new error.TokenValidationError('Algorithm ' + alg +
+            ' is not supported. (Expected alg: ' + this.expectedAlg + ')'));
+    }
+    var sha256AccessToken = sha256(accessToken);
+    var hashToHex = cryptoHex.stringify(sha256AccessToken);
+    var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
+    var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
+    var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
+    var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
+    if (hashFirstHalfBase64SafeUrl !== atHash) {
+        return Promise.reject(new error.TokenValidationError('Invalid access_token'));
+    }
+    return Promise.resolve(null);
 };
 
 module.exports = IdTokenVerifier;
