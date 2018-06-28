@@ -26,6 +26,10 @@ function getJWKS(options, cb) {
         return cb(err);
       }
 
+      if (!data.body) {
+        return cb({error: true}, data);
+      }
+
       // eslint-disable-next-line no-plusplus
       for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
         key = data.body.keys[a];
