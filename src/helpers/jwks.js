@@ -26,6 +26,13 @@ function getJWKS(options, cb) {
         return cb(err);
       }
 
+      if (!data.body) {
+        return cb({
+          error: 'invalid_request',
+          error_description: 'Could not fetch jwks.json information'
+        });
+      }
+
       // eslint-disable-next-line no-plusplus
       for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
         key = data.body.keys[a];

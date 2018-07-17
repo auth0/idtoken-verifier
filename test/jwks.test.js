@@ -28,6 +28,20 @@ describe('jwks', function () {
         jwks.getJWKS({iss: 'https://iss.com/'});
       });
     });
+    it('returns error when data is empty', function (done) {
+      stub(request, 'get', function () {
+        return {
+          end: function(cb) {
+            cb(null, {});
+          }
+        };
+      });
+      jwks.getJWKS({jwksURI: 'https://example.com/jwks.json'}, function(err, data) {
+        expect(err).to.be.eql({error: 'invalid_request', error_description: 'Could not fetch jwks.json information'});
+        expect(data).to.be(undefined);
+        done();
+      });    
+    });
     it('returns error in the callback', function (done) {
       stub(request, 'get', function () {
         return {
