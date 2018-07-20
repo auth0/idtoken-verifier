@@ -1,3 +1,7 @@
+var sha256 = require('crypto-js/sha256');
+var cryptoBase64 = require('crypto-js/enc-base64');
+var cryptoHex = require('crypto-js/enc-hex');
+
 var RSAVerifier = require('./helpers/rsa-verifier');
 var base64 = require('./helpers/base64');
 var jwks = require('./helpers/jwks');
@@ -14,6 +18,7 @@ var supportedAlgs = ['RS256'];
  * @param {String} parameters.audience identifies the recipients that the JWT is intended for
  * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
+ * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
  * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
  * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
@@ -28,6 +33,7 @@ function IdTokenVerifier(parameters) {
   this.audience = options.audience;
   this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
+  this.jwksURI = options.jwksURI;
 
   if (this.leeway < 0 || this.leeway > 60) {
     throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
@@ -191,14 +197,15 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
 
   if (!this.jwksCache.has(cachekey)) {
     jwks.getJWKS({
+      jwksURI: this.jwksURI,
       iss: iss,
       kid: kid
     }, function (err, keyInfo) {
       if (err) {
-        cb(err);
+        return cb(err);
       }
       _this.jwksCache.set(cachekey, keyInfo);
-      cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+      return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
     });
   } else {
     var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
@@ -247,6 +254,42 @@ IdTokenVerifier.prototype.decode = function (token) {
       signature: parts[2]
     }
   };
+};
+
+/**
+ * @callback validateAccessTokenCallback
+ * @param {Error} [err] error returned if the validation cannot be performed
+ * or the token is invalid. If there is no error, then the access_token is valid.
+ */
+
+/**
+ * Validates an access_token based on {@link http://openid.net/specs/openid-connect-core-1_0.html#ImplicitTokenValidation}.
+ * The id_token from where the alg and atHash parameters are taken,
+ * should be decoded and verified before using thisfunction
+ *
+ * @method validateAccessToken
+ * @param {String} access_token the access_token
+ * @param {String} alg The algorithm defined in the header of the
+ * previously verified id_token under the "alg" claim.
+ * @param {String} atHash The "at_hash" value included in the payload
+ * of the previously verified id_token.
+ * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
+ */
+IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash, cb) {
+  if (this.expectedAlg !== alg) {
+    return cb(new error.TokenValidationError('Algorithm ' + alg +
+      ' is not supported. (Expected alg: ' + this.expectedAlg + ')'));
+  }
+  var sha256AccessToken = sha256(accessToken);
+  var hashToHex = cryptoHex.stringify(sha256AccessToken);
+  var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
+  var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
+  var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
+  var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
+  if (hashFirstHalfBase64SafeUrl !== atHash) {
+    return cb(new error.TokenValidationError('Invalid access_token'));
+  }
+  return cb(null);
 };
 
 module.exports = IdTokenVerifier;

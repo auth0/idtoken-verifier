@@ -2,9 +2,11 @@ var expect = require('expect.js');
 
 var CacheMock = require('./mock/cache-mock');
 var helpers = require('./helper/token-validation');
+var rewire = require('rewire');
+var sinon = require('sinon');
 
 var error = require('../src/helpers/error');
-var IdTokenVerifier = require('../src/index');
+var IdTokenVerifier = rewire('../src/index');
 
 describe('jwt-verification', function () {
 
@@ -271,5 +273,98 @@ describe('jwt-verification', function () {
     var result = verifier.decode(id_token);
     expect(result).to.be.an(error.TokenValidationError);
     expect(result.message).to.eql('Token header or payload is not valid JSON');
+  });
+  
+  describe('getRsaVerifier', function () {
+    it('should pass options.jwksURI through ', function(done){
+      var mockJwks = {
+          getJWKS: function(options){
+            expect(options.jwksURI).to.be('https://example.com/');
+            done();
+          }
+      };
+      var revert = IdTokenVerifier.__set__({jwks: mockJwks});
+      
+      var verifier = new IdTokenVerifier({jwksURI: 'https://example.com/'});
+      verifier.getRsaVerifier('iss', 'kid');
+      revert();
+    });
+    it('should call callback once with error when an error is returned from jwks.getJWKS', function(){
+      var mockJwks = {
+          getJWKS: function(){}
+      };
+      var err = 'error';
+      sinon.stub(mockJwks, 'getJWKS', function(obj, cb) {
+        cb(err);
+      });
+      
+      var revert = IdTokenVerifier.__set__({jwks: mockJwks});
+      
+      var callback = sinon.spy();
+      
+      var verifier = new IdTokenVerifier({jwksCache: CacheMock.validKey()});
+      verifier.getRsaVerifier('iss', 'kid', callback);
+      
+      try {
+        sinon.assert.calledOnce(callback);      
+        expect(callback.calledWith(err)).to.be.ok();
+      }
+      finally {
+        revert();
+      }
+    });
+  });
+});
+describe('access_token validation', function() {
+  describe('With empty access_tokens', function() {
+    [null, undefined, ''].forEach(function(at) {
+      it('should throw when access_token is `' + at + '`', function(done) {
+        var access_token = at;
+        var alg = 'RS256';
+        var at_hash = 'at_hash';
+    
+        var itv = new IdTokenVerifier();
+        itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+          expect(err.name).to.be('TokenValidationError');
+          expect(err.message).to.be('Invalid access_token');
+          done();
+        });
+      });
+    });
+  });
+  it('should throw an error with HS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var alg = 'HS256';
+    var at_hash = 'at_hash';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Algorithm HS256 is not supported. (Expected alg: RS256)');
+      done();
+    });
+  });
+  it('should throw an error when access_token is invalid', function(done) {
+    var access_token = "not an access token";
+    var alg = 'RS256';
+    var at_hash = 'cdukoaUswM9bo_yzrgVcrw';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err.name).to.be('TokenValidationError');
+      expect(err.message).to.be('Invalid access_token');
+      done();
+    });
+  });
+  it('should validate access_token with RS256 id_token', function(done) {
+    var access_token = "YTvJYcYrrZYHUXLZK5leLnfmD5ZIA_EA";
+    var alg = 'RS256';
+    var at_hash = 'cdukoaUswM9bo_yzrgVcrw';
+
+    var itv = new IdTokenVerifier();
+    itv.validateAccessToken(access_token, alg, at_hash, function(err) {
+      expect(err).to.be(null);
+      done();
+    });
   });
 });
