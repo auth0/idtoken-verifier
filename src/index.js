@@ -84,11 +84,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
   }
 
-  if (Array.isArray(aud)) {
-    if (!aud.includes(this.audience)) {
-      return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
-    }
-  } else if (this.audience !== aud) {
+  if (!this.isAudienceValid(aud)) {
     return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
   }
 
@@ -117,6 +113,32 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(new error.TokenValidationError('Invalid signature.'));
   });
 };
+
+/**
+ * Verifies the supplied audience(s) match the pre-defined audience(s)
+ *
+ *
+ * @method isAudienceValid
+ * @param {String | String[]} token audience to verify
+ * @return {boolean} if audience is valid
+ */
+IdTokenVerifier.prototype.isAudienceValid = function (tokenAud) {
+  var whiteListAud = this.audience;
+  if (Array.isArray(tokenAud)) {
+    if (Array.isArray(whiteListAud)) {
+      if (!tokenAud.every(function includes(c) {
+        return (whiteListAud.includes(c));
+      })) {
+        return false;
+      }
+    } else if (!tokenAud.includes(whiteListAud)) {
+      return false;
+    }
+  } else if (whiteListAud !== tokenAud) {
+    return false;
+  }
+  return true;
+}
 
 /**
  * Verifies that the `exp` and `nbf` claims are valid in the current moment.
