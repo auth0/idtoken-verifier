@@ -1,6 +1,4 @@
 var expect = require('expect.js');
-var atob = require('./helper/atob');
-var btoa = require('./helper/btoa');
 
 var base64 = require('../src/helpers/base64');
 
@@ -35,7 +33,7 @@ describe('helpers base64 url', function () {
 
     expect(base64.decodeToString('dGVzdA==')).to.eql('test');
     expect(base64.decodeToString('w6XDhsOYw6XDqcO8w6bDmA==')).to.eql('åÆØåéüæØ');
-    
+
   });
 
   it('padding', function () {
@@ -54,6 +52,10 @@ describe('helpers base64 url', function () {
 
     expect(base64.decodeToHEX('AQAB')).to.eql('010001');
 
+  });
+
+  it('base64ToBase64Url', function() {
+    expect(base64.base64ToBase64Url('aa/bb+cc=')).to.eql('aa_bb-cc');
   });
 
 });
