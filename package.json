@@ -30,8 +30,9 @@
   "dependencies": {
     "base64-js": "^1.2.0",
     "crypto-js": "^3.1.9-1",
+    "es6-promise-polyfill": "^1.2.0",
+    "isomorphic-unfetch": "^3.0.0",
     "jsbn": "^0.1.0",
-    "superagent": "^3.8.2",
     "url-join": "^1.1.0"
   },
   "keywords": [
@@ -69,6 +70,7 @@
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
+    "proxyquire": "^2.1.0",
     "sinon": "^1.17.6"
   },
   "ccu": {
