@@ -1,11 +1,9 @@
-var expect = require('expect.js');
-var rewire = require('rewire');
-var sinon = require('sinon');
-var stub = sinon.stub;
+import expect from 'expect.js';
+import { stub } from 'sinon';
 
-var request = require('superagent');
+import request from 'superagent';
 
-var jwks = require('../src/helpers/jwks');
+import jwks from '../src/helpers/jwks';
 
 describe('jwks', function() {
   describe('getJWKS', function() {

@@ -1,0 +1,8 @@
+{
+  "env": {
+    "test": {
+      "plugins": ["rewire"],
+      "presets": ["@babel/preset-env"]
+    }
+  }
+}

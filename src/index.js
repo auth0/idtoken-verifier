@@ -3,9 +3,9 @@ import cryptoBase64 from 'crypto-js/enc-base64';
 import cryptoHex from 'crypto-js/enc-hex';
 
 import RSAVerifier from './helpers/rsa-verifier';
-import base64 from './helpers/base64';
+import * as base64 from './helpers/base64';
 import jwks from './helpers/jwks';
-import error from './helpers/error';
+import * as error from './helpers/error';
 import DummyCache from './helpers/dummy-cache';
 var supportedAlgs = ['RS256'];
 

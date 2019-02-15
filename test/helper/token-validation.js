@@ -1,7 +1,7 @@
-var expect = require('expect.js');
+import expect from 'expect.js';
 
-var IdTokenVerifier = require('../../src/index');
-var error = require('../../src/helpers/error');
+import IdTokenVerifier from '../../src/index';
+import * as error from '../../src/helpers/error';
 
 function assertTokenValidationError(
   configuration,
@@ -55,7 +55,7 @@ function assertTokenValid(configuration, nonce, done) {
   });
 }
 
-module.exports = {
+export default {
   assertValidatorInitalizationError: assertValidatorInitalizationError,
   assertTokenValidationError: assertTokenValidationError,
   assertTokenValid: assertTokenValid

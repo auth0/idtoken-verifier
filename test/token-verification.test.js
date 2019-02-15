@@ -1,12 +1,11 @@
-var expect = require('expect.js');
+import expect from 'expect.js';
 
-var CacheMock = require('./mock/cache-mock');
-var helpers = require('./helper/token-validation');
-var rewire = require('rewire');
-var sinon = require('sinon');
+import CacheMock from './mock/cache-mock';
+import helpers from './helper/token-validation';
+import sinon from 'sinon';
 
-var error = require('../src/helpers/error');
-var IdTokenVerifier = rewire('../src/index');
+import * as error from '../src/helpers/error';
+import IdTokenVerifier from '../src/index';
 
 describe('jwt-verification', function() {
   it('should verify the signature using the public key in the cache', function(done) {

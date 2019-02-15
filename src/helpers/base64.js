@@ -1,6 +1,6 @@
 import base64 from 'base64-js';
 
-function padding(str) {
+export function padding(str) {
   var mod = str.length % 4;
   var pad = 4 - mod;
 
@@ -11,7 +11,7 @@ function padding(str) {
   return str + new Array(1 + pad).join('=');
 }
 
-function byteArrayToString(array) {
+export function byteArrayToString(array) {
   var result = '';
   for (var i = 0; i < array.length; i++) {
     result += String.fromCharCode(array[i]);
@@ -19,7 +19,7 @@ function byteArrayToString(array) {
   return result;
 }
 
-function stringToByteArray(str) {
+export function stringToByteArray(str) {
   var arr = new Array(str.length);
   for (var a = 0; a < str.length; a++) {
     arr[a] = str.charCodeAt(a);
@@ -27,7 +27,7 @@ function stringToByteArray(str) {
   return arr;
 }
 
-function byteArrayToHex(raw) {
+export function byteArrayToHex(raw) {
   var HEX = '';
 
   for (var i = 0; i < raw.length; i++) {
@@ -38,7 +38,7 @@ function byteArrayToHex(raw) {
   return HEX;
 }
 
-function encodeString(str) {
+export function encodeString(str) {
   return base64
     .fromByteArray(
       stringToByteArray(
@@ -51,7 +51,7 @@ function encodeString(str) {
     .replace(/\//g, '_'); // Convert '/' to '_';
 }
 
-function decodeToString(str) {
+export function decodeToString(str) {
   str = padding(str)
     .replace(/\-/g, '+') // Convert '-' to '+'
     .replace(/_/g, '/'); // Convert '_' to '/'
@@ -66,11 +66,11 @@ function decodeToString(str) {
   );
 }
 
-function decodeToHEX(str) {
+export function decodeToHEX(str) {
   return byteArrayToHex(base64.toByteArray(padding(str)));
 }
 
-function base64ToBase64Url(base64String) {
+export function base64ToBase64Url(base64String) {
   var SAFE_URL_ENCODING_MAPPING = {
     '+': '-',
     '/': '_',
@@ -81,14 +81,3 @@ function base64ToBase64Url(base64String) {
     return SAFE_URL_ENCODING_MAPPING[m];
   });
 }
-
-module.exports = {
-  encodeString: encodeString,
-  decodeToString: decodeToString,
-  byteArrayToString: byteArrayToString,
-  stringToByteArray: stringToByteArray,
-  padding: padding,
-  byteArrayToHex: byteArrayToHex,
-  decodeToHEX: decodeToHEX,
-  base64ToBase64Url: base64ToBase64Url
-};

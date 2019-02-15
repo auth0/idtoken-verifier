@@ -1,5 +1,5 @@
 import urljoin from 'url-join';
-import base64 from './base64';
+import * as base64 from './base64';
 import request from 'superagent';
 
 function process(jwks) {
@@ -36,7 +36,7 @@ function getJWKS(options, cb) {
   });
 }
 
-module.exports = {
+export default {
   process: process,
   getJWKS: getJWKS
 };

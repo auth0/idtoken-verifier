@@ -1,6 +1,6 @@
-var expect = require('expect.js');
+import expect from 'expect.js';
 
-var base64 = require('../src/helpers/base64');
+import * as base64 from '../src/helpers/base64';
 
 describe('helpers base64 url', function() {
   it('string to byte array', function() {

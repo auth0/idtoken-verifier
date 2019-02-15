@@ -72,7 +72,7 @@ function invalidKey() {
   return cache;
 }
 
-module.exports = {
+export default {
   CacheMock: CacheMock,
   validKey: validKey,
   invalidKey: invalidKey

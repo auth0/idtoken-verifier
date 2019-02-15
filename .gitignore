@@ -50,7 +50,7 @@ jspm_packages
 example
 
 # Build folder
-Build
+build
 
 # Release process
 .release
