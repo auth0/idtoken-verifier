@@ -1,7 +1,7 @@
 {
   "env": {
     "test": {
-      "plugins": ["rewire"],
+      "plugins": ["rewire", "babel-plugin-istanbul"],
       "presets": ["@babel/preset-env"]
     }
   }
