@@ -71,9 +71,18 @@
     "sinon": "^1.17.6"
   },
   "ccu": {
-    "name": "idtoken-verifier",
+    "name": "auth0",
     "cdn": "https://cdn.auth0.com",
-    "mainBundleFile": "idtoken-verifier.min.js",
-    "bucket": "assets.us.auth0.com"
+    "mainBundleFile": "build/idtoken-verifier.umd.js",
+    "bucket": "assets.us.auth0.com",
+    "localPath": "build",
+    "digest": {
+      "hashes": [
+        "sha384"
+      ],
+      "extensions": [
+        ".js"
+      ]
+    }
   }
 }
