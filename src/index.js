@@ -331,4 +331,4 @@ IdTokenVerifier.prototype.validateAccessToken = function(
   return cb(null);
 };
 
-module.exports = IdTokenVerifier;
+export default IdTokenVerifier;
