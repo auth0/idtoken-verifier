@@ -15,27 +15,25 @@ function process(jwks) {
 function getJWKS(options, cb) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
 
-  return request
-    .get(url)
-    .end(function (err, data) {
-      var matchingKey = null;
-      var a;
-      var key;
+  return request.get(url).end(function(err, data) {
+    var matchingKey = null;
+    var a;
+    var key;
 
-      if (err) {
-        return cb(err);
+    if (err) {
+      return cb(err);
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
+      key = data.body.keys[a];
+      if (key.kid === options.kid) {
+        matchingKey = key;
       }
+    }
 
-      // eslint-disable-next-line no-plusplus
-      for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
-        key = data.body.keys[a];
-        if (key.kid === options.kid) {
-          matchingKey = key;
-        }
-      }
-
-      return cb(null, process(matchingKey));
-    });
+    return cb(null, process(matchingKey));
+  });
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ http://www-cs-students.stanford.edu/~tjw/jsbn/
 http://www-cs-students.stanford.edu/~tjw/jsbn/LICENSE
 */
 
-import {BigInteger} from 'jsbn';
+import { BigInteger } from 'jsbn';
 import SHA256 from 'crypto-js/sha256';
 
 var DigestInfoHead = {
@@ -49,9 +49,8 @@ function getAlgorithmFromDigest(hDigestInfo) {
   return [];
 }
 
-
-RSAVerifier.prototype.verify = function (msg, encsig) {
-  encsig = encsig.replace(/[^0-9a-f]|[\s\n]]/ig, '');
+RSAVerifier.prototype.verify = function(msg, encsig) {
+  encsig = encsig.replace(/[^0-9a-f]|[\s\n]]/gi, '');
 
   var sig = new BigInteger(encsig, 16);
   if (sig.bitLength() > this.n.bitLength()) {
@@ -71,7 +70,7 @@ RSAVerifier.prototype.verify = function (msg, encsig) {
   }
 
   var msgHash = DigestAlgs[digestInfo.alg](msg).toString();
-  return (digestInfo.hash === msgHash);
+  return digestInfo.hash === msgHash;
 };
 
 module.exports = RSAVerifier;

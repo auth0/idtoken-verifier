@@ -1,18 +1,18 @@
 import base64 from 'base64-js';
 
 function padding(str) {
-  var mod = (str.length % 4);
+  var mod = str.length % 4;
   var pad = 4 - mod;
 
   if (mod === 0) {
     return str;
   }
 
-  return str + (new Array(1 + pad)).join('=');
+  return str + new Array(1 + pad).join('=');
 }
 
 function byteArrayToString(array) {
-  var result = "";
+  var result = '';
   for (var i = 0; i < array.length; i++) {
     result += String.fromCharCode(array[i]);
   }
@@ -32,18 +32,23 @@ function byteArrayToHex(raw) {
 
   for (var i = 0; i < raw.length; i++) {
     var _hex = raw[i].toString(16);
-    HEX += (_hex.length === 2 ? _hex : '0' + _hex);
+    HEX += _hex.length === 2 ? _hex : '0' + _hex;
   }
 
   return HEX;
 }
 
 function encodeString(str) {
-  return base64.fromByteArray(stringToByteArray(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-    return String.fromCharCode('0x' + p1);
-  })))
-  .replace(/\+/g, '-') // Convert '+' to '-'
-  .replace(/\//g, '_'); // Convert '/' to '_';
+  return base64
+    .fromByteArray(
+      stringToByteArray(
+        encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+          return String.fromCharCode('0x' + p1);
+        })
+      )
+    )
+    .replace(/\+/g, '-') // Convert '+' to '-'
+    .replace(/\//g, '_'); // Convert '/' to '_';
 }
 
 function decodeToString(str) {
@@ -51,9 +56,14 @@ function decodeToString(str) {
     .replace(/\-/g, '+') // Convert '-' to '+'
     .replace(/_/g, '/'); // Convert '_' to '/'
 
-  return decodeURIComponent(byteArrayToString(base64.toByteArray(str)).split('').map(function (c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  return decodeURIComponent(
+    byteArrayToString(base64.toByteArray(str))
+      .split('')
+      .map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join('')
+  );
 }
 
 function decodeToHEX(str) {
@@ -62,9 +72,9 @@ function decodeToHEX(str) {
 
 function base64ToBase64Url(base64String) {
   var SAFE_URL_ENCODING_MAPPING = {
-    "+": "-",
-    "/": "_",
-    "=": ""
+    '+': '-',
+    '/': '_',
+    '=': ''
   };
 
   return base64String.replace(/[+/=]/g, function(m) {
