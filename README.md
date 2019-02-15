@@ -11,14 +11,14 @@ A lightweight library to decode and verify RS JWT meant for the browser.
 ## Usage
 
 ```js
-var IdTokenVerifier = require('idtoken-verifier');
+import IdTokenVerifier from 'idtoken-verifier';
 
-var verifier = new IdTokenVerifier({
+const verifier = new IdTokenVerifier({
     issuer: 'https://my.auth0.com/',
     audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
 });
 
-verifier.verify(id_token, nonce, function(error, payload) {
+verifier.verify(id_token, nonce, (error, payload) => {
     ...
 });
 
@@ -30,43 +30,47 @@ var decoded = verifier.decode(id_token);
 Initializes the verifier.
 
 Parameters:
+
 - configuration
-    + issuer: the issuer you trust to sign the tokens.
-    + audience: the audience the token is issued for.
-    + leeway: when there is a clock skew times between the signing and verifying servers. The leeway should not be biger than a minute.
-    + jwksCache: the verifier will try to fetch the JWKS from the `/.well-known/jwks.json` endpoint (or `jwksURI` if provided) each time it verifies a token. You can provide a cache to store the keys and avoid repeated requests. For the contract, check [this example](https://github.com/auth0/jwt-js-rsa-verification/blob/master/src/helpers/dummy-cache.js). Hint: for in-memory cache, an easy way is to just provide `new Map()`, which is a valid object for jwksCache. 
-    + jwksURI: A valid, direct URI to fetch the JSON Web Key Set (JWKS). Defaults to `${id_token.iss}/.well-known/jwks.json`
+  - issuer: the issuer you trust to sign the tokens.
+  - audience: the audience the token is issued for.
+  - leeway: when there is a clock skew times between the signing and verifying servers. The leeway should not be biger than a minute.
+  - jwksCache: the verifier will try to fetch the JWKS from the `/.well-known/jwks.json` endpoint (or `jwksURI` if provided) each time it verifies a token. You can provide a cache to store the keys and avoid repeated requests. For the contract, check [this example](https://github.com/auth0/jwt-js-rsa-verification/blob/master/src/helpers/dummy-cache.js). Hint: for in-memory cache, an easy way is to just provide `new Map()`, which is a valid object for jwksCache.
+  - jwksURI: A valid, direct URI to fetch the JSON Web Key Set (JWKS). Defaults to `${id_token.iss}/.well-known/jwks.json`
 - callback
-    + error: the validation error if any, null otherwise
-    + payload: the decoded jwt payload
+  - error: the validation error if any, null otherwise
+  - payload: the decoded jwt payload
 
 ### verifier.verify
 
 This method will decode the token, verify the issuer, audience, expiration, algorithm and nonce claims and after that will verify the token signature.
 
 Parameters
+
 - id_token: the id_token to verify.
 - nonce: the nonce previously sent to tha authorization server.
 - callback
 
 ### verifier.decode
 
-This method will decode the token header and payload *WITHOUT* doing any verification.
+This method will decode the token header and payload _WITHOUT_ doing any verification.
 
 Parameters
+
 - id_token: the id_token to decode.
 
 Return
+
 - header: the decoded header.
 - payload: the decoded payload.
 - encoded: the parts without decode
-    + header: the header string.
-    + payload: the payload string.
-    + signature: the signature string.
+  - header: the header string.
+  - payload: the payload string.
+  - signature: the signature string.
 
 ## Support
 
-To make it as lightweight as posible, it only provides support for RS256 tokens. It can be easily extensible to other RS* algorithms.
+To make it as lightweight as posible, it only provides support for RS256 tokens. It can be easily extensible to other RS\* algorithms.
 
 ## Issue Reporting
 
