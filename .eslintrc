@@ -1,8 +1,0 @@
-{
-  "extends": "auth0-base/legacy",
-  "rules": {
-    "func-names": "off",
-    "no-underscore-dangle": "off",
-    "vars-on-top": "off"
-  }
-}

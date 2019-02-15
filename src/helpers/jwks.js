@@ -1,6 +1,6 @@
-var urljoin = require('url-join');
-var base64 = require('./base64');
-var request = require('superagent');
+import urljoin from 'url-join';
+import base64 from './base64';
+import request from 'superagent';
 
 function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);

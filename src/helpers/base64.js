@@ -1,4 +1,4 @@
-var base64 = require('base64-js');
+import base64 from 'base64-js';
 
 function padding(str) {
   var mod = (str.length % 4);

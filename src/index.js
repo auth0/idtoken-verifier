@@ -1,12 +1,12 @@
-var sha256 = require('crypto-js/sha256');
-var cryptoBase64 = require('crypto-js/enc-base64');
-var cryptoHex = require('crypto-js/enc-hex');
+import sha256 from 'crypto-js/sha256';
+import cryptoBase64 from 'crypto-js/enc-base64';
+import cryptoHex from 'crypto-js/enc-hex';
 
-var RSAVerifier = require('./helpers/rsa-verifier');
-var base64 = require('./helpers/base64');
-var jwks = require('./helpers/jwks');
-var error = require('./helpers/error');
-var DummyCache = require('./helpers/dummy-cache');
+import RSAVerifier from './helpers/rsa-verifier';
+import base64 from './helpers/base64';
+import jwks from './helpers/jwks';
+import error from './helpers/error';
+import DummyCache from './helpers/dummy-cache';
 var supportedAlgs = ['RS256'];
 
 /**
