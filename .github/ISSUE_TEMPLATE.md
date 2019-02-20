@@ -16,17 +16,15 @@ Description of the bug or feature request and why it's a problem. Consider inclu
 - [ ] I have checked for related or duplicate [Issues](https://github.com/auth0/idtoken-verifier/issues) and [PRs](https://github.com/auth0/idtoken-verifier/pulls).
 - [ ] I have read the [Auth0 general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md).
 - [ ] I have read the [Auth0 Code of Conduct](https://github.com/auth0/open-source-template/blob/master/CODE-OF-CONDUCT.md).
-- [ ] I am reporting this to the correct repository.
 
 ### Environment
 
 Please provide the following:
 
-- Version of the library being used
-- Version of the platform or framework used, if applicable
-- Relevant environmental versions (language version, server software, OS version)
-- Browser version, if applicable
-- Additional modules/plugins/add-ons that might be affecting your instance
+- Version of `idtoken-verifier` used:
+- Browser version tested:
+- Any other elevant environmental versions:
+- Additional modules/plugins/add-ons that might be affecting your instance:
 
 ### Reproduction
 
