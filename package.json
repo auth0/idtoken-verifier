@@ -9,8 +9,8 @@
   "scripts": {
     "start": "gulp dev",
     "build": "microbundle --target web --external none",
-    "test": "NODE_ENV=test mocha --require @babel/register test/**/*.test.js --exit",
-    "test:watch": "NODE_ENV=test mocha --require @babel/register --watch -R min test/*.test.js",
+    "test": "cross-env NODE_ENV=test mocha --require @babel/register test/**/*.test.js --exit",
+    "test:watch": "cross-env NODE_ENV=test mocha --require @babel/register --watch -R min test/*.test.js",
     "test:coverage": "nyc npm run test",
     "test:es-check:es5": "es-check es5 'build/idtoken-verifier.umd.js'",
     "test:es-check:es2015:module": "es-check es2015 --module 'build/idtoken-verifier.esm.js'",
@@ -52,6 +52,7 @@
     "babel-plugin-rewire": "^1.2.0",
     "cli-table": "^0.3.1",
     "codecov": "^3.2.0",
+    "cross-env": "^5.2.0",
     "es-check": "^5.0.0",
     "expect.js": "^0.3.1",
     "gzip-size": "^5.0.0",
