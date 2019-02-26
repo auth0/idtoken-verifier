@@ -4,9 +4,10 @@ if (process.platform === 'win32') {
 }
 
 var library = require('../package.json');
-var fs = require('fs');
-var telemetry = require('../src/telemetry');
 var execSync = require('child_process').execSync;
-telemetry.version = library.version;
-fs.writeFileSync('src/telemetry.js', `// Generated file by ${process.env['USER']} on ${new Date()};\nmodule.exports = ${JSON.stringify(telemetry, null, 2)};`);
+execSync(
+  `echo "export default { version: '${
+    library.version
+  }', name: 'idtoken-verifier' };" > src/telemetry.js`
+);
 execSync('git add src/telemetry.js');

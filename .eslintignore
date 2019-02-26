@@ -1,7 +1,0 @@
-/node_modules/*
-**/node_modules/*
-/build/*
-/test/*
-src/helpers/base64.js
-src/helpers/rsa-verifier.js
-src/telemetry.js
