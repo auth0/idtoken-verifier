@@ -35,9 +35,9 @@ function IdTokenVerifier(parameters) {
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
 
-  if (this.leeway < 0 || this.leeway > 60) {
+  if (this.leeway < 0 || this.leeway > 300) {
     throw new error.ConfigurationError(
-      'The leeway should be positive and lower than a minute.'
+      'The leeway should be positive and lower than five minutes.'
     );
   }
 
