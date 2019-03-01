@@ -51,9 +51,9 @@ describe('jwt-verification', function() {
   it('should fail if the leeway is too big', function(done) {
     helpers.assertValidatorInitalizationError(
       {
-        leeway: 100
+        leeway: 301
       },
-      'The leeway should be positive and lower than a minute.',
+      'The leeway should be positive and lower than five minutes.',
       done
     );
   });
@@ -63,7 +63,7 @@ describe('jwt-verification', function() {
       {
         leeway: -1
       },
-      'The leeway should be positive and lower than a minute.',
+      'The leeway should be positive and lower than five minutes.',
       done
     );
   });
