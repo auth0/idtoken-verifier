@@ -34,7 +34,7 @@ Parameters:
 - configuration
   - issuer: the issuer you trust to sign the tokens.
   - audience: the audience the token is issued for.
-  - leeway: when there is a clock skew times between the signing and verifying servers. The leeway should not be biger than five minutes.
+  - leeway: when there is a clock skew times between the signing and verifying servers. The leeway should not be bigger than five minutes.
   - jwksCache: the verifier will try to fetch the JWKS from the `/.well-known/jwks.json` endpoint (or `jwksURI` if provided) each time it verifies a token. You can provide a cache to store the keys and avoid repeated requests. For the contract, check [this example](https://github.com/auth0/jwt-js-rsa-verification/blob/master/src/helpers/dummy-cache.js). Hint: for in-memory cache, an easy way is to just provide `new Map()`, which is a valid object for jwksCache.
   - jwksURI: A valid, direct URI to fetch the JSON Web Key Set (JWKS). Defaults to `${id_token.iss}/.well-known/jwks.json`
 - callback
