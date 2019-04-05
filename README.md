@@ -70,7 +70,7 @@ Return
 
 ## Support
 
-To make it as lightweight as posible, it only provides support for RS256 tokens. It can be easily extensible to other RS\* algorithms.
+To make it as lightweight as posible, it only provides support for RS256 and ES256 tokens. It can be easily extensible to other RS\* algorithms.
 
 ## Issue Reporting
 

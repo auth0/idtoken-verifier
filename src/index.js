@@ -7,7 +7,7 @@ import * as base64 from './helpers/base64';
 import jwks from './helpers/jwks';
 import * as error from './helpers/error';
 import DummyCache from './helpers/dummy-cache';
-var supportedAlgs = ['RS256'];
+var supportedAlgs = ['RS256', 'ES256'];
 
 /**
  * Creates a new id_token verifier
