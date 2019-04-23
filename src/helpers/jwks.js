@@ -1,7 +1,7 @@
 import urljoin from 'url-join';
 import * as base64 from './base64';
 import fetch from 'isomorphic-unfetch';
-import {Promise} from 'es6-promise-polyfill';
+import { Promise } from 'es6-promise-polyfill';
 
 export function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);
@@ -27,7 +27,7 @@ export function getJWKS(options, cb) {
 
   return fetch(url)
     .then(checkStatus)
-    .then(function (data) {
+    .then(function(data) {
       var matchingKey = null;
       var a;
       var key;
@@ -40,7 +40,7 @@ export function getJWKS(options, cb) {
       }
       return cb(null, process(matchingKey));
     })
-    .catch(function (e) {
+    .catch(function(e) {
       cb(e);
     });
 }
