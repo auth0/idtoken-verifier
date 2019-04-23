@@ -30,11 +30,27 @@ describe("jwks", function() {
         ).to.be(true);
       });
     });
-    it("returns error in the callback", function(done) {
+    it("returns error in the callback when fetch fails", function(done) {
       getProxy(stub().returns(Promise.reject({ error: true }))).getJWKS(
         { jwksURI: "https://example.com/jwks.json" },
         function(err) {
           expect(err).to.be.eql({ error: true });
+          done();
+        }
+      );
+    });
+    it("returns error in the callback when jwks response is not ok", function(done) {
+      getProxy(stub().returns(Promise.resolve({
+        ok: false,
+        statusText: 'the-error'
+      }))).getJWKS(
+        { jwksURI: "https://example.com/jwks.json" },
+        function(err) {
+          expect(err.message).to.be('the-error');
+          expect(err.response).to.be.eql({
+            ok: false,
+            statusText: 'the-error'
+          });
           done();
         }
       );
