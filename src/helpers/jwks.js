@@ -1,8 +1,9 @@
 import urljoin from 'url-join';
 import * as base64 from './base64';
-import request from 'superagent';
+import fetch from 'isomorphic-unfetch';
+import { Promise } from 'es6-promise-polyfill';
 
-function process(jwks) {
+export function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);
   var exp = base64.decodeToHEX(jwks.e);
 
@@ -12,31 +13,34 @@ function process(jwks) {
   };
 }
 
-function getJWKS(options, cb) {
-  var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
-
-  return request.get(url).end(function(err, data) {
-    var matchingKey = null;
-    var a;
-    var key;
-
-    if (err) {
-      return cb(err);
-    }
-
-    // eslint-disable-next-line no-plusplus
-    for (a = 0; a < data.body.keys.length && matchingKey === null; a++) {
-      key = data.body.keys[a];
-      if (key.kid === options.kid) {
-        matchingKey = key;
-      }
-    }
-
-    return cb(null, process(matchingKey));
-  });
+function checkStatus(response) {
+  if (response.ok) {
+    return response.json();
+  }
+  var error = new Error(response.statusText);
+  error.response = response;
+  return Promise.reject(error);
 }
 
-export default {
-  process: process,
-  getJWKS: getJWKS
-};
+export function getJWKS(options, cb) {
+  var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
+
+  return fetch(url)
+    .then(checkStatus)
+    .then(function(data) {
+      var matchingKey = null;
+      var a;
+      var key;
+      // eslint-disable-next-line no-plusplus
+      for (a = 0; a < data.keys.length && matchingKey === null; a++) {
+        key = data.keys[a];
+        if (key.kid === options.kid) {
+          matchingKey = key;
+        }
+      }
+      return cb(null, process(matchingKey));
+    })
+    .catch(function(e) {
+      cb(e);
+    });
+}
