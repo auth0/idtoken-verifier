@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>index.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
@@ -10,44 +10,86 @@
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-<body>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+  <body>
+    <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+    <label for="nav-trigger" class="navicon-button x">
+      <div class="navicon"></div>
+    </label>
 
-<input type="checkbox" id="nav-trigger" class="nav-trigger" />
-<label for="nav-trigger" class="navicon-button x">
-  <div class="navicon"></div>
-</label>
+    <label for="nav-trigger" class="overlay"></label>
 
-<label for="nav-trigger" class="overlay"></label>
+    <nav>
+      <li class="nav-link nav-home-link"><a href="index.html">Home</a></li>
+      <li class="nav-heading">Classes</li>
+      <li class="nav-heading">
+        <span class="nav-item-type type-class">C</span
+        ><span class="nav-item-name"
+          ><a href="IdTokenVerifier.html">IdTokenVerifier</a></span
+        >
+      </li>
+      <li class="nav-heading"><a href="global.html">Globals</a></li>
+      <li class="nav-item">
+        <span class="nav-item-type type-function">F</span
+        ><span class="nav-item-name"
+          ><a href="global.html#decode">decode</a></span
+        >
+      </li>
+      <li class="nav-item">
+        <span class="nav-item-type type-function">F</span
+        ><span class="nav-item-name"
+          ><a href="global.html#validateAccessToken"
+            >validateAccessToken</a
+          ></span
+        >
+      </li>
+      <li class="nav-item">
+        <span class="nav-item-type type-function">F</span
+        ><span class="nav-item-name"
+          ><a href="global.html#verify">verify</a></span
+        >
+      </li>
+      <li class="nav-item">
+        <span class="nav-item-type type-function">F</span
+        ><span class="nav-item-name"
+          ><a href="global.html#verifyExpAndIat">verifyExpAndIat</a></span
+        >
+      </li>
+      <li class="nav-item">
+        <span class="nav-item-type type-function">F</span
+        ><span class="nav-item-name"
+          ><a href="global.html#verifyExpAndNbf">verifyExpAndNbf</a></span
+        >
+      </li>
+    </nav>
 
-<nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="IdTokenVerifier.html">IdTokenVerifier</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#decode">decode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validateAccessToken">validateAccessToken</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verify">verify</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndIat">verifyExpAndIat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#verifyExpAndNbf">verifyExpAndNbf</a></span></li>
-</nav>
+    <div id="main">
+      <h1 class="page-title">index.js</h1>
 
-<div id="main">
-    
-    <h1 class="page-title">index.js</h1>
-    
-
-    
-
-
-
-    
-    <section>
+      <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var sha256 = require('crypto-js/sha256');
-var cryptoBase64 = require('crypto-js/enc-base64');
-var cryptoHex = require('crypto-js/enc-hex');
+          <pre
+            class="prettyprint source linenums"
+          ><code>import sha256 from 'crypto-js/sha256';
+import cryptoBase64 from 'crypto-js/enc-base64';
+import cryptoHex from 'crypto-js/enc-hex';
 
-var RSAVerifier = require('./helpers/rsa-verifier');
-var base64 = require('./helpers/base64');
-var jwks = require('./helpers/jwks');
-var error = require('./helpers/error');
-var DummyCache = require('./helpers/dummy-cache');
+import RSAVerifier from './helpers/rsa-verifier';
+import * as base64 from './helpers/base64';
+import * as jwks from './helpers/jwks';
+import * as error from './helpers/error';
+import DummyCache from './helpers/dummy-cache';
 var supportedAlgs = ['RS256'];
 
 /**
@@ -76,13 +118,20 @@ function IdTokenVerifier(parameters) {
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
 
-  if (this.leeway &lt; 0 || this.leeway > 60) {
-    throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
+  if (this.leeway &lt; 0 || this.leeway > 300) {
+    throw new error.ConfigurationError(
+      'The leeway should be positive and lower than five minutes.'
+    );
   }
 
   if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
-    throw new error.ConfigurationError('Algorithm ' + this.expectedAlg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])');
+    throw new error.ConfigurationError(
+      'Algorithm ' +
+        this.expectedAlg +
+        ' is not supported. (Expected algs: [' +
+        supportedAlgs.join(',') +
+        '])'
+    );
   }
 }
 
@@ -106,7 +155,7 @@ function IdTokenVerifier(parameters) {
  * @param {String} [nonce] nonce value that should match the one in the id_token claims
  * @param {verifyCallback} cb callback used to notify the results of the validation
  */
-IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
+IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var jwt = this.decode(token);
 
   if (jwt instanceof Error) {
@@ -128,16 +177,30 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
   /* eslint-enable vars-on-top */
 
   if (this.issuer !== iss) {
-    return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
+    return cb(
+      new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
+      false
+    );
   }
 
   if (this.audience !== aud) {
-    return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
+    return cb(
+      new error.TokenValidationError('Audience ' + aud + ' is not valid.'),
+      false
+    );
   }
 
   if (this.expectedAlg !== alg) {
-    return cb(new error.TokenValidationError('Algorithm ' + alg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
+    return cb(
+      new error.TokenValidationError(
+        'Algorithm ' +
+          alg +
+          ' is not supported. (Expected algs: [' +
+          supportedAlgs.join(',') +
+          '])'
+      ),
+      false
+    );
   }
 
   if (tnonce !== nonce) {
@@ -150,7 +213,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
     return cb(expirationError, false);
   }
 
-  return this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
+  return this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
     if (err) {
       return cb(err);
     }
@@ -169,7 +232,7 @@ IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
  * @param {String} nbf value of `nbf` claim
  * @return {boolean} if token is valid according to `exp` and `nbf`
  */
-IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
+IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
   var now = new Date();
   var expDate = new Date(0);
   var nbfDate = new Date(0);
@@ -189,8 +252,10 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
   }
   nbfDate.setUTCSeconds(nbf - this.leeway);
   if (now &lt; nbfDate) {
-    return new error.TokenValidationError('The token is not valid until later in the future. ' +
-      'Please check your computed clock.');
+    return new error.TokenValidationError(
+      'The token is not valid until later in the future. ' +
+        'Please check your computed clock.'
+    );
   }
 
   return null;
@@ -204,7 +269,7 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
  * @param {String} iat value of `iat` claim
  * @return {boolean} if token is valid according to `exp` and `iat`
  */
-IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
+IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
   var now = new Date();
   var expDate = new Date(0);
   var iatDate = new Date(0);
@@ -222,34 +287,38 @@ IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
   iatDate.setUTCSeconds(iat - this.leeway);
 
   if (now &lt; iatDate) {
-    return new error.TokenValidationError('The token was issued in the future. ' +
-      'Please check your computed clock.');
+    return new error.TokenValidationError(
+      'The token was issued in the future. ' +
+        'Please check your computed clock.'
+    );
   }
   return null;
 };
 
-IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
+IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
   var _this = this;
   var cachekey = iss + kid;
 
   if (!this.jwksCache.has(cachekey)) {
-    jwks.getJWKS({
-      jwksURI: this.jwksURI,
-      iss: iss,
-      kid: kid
-    }, function (err, keyInfo) {
-      if (err) {
-        return cb(err);
+    jwks.getJWKS(
+      {
+        jwksURI: this.jwksURI,
+        iss: iss,
+        kid: kid
+      },
+      function(err, keyInfo) {
+        if (err) {
+          return cb(err);
+        }
+        _this.jwksCache.set(cachekey, keyInfo);
+        return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
       }
-      _this.jwksCache.set(cachekey, keyInfo);
-      return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-    });
+    );
   } else {
     var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
     cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
   }
 };
-
 
 /**
  * @typedef DecodedToken
@@ -266,7 +335,7 @@ IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
  * @param {String} token decodes the token
  * @return {DecodedToken} if token is valid according to `exp` and `nbf`
  */
-IdTokenVerifier.prototype.decode = function (token) {
+IdTokenVerifier.prototype.decode = function(token) {
   var parts = token.split('.');
   var header;
   var payload;
@@ -279,7 +348,9 @@ IdTokenVerifier.prototype.decode = function (token) {
     header = JSON.parse(base64.decodeToString(parts[0]));
     payload = JSON.parse(base64.decodeToString(parts[1]));
   } catch (e) {
-    return new error.TokenValidationError('Token header or payload is not valid JSON');
+    return new error.TokenValidationError(
+      'Token header or payload is not valid JSON'
+    );
   }
 
   return {
@@ -312,40 +383,54 @@ IdTokenVerifier.prototype.decode = function (token) {
  * of the previously verified id_token.
  * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
  */
-IdTokenVerifier.prototype.validateAccessToken = function (accessToken, alg, atHash, cb) {
+IdTokenVerifier.prototype.validateAccessToken = function(
+  accessToken,
+  alg,
+  atHash,
+  cb
+) {
   if (this.expectedAlg !== alg) {
-    return cb(new error.TokenValidationError('Algorithm ' + alg +
-      ' is not supported. (Expected alg: ' + this.expectedAlg + ')'));
+    return cb(
+      new error.TokenValidationError(
+        'Algorithm ' +
+          alg +
+          ' is not supported. (Expected alg: ' +
+          this.expectedAlg +
+          ')'
+      )
+    );
   }
   var sha256AccessToken = sha256(accessToken);
   var hashToHex = cryptoHex.stringify(sha256AccessToken);
   var hashToHexFirstHalf = hashToHex.substring(0, hashToHex.length / 2);
   var hashFirstHalfWordArray = cryptoHex.parse(hashToHexFirstHalf);
   var hashFirstHalfBase64 = cryptoBase64.stringify(hashFirstHalfWordArray);
-  var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(hashFirstHalfBase64);
+  var hashFirstHalfBase64SafeUrl = base64.base64ToBase64Url(
+    hashFirstHalfBase64
+  );
   if (hashFirstHalfBase64SafeUrl !== atHash) {
     return cb(new error.TokenValidationError('Invalid access_token'));
   }
   return cb(null);
 };
 
-module.exports = IdTokenVerifier;
+export default IdTokenVerifier;
 </code></pre>
         </article>
-    </section>
+      </section>
+    </div>
 
+    <br class="clear" />
 
+    <footer>
+      Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on
+      Wed Jun 05 2019 17:20:21 GMT-0300 (Brasilia Standard Time) using the
+      Minami theme.
+    </footer>
 
-
-</div>
-
-<br class="clear">
-
-<footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.0</a> on Wed Mar 21 2018 14:58:11 GMT-0300 (-03) using the Minami theme.
-</footer>
-
-<script>prettyPrint();</script>
-<script src="scripts/linenumber.js"></script>
-</body>
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
 </html>
