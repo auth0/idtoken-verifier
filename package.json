@@ -1,8 +1,8 @@
 {
   "name": "idtoken-verifier",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "A lightweight library to decode and verify RS JWT meant for the browser.",
-  "main": "build/idtoken-verifier.cjs.js",
+  "main": "build/idtoken-verifier.js",
   "umd:main": "build/idtoken-verifier.umd.js",
   "module": "build/idtoken-verifier.esm.js",
   "source": "src/index.js",
