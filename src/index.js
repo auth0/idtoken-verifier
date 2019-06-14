@@ -107,6 +107,10 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
     );
   }
 
+  if (tnonce !== nonce) {
+    return cb(new error.TokenValidationError('Nonce does not match.'), false);
+  }
+
   if (this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
@@ -118,10 +122,6 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
       ),
       false
     );
-  }
-
-  if (tnonce !== nonce) {
-    return cb(new error.TokenValidationError('Nonce does not match.'), false);
   }
 
   var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top

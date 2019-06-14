@@ -164,6 +164,21 @@ describe('jwt-verification', function() {
     );
   });
 
+  it('should fail if the nonce does not match even though the alg is not supported', function(done) {
+    helpers.assertTokenValidationError(
+      {
+        issuer: 'https://wptest.auth0.com/',
+        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+        __disableExpirationCheck: true,
+        jwksCache: CacheMock.validKey()
+      },
+      'invalid-nonce',
+      'Nonce does not match.',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
+      done
+    );
+  });
+
   it('should fail with missing claims', function(done) {
     helpers.assertTokenValidationError(
       {
