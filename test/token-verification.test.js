@@ -8,261 +8,203 @@ import * as error from '../src/helpers/error';
 import IdTokenVerifier from '../src/index';
 
 describe('jwt-verification', function() {
-  it('should verify the signature using the public key in the cache', function(done) {
-    helpers.assertTokenValid(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        __disableExpirationCheck: true,
-        jwksCache: CacheMock.validKey()
-      },
-      'asfd',
-      done
-    );
-  });
+  describe('verify', () => {
+    describe('with a configuration error', () => {
+      it('should fail if the leeway is too big', done => {
+        helpers.assertValidatorInitalizationError(
+          {
+            leeway: 301
+          },
+          'The leeway should be positive and lower than five minutes.',
+          done
+        );
+      });
 
-  it('should fetch the public key and verify the token', function(done) {
-    helpers.assertTokenValid(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        __disableExpirationCheck: true
-      },
-      'asfd',
-      done
-    );
-  });
+      it('should fail if the leeway is negative', done => {
+        helpers.assertValidatorInitalizationError(
+          {
+            leeway: -1
+          },
+          'The leeway should be positive and lower than five minutes.',
+          done
+        );
+      });
 
-  it('should FAIL to verify the signature using the public key', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        __disableExpirationCheck: true,
-        jwksCache: CacheMock.invalidKey()
-      },
-      'asfd',
-      'Invalid signature.',
-      null,
-      done
-    );
-  });
-
-  it('should fail if the leeway is too big', function(done) {
-    helpers.assertValidatorInitalizationError(
-      {
-        leeway: 301
-      },
-      'The leeway should be positive and lower than five minutes.',
-      done
-    );
-  });
-
-  it('should fail if the leeway is negative', function(done) {
-    helpers.assertValidatorInitalizationError(
-      {
-        leeway: -1
-      },
-      'The leeway should be positive and lower than five minutes.',
-      done
-    );
-  });
-
-  it('should fail if the algorithm is not supported', function(done) {
-    helpers.assertValidatorInitalizationError(
-      {
-        expectedAlg: 'HS256'
-      },
-      'Algorithm HS256 is not supported. (Expected algs: [RS256])',
-      done
-    );
-  });
-
-  it('should fail if the nonce does not match', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        __disableExpirationCheck: true,
-        jwksCache: CacheMock.validKey()
-      },
-      'invalid',
-      'Nonce does not match.',
-      null,
-      done
-    );
-  });
-
-  it('should fail if the token is not valid', function(done) {
-    helpers.assertTokenValidationError(
-      {},
-      null,
-      'Cannot decode a malformed JWT',
-      'asjkdhfgakdsjhf',
-      done
-    );
-  });
-
-  it('should require to whitelist the iss', function(done) {
-    helpers.assertTokenValidationError(
-      {},
-      'asfd',
-      'Issuer https://wptest.auth0.com/ is not valid.',
-      null,
-      done
-    );
-  });
-
-  it('should require to whitelist the audience', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/'
-      },
-      'asfd',
-      'Audience gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt is not valid.',
-      null,
-      done
-    );
-  });
-
-  it('should require to whitelist the audience', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'Expired token.',
-      null,
-      done
-    );
-  });
-
-  it('should check the token expiration', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'Expired token.',
-      null,
-      done
-    );
-  });
-
-  it('should fail if the token alg is not the one expected', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'Algorithm HS256 is not supported. (Expected algs: [RS256])',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
-      done
-    );
-  });
-
-  it('should fail if the nonce does not match even though the alg is not supported', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        __disableExpirationCheck: true,
-        jwksCache: CacheMock.validKey()
-      },
-      'invalid-nonce',
-      'Nonce does not match.',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
-      done
-    );
-  });
-
-  it('should fail with missing claims', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'Issuer undefined is not valid.',
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
-      done
-    );
-  });
-
-  it('should fail with corrupt token', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'Invalid signature.',
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjk0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
-      done
-    );
-  });
-
-  it('should validate the nbf claim', function(done) {
-    helpers.assertTokenValidationError(
-      {
-        issuer: 'https://wptest.auth0.com/',
-        audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-      },
-      'asfd',
-      'The token is not valid until later in the future. Please check your computed clock.',
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJub25jZSI6ImFzZmQiLCJpYXQiOjE0OTczNjQyNzMsIm5iZiI6NDY1MzEyNDI3MywiZXhwIjo3ODA4ODg0MjczfQ.IWU4y_Q2jHOmOR50Kk64oYIa1scvRMxzOE7sly_R953eypSoHB1OEWROsG4-qsTStfaJ7c6LbxeCbzpiFMAXDr594vDXny2lb8W_mF8OoTBPxMMlSBisy60hcH_GJL864SNiijr4SEuPL5sAUAI4PL77FrMpVODZ_To9GwixkZ8ajN7E7CYwlK6xkUuq5PQOknNjc1KBFh5bwIuA5gRSi0ggp74pi3bR9MRGLxMvZx_7kxa6G2IeTcXYjBlDS8BnKpoW0d6vOK804DWA8OIYTTY8570FaOwxusxEK-D8LolA8v7JfYY2AvWkjXwxN9rtGlMjZrXiUMAk67eW8abGWw',
-      done
-    );
-  });
-
-  it('should decode the token', function() {
-    var id_token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA';
-    var verifier = new IdTokenVerifier();
-    var result = verifier.decode(id_token);
-
-    expect(result).to.eql({
-      header: {
-        typ: 'JWT',
-        alg: 'RS256',
-        kid: 'QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg'
-      },
-      payload: {
-        iss: 'https://wptest.auth0.com/',
-        sub: 'auth0|55d48c57d5b0ad0223c408d7',
-        aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-        exp: 1482969031,
-        iat: 1482933031,
-        nonce: 'asfd'
-      },
-      encoded: {
-        header:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9',
-        payload:
-          'eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0',
-        signature:
-          'PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA'
-      }
+      it('should fail if the algorithm is not supported', done => {
+        helpers.assertValidatorInitalizationError(
+          {
+            expectedAlg: 'HS256'
+          },
+          'Algorithm HS256 is not supported. (Expected algs: [RS256])',
+          done
+        );
+      });
+      it('should fail if the token is not valid', done => {
+        helpers.assertTokenValidationError(
+          {},
+          null,
+          'Cannot decode a malformed JWT',
+          'asjkdhfgakdsjhf',
+          done
+        );
+      });
     });
-  });
-
-  it('should return an error when trying to decode (not verify) a malformed token', function() {
-    var id_token = 'this.is.not.a.jwt';
-    var verifier = new IdTokenVerifier();
-    var result = verifier.decode(id_token);
-    expect(result).to.be.an(error.TokenValidationError);
-    expect(result.message).to.eql('Cannot decode a malformed JWT');
-  });
-
-  it('should return an error when trying to decode (not verify) a token with invalid JSON contents', function() {
-    var id_token = 'invalid.json.here';
-    var verifier = new IdTokenVerifier();
-    var result = verifier.decode(id_token);
-    expect(result).to.be.an(error.TokenValidationError);
-    expect(result.message).to.eql('Token header or payload is not valid JSON');
+    describe('with a valid configuration', () => {
+      afterEach(() => {
+        expect(IdTokenVerifier.prototype.getRsaVerifier.callCount).to.be(1);
+        IdTokenVerifier.prototype.getRsaVerifier.restore();
+      });
+      it('should fail when `getRsaVerifier` fails', done => {
+        const error = { error: 'fail' };
+        sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
+          cb(error)
+        );
+        var idv = new IdTokenVerifier();
+        idv.verify(
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
+          'test_nonce',
+          err => {
+            expect(err).to.be.eql(error);
+            done();
+          }
+        );
+      });
+      it('should fail when `rsaVerifier.verify` returns false', function(done) {
+        sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
+          cb(null, {
+            verify: () => {
+              return false;
+            }
+          })
+        );
+        helpers.assertTokenValidationError(
+          {
+            issuer: 'https://wptest.auth0.com/',
+            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+          },
+          'asfd',
+          'Invalid signature.',
+          null,
+          done
+        );
+      });
+      describe('when `rsaVerifier.verify` returns true', () => {
+        beforeEach(() => {
+          sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
+            cb(null, {
+              verify: () => {
+                return true;
+              }
+            })
+          );
+        });
+        it('validates issuer', done => {
+          helpers.assertTokenValidationError(
+            {},
+            'asfd',
+            'Issuer https://wptest.auth0.com/ is not valid.',
+            null,
+            done
+          );
+        });
+        it('validates audience', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/'
+            },
+            'asfd',
+            'Audience gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt is not valid.',
+            null,
+            done
+          );
+        });
+        it('should validate nonce', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/',
+              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+            },
+            'invalid',
+            'Nonce does not match.',
+            null,
+            done
+          );
+        });
+        it('should validate the supported algorithm', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/',
+              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+            },
+            'asfd',
+            'Algorithm HS256 is not supported. (Expected algs: [RS256])',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
+            done
+          );
+        });
+        it('should validate the nbf claim', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/',
+              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+            },
+            'asfd',
+            'The token is not valid until later in the future. Please check your computed clock.',
+            'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJub25jZSI6ImFzZmQiLCJpYXQiOjE0OTczNjQyNzMsIm5iZiI6NDY1MzEyNDI3MywiZXhwIjo3ODA4ODg0MjczfQ.IWU4y_Q2jHOmOR50Kk64oYIa1scvRMxzOE7sly_R953eypSoHB1OEWROsG4-qsTStfaJ7c6LbxeCbzpiFMAXDr594vDXny2lb8W_mF8OoTBPxMMlSBisy60hcH_GJL864SNiijr4SEuPL5sAUAI4PL77FrMpVODZ_To9GwixkZ8ajN7E7CYwlK6xkUuq5PQOknNjc1KBFh5bwIuA5gRSi0ggp74pi3bR9MRGLxMvZx_7kxa6G2IeTcXYjBlDS8BnKpoW0d6vOK804DWA8OIYTTY8570FaOwxusxEK-D8LolA8v7JfYY2AvWkjXwxN9rtGlMjZrXiUMAk67eW8abGWw',
+            done
+          );
+        });
+        it('should validate the token expiration', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/',
+              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+            },
+            'asfd',
+            'Expired token.',
+            null,
+            done
+          );
+        });
+        it('should fail with missing claims', done => {
+          helpers.assertTokenValidationError(
+            {
+              issuer: 'https://wptest.auth0.com/',
+              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+            },
+            'asfd',
+            'Issuer undefined is not valid.',
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
+            done
+          );
+        });
+      });
+    });
+    describe('without stubing `getRsaVerifier`', () => {
+      it('should fail with corrupt token', done => {
+        helpers.assertTokenValidationError(
+          {
+            issuer: 'https://wptest.auth0.com/',
+            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+          },
+          'asfd',
+          'Invalid signature.',
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjk0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
+          done
+        );
+      });
+      it('should fetch the public key and verify the token ', done => {
+        helpers.assertTokenValid(
+          {
+            issuer: 'https://wptest.auth0.com/',
+            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+            __disableExpirationCheck: true
+          },
+          'asfd',
+          done
+        );
+      });
+    });
   });
 
   describe('getRsaVerifier', function() {
@@ -301,6 +243,57 @@ describe('jwt-verification', function() {
       } finally {
         revert();
       }
+    });
+  });
+
+  describe('decode', () => {
+    it('should decode the token', function() {
+      var id_token =
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA';
+      var verifier = new IdTokenVerifier();
+      var result = verifier.decode(id_token);
+
+      expect(result).to.eql({
+        header: {
+          typ: 'JWT',
+          alg: 'RS256',
+          kid: 'QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg'
+        },
+        payload: {
+          iss: 'https://wptest.auth0.com/',
+          sub: 'auth0|55d48c57d5b0ad0223c408d7',
+          aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+          exp: 1482969031,
+          iat: 1482933031,
+          nonce: 'asfd'
+        },
+        encoded: {
+          header:
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9',
+          payload:
+            'eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0',
+          signature:
+            'PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA'
+        }
+      });
+    });
+
+    it('should return an error when trying to decode (not verify) a malformed token', function() {
+      var id_token = 'this.is.not.a.jwt';
+      var verifier = new IdTokenVerifier();
+      var result = verifier.decode(id_token);
+      expect(result).to.be.an(error.TokenValidationError);
+      expect(result.message).to.eql('Cannot decode a malformed JWT');
+    });
+
+    it('should return an error when trying to decode (not verify) a token with invalid JSON contents', function() {
+      var id_token = 'invalid.json.here';
+      var verifier = new IdTokenVerifier();
+      var result = verifier.decode(id_token);
+      expect(result).to.be.an(error.TokenValidationError);
+      expect(result.message).to.eql(
+        'Token header or payload is not valid JSON'
+      );
     });
   });
 });
