@@ -26,7 +26,7 @@ function assertTokenValidationError(
 
 function assertValidatorInitalizationError(configuration, message, done) {
   expect(function() {
-    var verifier = new IdTokenVerifier(configuration);
+    new IdTokenVerifier(configuration);
   }).to.throwException(function(err) {
     // get the exception object
     expect(err).to.be.a(error.ConfigurationError);

@@ -92,22 +92,9 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var nbf = jwt.payload.nbf;
   var tnonce = jwt.payload.nonce || null;
   /* eslint-enable vars-on-top */
+  var _this = this;
 
-  if (this.issuer !== iss) {
-    return cb(
-      new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
-      false
-    );
-  }
-
-  if (this.audience !== aud) {
-    return cb(
-      new error.TokenValidationError('Audience ' + aud + ' is not valid.'),
-      false
-    );
-  }
-
-  if (this.expectedAlg !== alg) {
+  if (_this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
         'Algorithm ' +
@@ -120,21 +107,37 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
     );
   }
 
-  if (tnonce !== nonce) {
-    return cb(new error.TokenValidationError('Nonce does not match.'), false);
-  }
-
-  var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
-
-  if (expirationError) {
-    return cb(expirationError, false);
-  }
-
-  return this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
+  this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
     if (err) {
       return cb(err);
     }
     if (rsaVerifier.verify(headAndPayload, signature)) {
+      if (_this.issuer !== iss) {
+        return cb(
+          new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
+          false
+        );
+      }
+
+      if (_this.audience !== aud) {
+        return cb(
+          new error.TokenValidationError('Audience ' + aud + ' is not valid.'),
+          false
+        );
+      }
+
+      if (tnonce !== nonce) {
+        return cb(
+          new error.TokenValidationError('Nonce does not match.'),
+          false
+        );
+      }
+
+      var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
+
+      if (expirationError) {
+        return cb(expirationError, false);
+      }
       return cb(null, jwt.payload);
     }
     return cb(new error.TokenValidationError('Invalid signature.'));
@@ -205,8 +208,7 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
 
   if (now < iatDate) {
     return new error.TokenValidationError(
-      'The token was issued in the future. ' +
-        'Please check your computed clock.'
+      'The token was issued in the future. Please check your computed clock.'
     );
   }
   return null;
