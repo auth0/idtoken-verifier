@@ -94,6 +94,19 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   /* eslint-enable vars-on-top */
   var _this = this;
 
+  if (_this.expectedAlg !== alg) {
+    return cb(
+      new error.TokenValidationError(
+        'Algorithm ' +
+          alg +
+          ' is not supported. (Expected algs: [' +
+          supportedAlgs.join(',') +
+          '])'
+      ),
+      false
+    );
+  }
+
   this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
     if (err) {
       return cb(err);
@@ -116,19 +129,6 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
       if (tnonce !== nonce) {
         return cb(
           new error.TokenValidationError('Nonce does not match.'),
-          false
-        );
-      }
-
-      if (_this.expectedAlg !== alg) {
-        return cb(
-          new error.TokenValidationError(
-            'Algorithm ' +
-              alg +
-              ' is not supported. (Expected algs: [' +
-              supportedAlgs.join(',') +
-              '])'
-          ),
           false
         );
       }
