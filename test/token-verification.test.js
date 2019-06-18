@@ -204,6 +204,18 @@ describe('jwt-verification', function() {
           done
         );
       });
+      it('should use cached key and verify the token ', done => {
+        helpers.assertTokenValid(
+          {
+            issuer: 'https://wptest.auth0.com/',
+            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+            __disableExpirationCheck: true,
+            jwksCache: CacheMock.validKey()
+          },
+          'asfd',
+          done
+        );
+      });
     });
   });
 
@@ -294,6 +306,39 @@ describe('jwt-verification', function() {
       expect(result.message).to.eql(
         'Token header or payload is not valid JSON'
       );
+    });
+  });
+
+  describe('verifyExpAndIat', () => {
+    it('disables validation when __disableExpirationCheck is set', () => {
+      const itv = new IdTokenVerifier({ __disableExpirationCheck: true });
+      const result = itv.verifyExpAndIat();
+      expect(result).to.be(null);
+    });
+    it('validates exp', () => {
+      //2016-12-28
+      const exp = '148296903';
+      const err = new IdTokenVerifier().verifyExpAndIat(exp);
+      expect(err.message).to.eql('Expired token.');
+      expect(err).to.be.a(error.TokenValidationError);
+    });
+    it('validates iat', () => {
+      //2439-12-07
+      const exp = '1482969031';
+      const iat = '14829690311';
+      const err = new IdTokenVerifier().verifyExpAndIat(exp, iat);
+      expect(err.message).to.eql(
+        'The token was issued in the future. Please check your computed clock.'
+      );
+      expect(err).to.be.a(error.TokenValidationError);
+    });
+    it('returns null if valid', () => {
+      //2439-12-07
+      const exp = '1482969031';
+      //1974-09-13
+      const iat = '148296903';
+      const result = new IdTokenVerifier().verifyExpAndIat(exp, iat);
+      expect(result).to.be(null);
     });
   });
 });
