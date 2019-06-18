@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.4.0](https://github.com/auth0/idtoken-verifier/tree/v1.4.0) (2019-06-18)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.0...v1.4.0)
+
+**Fixed**
+
+- Validate claims after verifying the signature of the token [\#39](https://github.com/auth0/idtoken-verifier/pull/39) ([luisrudge](https://github.com/luisrudge))
+
 ## [v1.3.0](https://github.com/auth0/idtoken-verifier/tree/v1.3.0) (2019-06-05)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.2.0...v1.3.0)
