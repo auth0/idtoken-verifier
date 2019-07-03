@@ -1,7 +1,7 @@
 import urljoin from 'url-join';
 import * as base64 from './base64';
-import fetch from 'isomorphic-unfetch';
-import { Promise } from 'es6-promise-polyfill';
+import unfetch from 'unfetch';
+import Promise from 'promise-polyfill';
 
 export function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);
@@ -23,9 +23,9 @@ function checkStatus(response) {
 }
 
 export function getJWKS(options, cb) {
+  const localFetch = typeof fetch == 'undefined' ? unfetch : fetch;
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
-
-  return fetch(url)
+  return localFetch(url)
     .then(checkStatus)
     .then(function(data) {
       var matchingKey = null;

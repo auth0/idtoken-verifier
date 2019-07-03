@@ -1,4 +1,5 @@
 import expect from 'expect.js';
+import nodeFetch from 'node-fetch';
 
 import CacheMock from './mock/cache-mock';
 import helpers from './helper/token-validation';
@@ -184,6 +185,12 @@ describe('jwt-verification', function() {
       });
     });
     describe('without stubing `getRsaVerifier`', () => {
+      beforeEach(() => {
+        global.fetch = nodeFetch;
+      });
+      afterEach(() => {
+        global.fetch = undefined;
+      });
       it('should fail with corrupt token', done => {
         helpers.assertTokenValidationError(
           {
