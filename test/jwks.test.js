@@ -7,7 +7,7 @@ describe('jwks', function() {
   beforeEach(() => {
     getProxy = s =>
       proxyquire('../src/helpers/jwks', {
-        ['isomorphic-unfetch']: s
+        ['unfetch']: s
       });
   });
   describe('getJWKS', function() {
