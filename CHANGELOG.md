@@ -2,7 +2,7 @@
 
 ## [v1.4.1](https://github.com/auth0/idtoken-verifier/tree/v1.4.1) (2019-07-09)
 
-[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.1...v1.4.1)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.0...v1.4.1)
 
 **Fixed**
 
