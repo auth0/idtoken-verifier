@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.4.1](https://github.com/auth0/idtoken-verifier/tree/v1.4.1) (2019-07-09)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.0...v1.4.1)
+
+**Fixed**
+
+- Use unfetch without requiring window at load time [\#42](https://github.com/auth0/idtoken-verifier/pull/42) ([luisrudge](https://github.com/luisrudge))
+
 ## [v1.4.0](https://github.com/auth0/idtoken-verifier/tree/v1.4.0) (2019-06-18)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.3.0...v1.4.0)
