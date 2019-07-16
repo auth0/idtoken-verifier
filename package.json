@@ -46,7 +46,7 @@
   ],
   "repository": "git@github.com:auth0/idtoken-verifier.git",
   "devDependencies": {
-    "@auth0/component-cdn-uploader": "auth0/component-cdn-uploader#v2.2.1",
+    "@auth0/component-cdn-uploader": "auth0/component-cdn-uploader#v2.2.2",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.0.0",
     "babel-plugin-istanbul": "^5.1.0",
