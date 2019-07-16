@@ -3747,9 +3747,9 @@ mocha-junit-reporter@^1.18.0:
     xml "^1.0.0"
 
 mocha-multi@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mocha-multi/-/mocha-multi-1.0.1.tgz#328d62bb947113526a70ba477abc33213c110975"
-  integrity sha512-vRgUzz4MejdCd4kR8fgJXvbRIpPi+F8xFPebA9Tn6/f00ljra2ZPuI+6yJmYaprNc+vO3sjLPrbxJhdhHQb7mg==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mocha-multi/-/mocha-multi-1.1.0.tgz#5081f0f1f9d63ceb36791b54576d219d8e546649"
+  integrity sha512-arxYYafYVx/FEmA9xk8lw2nhc57Ld227YqX1yBYVcTQAeOhCBsvI7kIEeoxMcmwWOT1Ed+3C60Ambng4n2xRuw==
   dependencies:
     debug "^3.1.0"
     is-string "^1.0.4"
