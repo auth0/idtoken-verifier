@@ -1,6 +1,6 @@
 import proxyquire from 'proxyquire';
 import expect from 'expect.js';
-import { stub } from 'sinon';
+import sinon from 'sinon';
 
 describe('jwks', function() {
   let getProxy;
@@ -13,25 +13,25 @@ describe('jwks', function() {
   describe('getJWKS', function() {
     describe('requests correct url', function() {
       it('with jwksURI', function() {
-        const fetchStub = stub().returns(Promise.resolve());
+        const fetchStub = sinon.stub().returns(Promise.resolve());
         getProxy(fetchStub).getJWKS(
           { jwksURI: 'https://example.com/jwks.json' },
-          stub()
+          sinon.stub()
         );
         expect(fetchStub.calledWith('https://example.com/jwks.json')).to.be(
           true
         );
       });
       it('without jwksURI', function() {
-        const fetchStub = stub().returns(Promise.resolve());
-        getProxy(fetchStub).getJWKS({ iss: 'https://iss.com/' }, stub());
+        const fetchStub = sinon.stub().returns(Promise.resolve());
+        getProxy(fetchStub).getJWKS({ iss: 'https://iss.com/' }, sinon.stub());
         expect(
           fetchStub.calledWith('https://iss.com/.well-known/jwks.json')
         ).to.be(true);
       });
     });
     it('returns error in the callback when fetch fails', function(done) {
-      getProxy(stub().returns(Promise.reject({ error: true }))).getJWKS(
+      getProxy(sinon.stub().returns(Promise.reject({ error: true }))).getJWKS(
         { jwksURI: 'https://example.com/jwks.json' },
         function(err) {
           expect(err).to.be.eql({ error: true });
@@ -41,7 +41,7 @@ describe('jwks', function() {
     });
     it('returns error in the callback when jwks response is not ok', function(done) {
       getProxy(
-        stub().returns(
+        sinon.stub().returns(
           Promise.resolve({
             ok: false,
             statusText: 'the-error'
@@ -76,7 +76,7 @@ describe('jwks', function() {
         ]
       };
       getProxy(
-        stub().returns(
+        sinon.stub().returns(
           Promise.resolve({
             ok: true,
             json: () => Promise.resolve(responseBody)
