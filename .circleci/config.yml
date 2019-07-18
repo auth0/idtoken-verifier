@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.11.3-browsers
+      - image: circleci/node:10-browsers
     environment:
       LANG: en_US.UTF-8
     steps:
@@ -28,6 +28,9 @@ jobs:
       - run:
           name: Run Tests
           command: yarn run ci:test
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+          when: always
       - run:
           name: Run ES5 check
           command: yarn run test:es-check:es5 && yarn run test:es-check:es2015:module
@@ -38,3 +41,7 @@ jobs:
           path: dist
       - store_artifacts:
           path: build
+      - store_artifacts:
+          path: junit
+      - store_test_results:
+          path: junit
