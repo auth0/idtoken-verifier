@@ -61,7 +61,7 @@
     "istanbul": "^0.4.5",
     "jsdoc": "^3.5.5",
     "jsdoc-to-markdown": "^4.0.1",
-    "microbundle": "^0.9.0",
+    "microbundle": "^0.11.0",
     "minami": "^1.2.3",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.18.0",
