@@ -4,7 +4,7 @@ http://www-cs-students.stanford.edu/~tjw/jsbn/
 http://www-cs-students.stanford.edu/~tjw/jsbn/LICENSE
 */
 
-import BigInteger from 'jsbn';
+import { BigInteger } from 'jsbn';
 import SHA256 from 'crypto-js/sha256';
 
 var DigestInfoHead = {

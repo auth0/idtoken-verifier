@@ -17,9 +17,7 @@ var currentVersion = fs.readFileSync(
 var changelogPath = path.resolve(tmp, 'CHANGELOG.md');
 var stream = fs.createWriteStream(changelogPath);
 
-var webtask = `https://webtask.it.auth0.com/api/run/wt-hernan-auth0_com-0/oss-changelog.js?webtask_no_cache=1&repo=idtoken-verifier&milestone=v${
-  library.version
-}`;
+var webtask = `https://webtask.it.auth0.com/api/run/wt-hernan-auth0_com-0/oss-changelog.js?webtask_no_cache=1&repo=idtoken-verifier&milestone=v${library.version}`;
 var command = `curl -f -s -H "Accept: text/markdown" "${webtask}"`;
 var changes = execSync(command, { encoding: 'utf-8' });
 var previous = execSync('sed "s/# Change Log//" CHANGELOG.md | sed \'1,2d\'');
@@ -34,9 +32,7 @@ stream.once('open', function(fd) {
   );
   stream.write('\n');
   stream.write(
-    `[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v${currentVersion}...v${
-      library.version
-    })`
+    `[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v${currentVersion}...v${library.version})`
   );
   stream.write('\n');
   stream.write(changes);

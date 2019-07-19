@@ -72,9 +72,9 @@ describe('jwt-verification', function() {
       });
       it('should fail when `getRsaVerifier` fails', done => {
         const error = { error: 'fail' };
-        sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
-          cb(error)
-        );
+        sinon
+          .stub(IdTokenVerifier.prototype, 'getRsaVerifier')
+          .callsFake((_, __, cb) => cb(error));
         var idv = new IdTokenVerifier();
         idv.verify(
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
@@ -86,13 +86,15 @@ describe('jwt-verification', function() {
         );
       });
       it('should fail when `rsaVerifier.verify` returns false', function(done) {
-        sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
-          cb(null, {
-            verify: () => {
-              return false;
-            }
-          })
-        );
+        sinon
+          .stub(IdTokenVerifier.prototype, 'getRsaVerifier')
+          .callsFake((_, __, cb) =>
+            cb(null, {
+              verify: () => {
+                return false;
+              }
+            })
+          );
         helpers.assertTokenValidationError(
           {
             issuer: 'https://wptest.auth0.com/',
@@ -106,13 +108,15 @@ describe('jwt-verification', function() {
       });
       describe('when `rsaVerifier.verify` returns true', () => {
         beforeEach(() => {
-          sinon.stub(IdTokenVerifier.prototype, 'getRsaVerifier', (_, __, cb) =>
-            cb(null, {
-              verify: () => {
-                return true;
-              }
-            })
-          );
+          sinon
+            .stub(IdTokenVerifier.prototype, 'getRsaVerifier')
+            .callsFake((_, __, cb) =>
+              cb(null, {
+                verify: () => {
+                  return true;
+                }
+              })
+            );
         });
         it('validates issuer', done => {
           helpers.assertTokenValidationError(
@@ -248,7 +252,7 @@ describe('jwt-verification', function() {
         getJWKS: function() {}
       };
       var err = 'error';
-      sinon.stub(mockJwks, 'getJWKS', function(obj, cb) {
+      sinon.stub(mockJwks, 'getJWKS').callsFake(function(obj, cb) {
         cb(err);
       });
 
