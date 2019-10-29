@@ -120,6 +120,14 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
     }
 
     if (rsaVerifier.verify(headAndPayload, signature)) {
+      if (!iss) {
+        return cb(
+          new error.TokenValidationError(
+            'Issuer (iss) claim must be a string present in the ID token',
+            false
+          )
+        );
+      }
       if (_this.issuer !== iss) {
         return cb(
           new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
