@@ -73,6 +73,13 @@ function IdTokenVerifier(parameters) {
  * @param {verifyCallback} cb callback used to notify the results of the validation
  */
 IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
+  if (!token) {
+    return cb(
+      new error.TokenValidationError('ID token is required but missing'),
+      false
+    );
+  }
+
   var jwt = this.decode(token);
 
   if (jwt instanceof Error) {
