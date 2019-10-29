@@ -43,11 +43,11 @@ function IdTokenVerifier(parameters) {
 
   if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
     throw new error.ConfigurationError(
-      'Algorithm ' +
+      'Signature algorithm of ' +
         this.expectedAlg +
-        ' is not supported. (Expected algs: [' +
-        supportedAlgs.join(',') +
-        '])'
+        ' is not supported. Expected the ID token to be signed with ' +
+        supportedAlgs.join(', ') +
+        '.'
     );
   }
 }
@@ -104,11 +104,11 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   if (_this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
-        'Algorithm ' +
+        'Signature algorithm of ' +
           alg +
-          ' is not supported. (Expected algs: [' +
-          supportedAlgs.join(',') +
-          '])'
+          ' is not supported. Expected the ID token to be signed with ' +
+          supportedAlgs.join(', ') +
+          '.'
       ),
       false
     );
@@ -118,6 +118,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
     if (err) {
       return cb(err);
     }
+
     if (rsaVerifier.verify(headAndPayload, signature)) {
       if (_this.issuer !== iss) {
         return cb(
