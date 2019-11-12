@@ -128,9 +128,16 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
           )
         );
       }
+
       if (_this.issuer !== iss) {
         return cb(
-          new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
+          new error.TokenValidationError(
+            'Issuer (iss) claim mismatch in the ID token, expected (' +
+              _this.issuer +
+              '), found (' +
+              iss +
+              ')'
+          ),
           false
         );
       }

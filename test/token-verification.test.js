@@ -95,6 +95,7 @@ describe('jwt-verification', function() {
           }
         );
       });
+
       it('should fail when `rsaVerifier.verify` returns false', function(done) {
         sinon
           .stub(IdTokenVerifier.prototype, 'getRsaVerifier')
@@ -116,6 +117,7 @@ describe('jwt-verification', function() {
           done
         );
       });
+
       describe('when `rsaVerifier.verify` returns true', () => {
         beforeEach(() => {
           sinon
@@ -128,6 +130,7 @@ describe('jwt-verification', function() {
               })
             );
         });
+
         it('validates issuer presence', done => {
           createJWT(DEFAULT_PAYLOAD, { issuer: '' }).then(token => {
             helpers.assertTokenValidationError(
@@ -139,15 +142,23 @@ describe('jwt-verification', function() {
             );
           });
         });
+
         it('validates issuer', done => {
-          helpers.assertTokenValidationError(
-            {},
-            'asfd',
-            'Issuer https://wptest.auth0.com/ is not valid.',
-            defaultToken,
-            done
-          );
+          createJWT(DEFAULT_PAYLOAD, {
+            issuer: 'https://wptest.auth0.com'
+          }).then(token => {
+            helpers.assertTokenValidationError(
+              {
+                issuer: 'https://example.com/'
+              },
+              'asfd',
+              `Issuer (iss) claim mismatch in the ID token, expected (https://example.com/), found (https://wptest.auth0.com)`,
+              token,
+              done
+            );
+          });
         });
+
         it('validates audience', done => {
           helpers.assertTokenValidationError(
             {
@@ -159,6 +170,7 @@ describe('jwt-verification', function() {
             done
           );
         });
+
         it('should validate nonce', done => {
           helpers.assertTokenValidationError(
             {
@@ -171,6 +183,7 @@ describe('jwt-verification', function() {
             done
           );
         });
+
         it('should validate the nbf claim', done => {
           helpers.assertTokenValidationError(
             {
@@ -183,6 +196,7 @@ describe('jwt-verification', function() {
             done
           );
         });
+
         it('should validate the token expiration', done => {
           helpers.assertTokenValidationError(
             {
@@ -197,6 +211,7 @@ describe('jwt-verification', function() {
         });
       });
     });
+
     describe('without stubbing `getRsaVerifier`', () => {
       beforeEach(() => {
         global.fetch = nodeFetch;
