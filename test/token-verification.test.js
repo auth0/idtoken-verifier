@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import nodeFetch from 'node-fetch';
 
 import CacheMock from './mock/cache-mock';
-import helpers from './helper/token-validation';
+import helpers, { DEFAULT_CONFIG } from './helper/token-validation';
 import sinon from 'sinon';
 
 import * as error from '../src/helpers/error';
@@ -184,10 +184,7 @@ describe('jwt-verification', function() {
 
         it('should validate nonce', done => {
           helpers.assertTokenValidationError(
-            {
-              issuer: 'https://wptest.auth0.com/',
-              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-            },
+            DEFAULT_CONFIG,
             'invalid',
             'Nonce does not match.',
             defaultToken,
@@ -197,10 +194,7 @@ describe('jwt-verification', function() {
 
         it('should validate the nbf claim', done => {
           helpers.assertTokenValidationError(
-            {
-              issuer: 'https://wptest.auth0.com/',
-              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-            },
+            DEFAULT_CONFIG,
             'asfd',
             'The token is not valid until later in the future. Please check your computed clock.',
             'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJub25jZSI6ImFzZmQiLCJpYXQiOjE0OTczNjQyNzMsIm5iZiI6NDY1MzEyNDI3MywiZXhwIjo3ODA4ODg0MjczfQ.IWU4y_Q2jHOmOR50Kk64oYIa1scvRMxzOE7sly_R953eypSoHB1OEWROsG4-qsTStfaJ7c6LbxeCbzpiFMAXDr594vDXny2lb8W_mF8OoTBPxMMlSBisy60hcH_GJL864SNiijr4SEuPL5sAUAI4PL77FrMpVODZ_To9GwixkZ8ajN7E7CYwlK6xkUuq5PQOknNjc1KBFh5bwIuA5gRSi0ggp74pi3bR9MRGLxMvZx_7kxa6G2IeTcXYjBlDS8BnKpoW0d6vOK804DWA8OIYTTY8570FaOwxusxEK-D8LolA8v7JfYY2AvWkjXwxN9rtGlMjZrXiUMAk67eW8abGWw',
@@ -210,10 +204,7 @@ describe('jwt-verification', function() {
 
         it('should validate the token expiration', done => {
           helpers.assertTokenValidationError(
-            {
-              issuer: 'https://wptest.auth0.com/',
-              audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-            },
+            DEFAULT_CONFIG,
             'asfd',
             'Expired token.',
             defaultToken,
@@ -234,10 +225,7 @@ describe('jwt-verification', function() {
 
       it('should fail with corrupt token', done => {
         helpers.assertTokenValidationError(
-          {
-            issuer: 'https://wptest.auth0.com/',
-            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-          },
+          DEFAULT_CONFIG,
           'asfd',
           'Invalid signature.',
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjk0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',

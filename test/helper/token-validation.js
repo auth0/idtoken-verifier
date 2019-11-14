@@ -3,6 +3,11 @@ import expect from 'expect.js';
 import IdTokenVerifier from '../../src/index';
 import * as error from '../../src/helpers/error';
 
+export const DEFAULT_CONFIG = {
+  issuer: 'https://wptest.auth0.com/',
+  audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+};
+
 function assertTokenValidationError(
   configuration,
   nonce,
