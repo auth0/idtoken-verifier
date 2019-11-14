@@ -170,6 +170,23 @@ describe('jwt-verification', function() {
           });
         });
 
+        it('validates presence of subject in the token', done => {
+          // Use destructuring to remove the sub fiele
+          const { sub, ...payload } = DEFAULT_PAYLOAD;
+
+          createJWT(payload)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'ksdhf',
+                'Subject (sub) claim must be a string present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('validates audience', done => {
           helpers.assertTokenValidationError(
             {

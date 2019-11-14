@@ -94,6 +94,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var kid = jwt.header.kid;
 
   var aud = jwt.payload.aud;
+  var sub = jwt.payload.sub;
   var iss = jwt.payload.iss;
   var exp = jwt.payload.exp;
   var nbf = jwt.payload.nbf;
@@ -137,6 +138,15 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
               '), found (' +
               iss +
               ')'
+          ),
+          false
+        );
+      }
+
+      if (!sub || typeof sub !== 'string') {
+        return cb(
+          new error.TokenValidationError(
+            'Subject (sub) claim must be a string present in the ID token'
           ),
           false
         );
