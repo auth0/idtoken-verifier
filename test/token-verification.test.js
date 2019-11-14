@@ -206,13 +206,14 @@ describe('jwt-verification', function() {
             .catch(done);
         });
 
-        it('validates audience', done => {
+        it('validates audience string', done => {
           helpers.assertTokenValidationError(
             {
-              issuer: 'https://wptest.auth0.com/'
+              issuer: 'https://wptest.auth0.com/',
+              audience: '98fukfdjlkff'
             },
             'asfd',
-            'Audience gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt is not valid.',
+            `Audience (aud) claim mismatch in the ID token; expected 98fukfdjlkff but found ${DEFAULT_PAYLOAD.aud}`,
             defaultToken,
             done
           );

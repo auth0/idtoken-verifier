@@ -162,7 +162,12 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
 
       if (_this.audience !== aud) {
         return cb(
-          new error.TokenValidationError('Audience ' + aud + ' is not valid.'),
+          new error.TokenValidationError(
+            'Audience (aud) claim mismatch in the ID token; expected ' +
+              _this.audience +
+              ' but found ' +
+              aud
+          ),
           false
         );
       }
