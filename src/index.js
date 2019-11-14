@@ -45,7 +45,7 @@ function IdTokenVerifier(parameters) {
     throw new error.ConfigurationError(
       'Signature algorithm of ' +
         this.expectedAlg +
-        ' is not supported. Expected the ID token to be signed with ' +
+        ' is not supported. Expected ' +
         supportedAlgs.join(', ') +
         '.'
     );
@@ -106,7 +106,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
       new error.TokenValidationError(
         'Signature algorithm of ' +
           alg +
-          ' is not supported. Expected the ID token to be signed with ' +
+          ' is not supported. Expected ' +
           supportedAlgs.join(', ') +
           '.'
       ),
@@ -334,11 +334,11 @@ IdTokenVerifier.prototype.validateAccessToken = function(
   if (this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
-        'Algorithm ' +
+        'Signature algorithm of "' +
           alg +
-          ' is not supported. (Expected alg: ' +
+          '" is not supported. Expected "' +
           this.expectedAlg +
-          ')'
+          '"'
       )
     );
   }
