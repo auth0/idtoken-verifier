@@ -23,26 +23,19 @@ const createCertificate = () =>
     });
   });
 
-const verifyOptions = {
-  iss: 'https://wptest.auth0.com/',
-  aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-  nonce: 'omcw.ptjx3~.8VBm3OuMziLdn5PB0uXG',
-  client_id: 'the_client_id'
-};
-
 export const DEFAULT_PAYLOAD = {
   sub: 'id|123',
   payload: true,
   nonce: verifyOptions.nonce,
-  azp: verifyOptions.aud
+  azp: verifyOptions.aud,
+  iss: 'https://wptest.auth0.com/',
+  aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
 };
 
 export const createJWT = (payload = DEFAULT_PAYLOAD, options = {}) => {
   return createCertificate().then(cert => {
     return jwt.sign(payload, cert.serviceKey, {
       algorithm: 'RS256',
-      audience: verifyOptions.aud,
-      issuer: verifyOptions.iss,
       expiresIn: '1h',
       keyid: 'QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg',
       ...options

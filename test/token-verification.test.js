@@ -143,35 +143,38 @@ describe('jwt-verification', function() {
         });
 
         it('validates issuer presence', done => {
-          createJWT(DEFAULT_PAYLOAD, { issuer: '' }).then(token => {
-            helpers.assertTokenValidationError(
-              {},
-              'oufd',
-              'Issuer (iss) claim must be a string present in the ID token',
-              token,
-              done
-            );
-          });
+          const { iss, ...payload } = DEFAULT_PAYLOAD;
+
+          createJWT(payload)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                {},
+                'oufd',
+                'Issuer (iss) claim must be a string present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('validates issuer', done => {
-          createJWT(DEFAULT_PAYLOAD, {
-            issuer: 'https://wptest.auth0.com'
-          }).then(token => {
-            helpers.assertTokenValidationError(
-              {
-                issuer: 'https://example.com/'
-              },
-              'asfd',
-              `Issuer (iss) claim mismatch in the ID token, expected (https://example.com/), found (https://wptest.auth0.com)`,
-              token,
-              done
-            );
-          });
+          createJWT(DEFAULT_PAYLOAD)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                {
+                  issuer: 'https://example.com/'
+                },
+                'asfd',
+                `Issuer (iss) claim mismatch in the ID token, expected (https://example.com/), found (https://wptest.auth0.com/)`,
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('validates presence of subject in the token', done => {
-          // Use destructuring to remove the sub fiele
           const { sub, ...payload } = DEFAULT_PAYLOAD;
 
           createJWT(payload)
