@@ -190,6 +190,22 @@ describe('jwt-verification', function() {
             .catch(done);
         });
 
+        it('validates audience presence', done => {
+          const { aud, ...payload } = DEFAULT_PAYLOAD;
+
+          createJWT(payload)
+            .then(token =>
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'foidsf',
+                'Audience (aud) claim must be a string or array of strings present in the ID token',
+                token,
+                done
+              )
+            )
+            .catch(done);
+        });
+
         it('validates audience', done => {
           helpers.assertTokenValidationError(
             {

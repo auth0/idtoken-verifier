@@ -152,6 +152,14 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         );
       }
 
+      if (!aud || (typeof aud !== 'string' && !Array.isArray(aud))) {
+        return cb(
+          new error.TokenValidationError(
+            'Audience (aud) claim must be a string or array of strings present in the ID token'
+          )
+        );
+      }
+
       if (_this.audience !== aud) {
         return cb(
           new error.TokenValidationError('Audience ' + aud + ' is not valid.'),

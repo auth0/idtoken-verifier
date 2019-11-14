@@ -26,8 +26,8 @@ const createCertificate = () =>
 export const DEFAULT_PAYLOAD = {
   sub: 'id|123',
   payload: true,
-  nonce: verifyOptions.nonce,
-  azp: verifyOptions.aud,
+  nonce: 'omcw.ptjx3~.8VBm3OuMziLdn5PB0uXG',
+  azp: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
   iss: 'https://wptest.auth0.com/',
   aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
 };
