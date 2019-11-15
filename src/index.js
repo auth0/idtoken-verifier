@@ -160,7 +160,16 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         );
       }
 
-      if (_this.audience !== aud) {
+      if (Array.isArray(aud) && !aud.includes(_this.audience)) {
+        return cb(
+          new error.TokenValidationError(
+            'Audience (aud) claim mismatch in the ID token; expected ' +
+              _this.audience +
+              ' but was not one of ' +
+              aud.join(', ')
+          )
+        );
+      } else if (typeof aud === 'string' && _this.audience !== aud) {
         return cb(
           new error.TokenValidationError(
             'Audience (aud) claim mismatch in the ID token; expected ' +

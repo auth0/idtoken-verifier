@@ -8,6 +8,7 @@ import sinon from 'sinon';
 import * as error from '../src/helpers/error';
 import IdTokenVerifier from '../src/index';
 import { defaultToken, createJWT, DEFAULT_PAYLOAD } from './helper/jwt';
+import { getTokenSourceMapRange } from 'typescript';
 
 describe('jwt-verification', function() {
   describe('verify', () => {
@@ -217,6 +218,26 @@ describe('jwt-verification', function() {
             defaultToken,
             done
           );
+        });
+
+        it('validates audience as an array', done => {
+          const { aud, ...payload } = DEFAULT_PAYLOAD;
+
+          const payloadWithAudience = Object.assign(payload, {
+            aud: ['audience-1', 'audience-2']
+          });
+
+          createJWT(payloadWithAudience)
+            .then(token =>
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'oidufldsf',
+                'Audience (aud) claim mismatch in the ID token; expected gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt but was not one of audience-1, audience-2',
+                token,
+                done
+              )
+            )
+            .catch(done);
         });
 
         it('should validate nonce', done => {
