@@ -181,11 +181,28 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         );
       }
 
-      if (tnonce !== nonce) {
-        return cb(
-          new error.TokenValidationError('Nonce does not match.'),
-          false
-        );
+      if (nonce) {
+        if (!tnonce) {
+          return cb(
+            new error.TokenValidationError(
+              'Nonce (nonce) claim must be a string present in the ID token'
+            ),
+            false
+          );
+        }
+
+        if (tnonce !== nonce) {
+          return cb(
+            new error.TokenValidationError(
+              'Nonce (nonce) claim value mismatch in the ID token; expected "' +
+                nonce +
+                '", found "' +
+                tnonce +
+                '"'
+            ),
+            false
+          );
+        }
       }
 
       var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
@@ -193,8 +210,10 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
       if (expirationError) {
         return cb(expirationError, false);
       }
+
       return cb(null, jwt.payload);
     }
+
     return cb(new error.TokenValidationError('Invalid signature.'));
   });
 };

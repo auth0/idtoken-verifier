@@ -240,11 +240,36 @@ describe('jwt-verification', function() {
             .catch(done);
         });
 
+        it('should validate nonce presence', done => {
+          const { nonce, ...payload } = DEFAULT_PAYLOAD;
+
+          createJWT(payload)
+            .then(token =>
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'lifusdflidf',
+                'Nonce (nonce) claim must be a string present in the ID token',
+                token,
+                done
+              )
+            )
+            .catch(done);
+        });
+
+        it('should not validate the nonce if none was given', done => {
+          createJWT()
+            .then(token => {
+              var verifier = new IdTokenVerifier(DEFAULT_CONFIG);
+              verifier.verify(token, undefined, done);
+            })
+            .catch(done);
+        });
+
         it('should validate nonce', done => {
           helpers.assertTokenValidationError(
             DEFAULT_CONFIG,
             'invalid',
-            'Nonce does not match.',
+            `Nonce (nonce) claim value mismatch in the ID token; expected "invalid", found "${DEFAULT_PAYLOAD.nonce}"`,
             defaultToken,
             done
           );
@@ -293,6 +318,7 @@ describe('jwt-verification', function() {
 
       it('should fetch the public key and verify the token ', done => {
         helpers.assertTokenValid(
+          defaultToken,
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
@@ -305,6 +331,7 @@ describe('jwt-verification', function() {
 
       it('should use cached key and verify the token ', done => {
         helpers.assertTokenValid(
+          defaultToken,
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
