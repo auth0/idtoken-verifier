@@ -9,6 +9,8 @@ import * as error from './helpers/error';
 import DummyCache from './helpers/dummy-cache';
 var supportedAlgs = ['RS256'];
 
+const isNumber = n => typeof n === 'number';
+
 /**
  * Creates a new id_token verifier
  * @constructor
@@ -34,6 +36,7 @@ function IdTokenVerifier(parameters) {
   this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
+  this.maxAge = options.max_age;
 
   if (this.leeway < 0 || this.leeway > 300) {
     throw new error.ConfigurationError(
@@ -99,6 +102,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var exp = jwt.payload.exp;
   var nbf = jwt.payload.nbf;
   var azp = jwt.payload.azp;
+  var auth_time = jwt.payload.auth_time;
   var tnonce = jwt.payload.nonce || null;
   /* eslint-enable vars-on-top */
   var _this = this;
@@ -228,6 +232,14 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
             false
           );
         }
+      }
+
+      if (_this.maxAge && !isNumber(auth_time)) {
+        return cb(
+          new error.TokenValidationError(
+            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
+          )
+        );
       }
 
       var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top

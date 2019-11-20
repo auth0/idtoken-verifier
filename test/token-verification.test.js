@@ -337,6 +337,20 @@ describe('jwt-verification', function() {
             done
           );
         });
+
+        it('should validate presence of auth_time when max_age was specified', done => {
+          const config = Object.assign(DEFAULT_CONFIG, {
+            max_age: 1000
+          });
+
+          helpers.assertTokenValidationError(
+            config,
+            'asfd',
+            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified',
+            defaultToken,
+            done
+          );
+        });
       });
     });
 
