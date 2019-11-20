@@ -275,6 +275,49 @@ describe('jwt-verification', function() {
           );
         });
 
+        it('should validate the presence of the azp claim', done => {
+          const { azp, ...payload } = Object.assign(DEFAULT_PAYLOAD, {
+            aud: ['audience-1', 'audience-2']
+          });
+
+          createJWT(payload)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                {
+                  issuer: DEFAULT_PAYLOAD.iss,
+                  audience: 'audience-1'
+                },
+                'asfd',
+                'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
+        it('should validate that the azp claim (when present) matches the specified audience', done => {
+          const payload = Object.assign(DEFAULT_PAYLOAD, {
+            aud: ['audience-1', 'audience-2'],
+            azp: 'something-different'
+          });
+
+          createJWT(payload)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                {
+                  issuer: DEFAULT_PAYLOAD.iss,
+                  audience: 'audience-1'
+                },
+                'asfd',
+                `Authorized Party (azp) claim mismatch in the ID token; expected "audience-1", found "something-different"`,
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('should validate the nbf claim', done => {
           helpers.assertTokenValidationError(
             DEFAULT_CONFIG,

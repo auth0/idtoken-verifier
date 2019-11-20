@@ -98,6 +98,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var iss = jwt.payload.iss;
   var exp = jwt.payload.exp;
   var nbf = jwt.payload.nbf;
+  var azp = jwt.payload.azp;
   var tnonce = jwt.payload.nonce || null;
   /* eslint-enable vars-on-top */
   var _this = this;
@@ -160,15 +161,39 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         );
       }
 
-      if (Array.isArray(aud) && !aud.includes(_this.audience)) {
-        return cb(
-          new error.TokenValidationError(
-            'Audience (aud) claim mismatch in the ID token; expected ' +
-              _this.audience +
-              ' but was not one of ' +
-              aud.join(', ')
-          )
-        );
+      if (Array.isArray(aud)) {
+        if (!aud.includes(_this.audience)) {
+          return cb(
+            new error.TokenValidationError(
+              'Audience (aud) claim mismatch in the ID token; expected ' +
+                _this.audience +
+                ' but was not one of ' +
+                aud.join(', ')
+            )
+          );
+        }
+
+        if (aud.length > 1) {
+          if (!azp) {
+            return cb(
+              new error.TokenValidationError(
+                'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
+              )
+            );
+          }
+
+          if (azp !== _this.audience) {
+            return cb(
+              new error.TokenValidationError(
+                'Authorized Party (azp) claim mismatch in the ID token; expected "' +
+                  _this.audience +
+                  '", found "' +
+                  azp +
+                  '"'
+              )
+            );
+          }
+        }
       } else if (typeof aud === 'string' && _this.audience !== aud) {
         return cb(
           new error.TokenValidationError(
