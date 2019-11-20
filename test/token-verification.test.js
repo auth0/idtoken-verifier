@@ -7,8 +7,13 @@ import sinon from 'sinon';
 
 import * as error from '../src/helpers/error';
 import IdTokenVerifier from '../src/index';
-import { defaultToken, createJWT, DEFAULT_PAYLOAD } from './helper/jwt';
-import { getTokenSourceMapRange } from 'typescript';
+import {
+  defaultToken,
+  createJWT,
+  DEFAULT_PAYLOAD,
+  defaultExp,
+  defaultExpDate
+} from './helper/jwt';
 
 describe('jwt-verification', function() {
   describe('verify', () => {
@@ -332,7 +337,7 @@ describe('jwt-verification', function() {
           helpers.assertTokenValidationError(
             DEFAULT_CONFIG,
             'asfd',
-            'Expired token.',
+            `Expiration Time (exp) claim error in the ID token; current time (${new Date()}) is after expiration time (${defaultExpDate})`,
             defaultToken,
             done
           );

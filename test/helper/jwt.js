@@ -1,6 +1,11 @@
 import pem from 'pem';
 import jwt from 'jsonwebtoken';
 
+export const defaultExp = 1482969031; // this is the exp in the defaultToken below 👇
+
+export const defaultExpDate = new Date(0);
+defaultExpDate.setUTCSeconds(defaultExp);
+
 export const defaultToken =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA';
 
@@ -32,11 +37,13 @@ export const DEFAULT_PAYLOAD = {
   aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
 };
 
-export const createJWT = (payload = DEFAULT_PAYLOAD, options = {}) => {
+export const createJWT = (
+  payload = DEFAULT_PAYLOAD,
+  options = { expiresIn: '1h' }
+) => {
   return createCertificate().then(cert => {
     return jwt.sign(payload, cert.serviceKey, {
       algorithm: 'RS256',
-      expiresIn: '1h',
       keyid: 'QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg',
       ...options
     });

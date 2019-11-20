@@ -275,7 +275,13 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
   expDate.setUTCSeconds(exp + this.leeway);
 
   if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
+    return new error.TokenValidationError(
+      'Expiration Time (exp) claim error in the ID token; current time (' +
+        now +
+        ') is after expiration time (' +
+        expDate +
+        ')'
+    );
   }
 
   if (typeof nbf === 'undefined') {
