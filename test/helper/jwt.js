@@ -32,14 +32,18 @@ export const DEFAULT_PAYLOAD = {
   sub: 'id|123',
   payload: true,
   nonce: 'asfd',
-  azp: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-  iss: 'https://wptest.auth0.com/',
-  aud: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+  azp: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+};
+
+export const DEFAULT_OPTIONS = {
+  expiresIn: '1h',
+  audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+  issuer: 'https://wptest.auth0.com/'
 };
 
 export const createJWT = (
   payload = DEFAULT_PAYLOAD,
-  options = { expiresIn: '1h' }
+  options = DEFAULT_OPTIONS
 ) => {
   return createCertificate().then(cert => {
     return jwt.sign(payload, cert.serviceKey, {

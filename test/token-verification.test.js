@@ -12,7 +12,8 @@ import {
   createJWT,
   DEFAULT_PAYLOAD,
   defaultExp,
-  defaultExpDate
+  defaultExpDate,
+  DEFAULT_OPTIONS
 } from './helper/jwt';
 
 describe('jwt-verification', function() {
@@ -149,9 +150,9 @@ describe('jwt-verification', function() {
         });
 
         it('validates issuer presence', done => {
-          const { iss, ...payload } = DEFAULT_PAYLOAD;
+          const { issuer, ...options } = DEFAULT_OPTIONS;
 
-          createJWT(payload)
+          createJWT(DEFAULT_PAYLOAD, options)
             .then(token => {
               helpers.assertTokenValidationError(
                 {},
@@ -197,9 +198,9 @@ describe('jwt-verification', function() {
         });
 
         it('validates audience presence', done => {
-          const { aud, ...payload } = DEFAULT_PAYLOAD;
+          const { audience, ...options } = DEFAULT_OPTIONS;
 
-          createJWT(payload)
+          createJWT(DEFAULT_PAYLOAD, options)
             .then(token =>
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
@@ -219,20 +220,18 @@ describe('jwt-verification', function() {
               audience: '98fukfdjlkff'
             },
             'asfd',
-            `Audience (aud) claim mismatch in the ID token; expected 98fukfdjlkff but found ${DEFAULT_PAYLOAD.aud}`,
+            `Audience (aud) claim mismatch in the ID token; expected 98fukfdjlkff but found ${DEFAULT_CONFIG.audience}`,
             defaultToken,
             done
           );
         });
 
         it('validates audience as an array', done => {
-          const { aud, ...payload } = DEFAULT_PAYLOAD;
-
-          const payloadWithAudience = Object.assign(payload, {
-            aud: ['audience-1', 'audience-2']
+          const optionsWithAudience = Object.assign({}, DEFAULT_OPTIONS, {
+            audience: ['audience-1', 'audience-2']
           });
 
-          createJWT(payloadWithAudience)
+          createJWT(DEFAULT_PAYLOAD, optionsWithAudience)
             .then(token =>
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
@@ -281,15 +280,16 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the presence of the azp claim', done => {
-          const { azp, ...payload } = Object.assign(DEFAULT_PAYLOAD, {
-            aud: ['audience-1', 'audience-2']
-          });
+          const { azp, ...payload } = DEFAULT_PAYLOAD;
 
-          createJWT(payload)
+          createJWT(payload, {
+            audience: ['audience-1', 'audience-2'],
+            issuer: DEFAULT_CONFIG.issuer
+          })
             .then(token => {
               helpers.assertTokenValidationError(
                 {
-                  issuer: DEFAULT_PAYLOAD.iss,
+                  issuer: DEFAULT_CONFIG.issuer,
                   audience: 'audience-1'
                 },
                 'asfd',
@@ -302,16 +302,19 @@ describe('jwt-verification', function() {
         });
 
         it('should validate that the azp claim (when present) matches the specified audience', done => {
-          const payload = Object.assign(DEFAULT_PAYLOAD, {
-            aud: ['audience-1', 'audience-2'],
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
             azp: 'something-different'
           });
 
-          createJWT(payload)
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            audience: ['audience-1', 'audience-2']
+          });
+
+          createJWT(payload, options)
             .then(token => {
               helpers.assertTokenValidationError(
                 {
-                  issuer: DEFAULT_PAYLOAD.iss,
+                  issuer: DEFAULT_CONFIG.issuer,
                   audience: 'audience-1'
                 },
                 'asfd',
@@ -333,6 +336,22 @@ describe('jwt-verification', function() {
           );
         });
 
+        it('should validate the exp claim presence', done => {
+          const { expiresIn, ...options } = DEFAULT_OPTIONS;
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                'Expiration Time (exp) claim must be a number present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('should validate the token expiration', done => {
           helpers.assertTokenValidationError(
             DEFAULT_CONFIG,
@@ -344,7 +363,7 @@ describe('jwt-verification', function() {
         });
 
         it('should validate presence of auth_time when max_age was specified', done => {
-          const config = Object.assign(DEFAULT_CONFIG, {
+          const config = Object.assign({}, DEFAULT_CONFIG, {
             max_age: 1000
           });
 

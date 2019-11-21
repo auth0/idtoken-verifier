@@ -274,6 +274,12 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
 
   expDate.setUTCSeconds(exp + this.leeway);
 
+  if (!isNumber(exp)) {
+    return new error.TokenValidationError(
+      'Expiration Time (exp) claim must be a number present in the ID token'
+    );
+  }
+
   if (now > expDate) {
     return new error.TokenValidationError(
       'Expiration Time (exp) claim error in the ID token; current time (' +
