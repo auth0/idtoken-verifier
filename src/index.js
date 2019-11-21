@@ -368,7 +368,11 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
 
   if (now < iatDate) {
     return new error.TokenValidationError(
-      'The token was issued in the future. Please check your computed clock.'
+      'Issued At (iat) claim error in the ID token; current time (' +
+        now +
+        ') is before issued at time (' +
+        iatDate +
+        ')'
     );
   }
 

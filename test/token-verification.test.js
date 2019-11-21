@@ -382,17 +382,21 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the token issued at claim', done => {
-          const options = Object.assign({}, DEFAULT_OPTIONS, {
-            noTimestamp: true
+          const iat = Date.now() / 1000 + 20000;
+
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
+            iat
           });
 
-          createJWT(DEFAULT_PAYLOAD, options)
+          createJWT(payload, DEFAULT_OPTIONS)
             .then(token => {
               console.log(token);
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
-                'Issued At (iat) claim must be a number present in the ID token',
+                `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
+                  iat * 1000
+                )})`,
                 token,
                 done
               );
@@ -593,7 +597,9 @@ describe('jwt-verification', function() {
       const err = new IdTokenVerifier().verifyExpAndIat(exp, iat);
 
       expect(err.message).to.eql(
-        'The token was issued in the future. Please check your computed clock.'
+        `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
+          iat * 1000
+        )})`
       );
 
       expect(err).to.be.a(error.TokenValidationError);
