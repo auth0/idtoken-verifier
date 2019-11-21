@@ -327,13 +327,24 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the nbf claim', done => {
-          helpers.assertTokenValidationError(
-            DEFAULT_CONFIG,
-            'asfd',
-            'The token is not valid until later in the future. Please check your computed clock.',
-            'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJub25jZSI6ImFzZmQiLCJpYXQiOjE0OTczNjQyNzMsIm5iZiI6NDY1MzEyNDI3MywiZXhwIjo3ODA4ODg0MjczfQ.IWU4y_Q2jHOmOR50Kk64oYIa1scvRMxzOE7sly_R953eypSoHB1OEWROsG4-qsTStfaJ7c6LbxeCbzpiFMAXDr594vDXny2lb8W_mF8OoTBPxMMlSBisy60hcH_GJL864SNiijr4SEuPL5sAUAI4PL77FrMpVODZ_To9GwixkZ8ajN7E7CYwlK6xkUuq5PQOknNjc1KBFh5bwIuA5gRSi0ggp74pi3bR9MRGLxMvZx_7kxa6G2IeTcXYjBlDS8BnKpoW0d6vOK804DWA8OIYTTY8570FaOwxusxEK-D8LolA8v7JfYY2AvWkjXwxN9rtGlMjZrXiUMAk67eW8abGWw',
-            done
-          );
+          const nbfDate = new Date();
+          nbfDate.setSeconds(nbfDate.getSeconds() + 100);
+
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
+            nbf: Math.floor(nbfDate.getTime() / 1000)
+          });
+
+          createJWT(payload, DEFAULT_OPTIONS)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                `Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (${new Date()}) is before ${nbfDate}`,
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('should validate the exp claim presence', done => {
@@ -369,7 +380,6 @@ describe('jwt-verification', function() {
 
           createJWT(DEFAULT_PAYLOAD, options)
             .then(token => {
-              console.log(token);
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
@@ -390,7 +400,6 @@ describe('jwt-verification', function() {
 
           createJWT(payload, DEFAULT_OPTIONS)
             .then(token => {
-              console.log(token);
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',

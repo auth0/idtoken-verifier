@@ -317,8 +317,10 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
 
   if (now < nbfDate) {
     return new error.TokenValidationError(
-      'The token is not valid until later in the future. ' +
-        'Please check your computed clock.'
+      "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (" +
+        now +
+        ') is before ' +
+        nbfDate
     );
   }
 
