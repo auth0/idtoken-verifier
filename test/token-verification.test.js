@@ -529,6 +529,16 @@ describe('jwt-verification', function() {
       expect(result).to.be(null);
     });
 
+    it('validated exp presence', () => {
+      const err = new IdTokenVerifier().verifyExpAndIat();
+
+      expect(err.message).to.eql(
+        'Expiration Time (exp) claim must be a number present in the ID token'
+      );
+
+      expect(err).to.be.a(error.TokenValidationError);
+    });
+
     it('validates exp', () => {
       //2016-12-28
       const exp = '148296903';
@@ -540,7 +550,7 @@ describe('jwt-verification', function() {
 
     it('validates iat', () => {
       //2439-12-07
-      const exp = '1482969031';
+      const exp = `${Date.now() / 1000 + 20000}`;
       const iat = '14829690311';
       const err = new IdTokenVerifier().verifyExpAndIat(exp, iat);
 
@@ -553,7 +563,7 @@ describe('jwt-verification', function() {
 
     it('returns null if valid', () => {
       //2439-12-07
-      const exp = '1482969031';
+      const exp = `${Date.now() / 1000 + 20000}`;
       //1974-09-13
       const iat = '148296903';
       const result = new IdTokenVerifier().verifyExpAndIat(exp, iat);

@@ -11,6 +11,11 @@ var supportedAlgs = ['RS256'];
 
 const isNumber = n => typeof n === 'number';
 
+const tryParseInt = n =>
+  isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
+
+const defaultClock = () => new Date();
+
 /**
  * Creates a new id_token verifier
  * @constructor
@@ -37,6 +42,11 @@ function IdTokenVerifier(parameters) {
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
   this.maxAge = options.max_age;
+
+  this.__clock =
+    options.__clock && typeof options.__clock === 'function'
+      ? options.__clock
+      : defaultClock;
 
   if (this.leeway < 0 || this.leeway > 300) {
     throw new error.ConfigurationError(
@@ -264,7 +274,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
  * @return {boolean} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
-  var now = new Date();
+  var now = this.__clock();
   var expDate = new Date(0);
   var nbfDate = new Date(0);
 
@@ -272,13 +282,15 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
     return null;
   }
 
-  expDate.setUTCSeconds(exp + this.leeway);
+  const parsedExp = tryParseInt(exp);
 
-  if (!isNumber(exp)) {
+  if (!parsedExp) {
     return new error.TokenValidationError(
       'Expiration Time (exp) claim must be a number present in the ID token'
     );
   }
+
+  expDate.setUTCSeconds(parsedExp + this.leeway);
 
   if (now > expDate) {
     return new error.TokenValidationError(
@@ -293,7 +305,9 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
   if (typeof nbf === 'undefined') {
     return null;
   }
+
   nbfDate.setUTCSeconds(nbf - this.leeway);
+
   if (now < nbfDate) {
     return new error.TokenValidationError(
       'The token is not valid until later in the future. ' +
@@ -313,7 +327,7 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
  * @return {boolean} if token is valid according to `exp` and `iat`
  */
 IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
-  var now = new Date();
+  var now = this.__clock();
   var expDate = new Date(0);
   var iatDate = new Date(0);
 
@@ -321,7 +335,15 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
     return null;
   }
 
-  expDate.setUTCSeconds(exp + this.leeway);
+  const parsedExp = tryParseInt(exp);
+
+  if (!parsedExp) {
+    return new error.TokenValidationError(
+      'Expiration Time (exp) claim must be a number present in the ID token'
+    );
+  }
+
+  expDate.setUTCSeconds(parsedExp + this.leeway);
 
   if (now > expDate) {
     return new error.TokenValidationError('Expired token.');
@@ -334,6 +356,7 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
       'The token was issued in the future. Please check your computed clock.'
     );
   }
+
   return null;
 };
 
