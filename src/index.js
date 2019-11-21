@@ -111,6 +111,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var iss = jwt.payload.iss;
   var exp = jwt.payload.exp;
   var nbf = jwt.payload.nbf;
+  var iat = jwt.payload.iat;
   var azp = jwt.payload.azp;
   var auth_time = jwt.payload.auth_time;
   var tnonce = jwt.payload.nonce || null;
@@ -258,6 +259,12 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         return cb(expirationError, false);
       }
 
+      var iatError = _this.verifyExpAndIat(exp, iat);
+
+      if (iatError) {
+        return cb(iatError, false);
+      }
+
       return cb(null, jwt.payload);
     }
 
@@ -349,7 +356,15 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
     return new error.TokenValidationError('Expired token.');
   }
 
-  iatDate.setUTCSeconds(iat - this.leeway);
+  const parsedIat = tryParseInt(iat);
+
+  if (!parsedIat) {
+    return new error.TokenValidationError(
+      'Issued At (iat) claim must be a number present in the ID token'
+    );
+  }
+
+  iatDate.setUTCSeconds(parsedIat - this.leeway);
 
   if (now < iatDate) {
     return new error.TokenValidationError(

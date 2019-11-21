@@ -362,6 +362,44 @@ describe('jwt-verification', function() {
           );
         });
 
+        it('should validate the presence of issued-at claim', done => {
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            noTimestamp: true
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              console.log(token);
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                'Issued At (iat) claim must be a number present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
+        it('should validate the token issued at claim', done => {
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            noTimestamp: true
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              console.log(token);
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                'Issued At (iat) claim must be a number present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('should validate presence of auth_time when max_age was specified', done => {
           const config = Object.assign({}, DEFAULT_CONFIG, {
             max_age: 1000
