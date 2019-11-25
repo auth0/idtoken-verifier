@@ -53,11 +53,11 @@ function IdTokenVerifier(parameters) {
 
   if (supportedAlg !== this.expectedAlg) {
     throw new error.ConfigurationError(
-      'Signature algorithm of ' +
+      'Signature algorithm of "' +
         this.expectedAlg +
-        ' is not supported. Expected ' +
+        '" is not supported. Expected the ID token to be signed with "' +
         supportedAlg +
-        '.'
+        '".'
     );
   }
 }
@@ -119,11 +119,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   if (_this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
-        'Signature algorithm of ' +
+        'Signature algorithm of "' +
           alg +
-          ' is not supported. Expected ' +
+          '" is not supported. Expected the ID token to be signed with "' +
           supportedAlg +
-          '.'
+          '".'
       ),
       false
     );
