@@ -415,7 +415,7 @@ describe('jwt-verification', function() {
 
         it('should validate presence of auth_time when max_age was specified', done => {
           const config = Object.assign({}, DEFAULT_CONFIG, {
-            max_age: 1000
+            maxAge: 1000
           });
 
           helpers.assertTokenValidationError(

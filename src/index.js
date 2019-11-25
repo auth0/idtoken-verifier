@@ -7,14 +7,13 @@ import * as base64 from './helpers/base64';
 import * as jwks from './helpers/jwks';
 import * as error from './helpers/error';
 import DummyCache from './helpers/dummy-cache';
-var supportedAlgs = ['RS256'];
 
-const isNumber = n => typeof n === 'number';
+var supportedAlg = 'RS256';
+var isNumber = n => typeof n === 'number';
+var defaultClock = () => new Date();
 
-const tryParseInt = n =>
+var tryParseInt = n =>
   isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
-
-const defaultClock = () => new Date();
 
 /**
  * Creates a new id_token verifier
@@ -41,12 +40,10 @@ function IdTokenVerifier(parameters) {
   this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
-  this.maxAge = options.max_age;
+  this.maxAge = options.maxAge;
 
   this.__clock =
-    options.__clock && typeof options.__clock === 'function'
-      ? options.__clock
-      : defaultClock;
+    typeof options.__clock === 'function' ? options.__clock : defaultClock;
 
   if (this.leeway < 0 || this.leeway > 300) {
     throw new error.ConfigurationError(
@@ -54,12 +51,12 @@ function IdTokenVerifier(parameters) {
     );
   }
 
-  if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
+  if (supportedAlg !== this.expectedAlg) {
     throw new error.ConfigurationError(
       'Signature algorithm of ' +
         this.expectedAlg +
         ' is not supported. Expected ' +
-        supportedAlgs.join(', ') +
+        supportedAlg +
         '.'
     );
   }
@@ -124,7 +121,7 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         'Signature algorithm of ' +
           alg +
           ' is not supported. Expected ' +
-          supportedAlgs.join(', ') +
+          supportedAlg +
           '.'
       ),
       false
@@ -289,7 +286,7 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
     return null;
   }
 
-  const parsedExp = tryParseInt(exp);
+  var parsedExp = tryParseInt(exp);
 
   if (!parsedExp) {
     return new error.TokenValidationError(
@@ -344,7 +341,7 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
     return null;
   }
 
-  const parsedExp = tryParseInt(exp);
+  var parsedExp = tryParseInt(exp);
 
   if (!parsedExp) {
     return new error.TokenValidationError(
@@ -358,7 +355,7 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
     return new error.TokenValidationError('Expired token.');
   }
 
-  const parsedIat = tryParseInt(iat);
+  var parsedIat = tryParseInt(iat);
 
   if (!parsedIat) {
     return new error.TokenValidationError(
