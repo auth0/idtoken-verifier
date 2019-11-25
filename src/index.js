@@ -82,7 +82,7 @@ function IdTokenVerifier(parameters) {
  * @param {String} [nonce] nonce value that should match the one in the id_token claims
  * @param {verifyCallback} cb callback used to notify the results of the validation
  */
-IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
+IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   if (!token) {
     return cb(
       new error.TokenValidationError('ID token is required but missing'),
@@ -111,7 +111,8 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var iat = jwt.payload.iat;
   var azp = jwt.payload.azp;
   var auth_time = jwt.payload.auth_time;
-  var tnonce = jwt.payload.nonce || null;
+  var nonce = jwt.payload.nonce;
+
   /* eslint-enable vars-on-top */
   var _this = this;
 
@@ -218,8 +219,8 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
         );
       }
 
-      if (nonce) {
-        if (!tnonce) {
+      if (requestedNonce) {
+        if (!nonce) {
           return cb(
             new error.TokenValidationError(
               'Nonce (nonce) claim must be a string present in the ID token'
@@ -228,13 +229,13 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
           );
         }
 
-        if (tnonce !== nonce) {
+        if (nonce !== requestedNonce) {
           return cb(
             new error.TokenValidationError(
               'Nonce (nonce) claim value mismatch in the ID token; expected "' +
-                nonce +
+                requestedNonce +
                 '", found "' +
-                tnonce +
+                nonce +
                 '"'
             ),
             false
