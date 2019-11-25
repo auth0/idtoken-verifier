@@ -220,7 +220,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       }
 
       if (requestedNonce) {
-        if (!nonce) {
+        if (!nonce || typeof nonce !== 'string') {
           return cb(
             new error.TokenValidationError(
               'Nonce (nonce) claim must be a string present in the ID token'

@@ -279,6 +279,22 @@ describe('jwt-verification', function() {
           );
         });
 
+        it('should fail if the nonce was not a string', done => {
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, { nonce: 839803 });
+
+          createJWT(payload)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                'Nonce (nonce) claim must be a string present in the ID token',
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('should validate the presence of the azp claim', done => {
           const { azp, ...payload } = DEFAULT_PAYLOAD;
 
