@@ -273,7 +273,7 @@ describe('jwt-verification', function() {
           helpers.assertTokenValidationError(
             DEFAULT_CONFIG,
             'invalid',
-            `Nonce (nonce) claim value mismatch in the ID token; expected "invalid", found "${DEFAULT_PAYLOAD.nonce}"`,
+            'Nonce (nonce) claim value mismatch in the ID token; expected "invalid", found "asfd"',
             defaultToken,
             done
           );
