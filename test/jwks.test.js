@@ -73,17 +73,7 @@ describe('jwks', function() {
         // from: https://brucke.auth0.com/.well-known/jwks.json
         keys: [
           {
-            alg: 'RS256',
-            kty: 'RSA',
-            use: 'sig',
-            x5c: [
-              'MIIC6DCCAdCgAwIBAgIJftS/aE0IPdZxMA0GCSqGSIb3DQEBBQUAMBsxGTAXBgNVBAMTEGJydWNrZS5hdXRoMC5jb20wHhcNMTYwNDIwMTIyMzE1WhcNMjkxMjI4MTIyMzE1WjAbMRkwFwYDVQQDExBicnVja2UuYXV0aDAuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlG4+sywQahA2bzbb53WiMS1MFJVFGJSHLwBuY/J4W84STvRUdcXPV3TE7s4A7/6fSdAXXVb69A5bL7mS/3EkGujgr2CnrRQNNdw055D28VHiZyAKrG2vg6e5+C8iHU0ew6nCqJ1bXK7vYhPs3qYlNdmxbxUyUimQZ038ABre8JlNiwsrnIoct/IKnhMNkUPovrcfNo83PwQwRJDabbYnTEtRIwlzVZxOwHXDySMf+xalRzxrQ+PvY1D5+HPfZHvmm+9ij4src9p5FTagMCkEUg9XrgpdhB+Aa0TyCpK8t1re1PjrFZgnIBZ5wTadTlbukYnD0FL83OU/olgBPMmd8QIDAQABoy8wLTAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBRzW81ap53F2F/90rR4cKJeRiwI8TANBgkqhkiG9w0BAQUFAAOCAQEAecY8JHbUESSXZiPhT9CCiX//VFfLpiBZCG2dWka5E4pPs3AFc7bEospWW7w+r2W0uSL6cDMu7wpb7N7lnWkiGc64Ej89ZXvZYAbpt6glM3z+W9H+fZ767W4/aiFSrD3HAMpGs61TUa7B9Xrn7Zhj4y8L1Z4z5v4xyzl5Zy5KKA19fiPJVtVzt6tVgfpbUDh0ufhno/WPWuRPzNNl+dKRH45JRVSwcYcFR4h2+i+t+3rhUmAuyOmjeN21vWvP8gqX6+LQW/olgkyrvg4rMmN6UZNBVa75g2ptnHo3ItdHh8UPMyn0VStOamtHYFVV+4uqzxV6EU2RHJnxO1YYt8LZfw=='
-            ],
-            n:
-              'lG4-sywQahA2bzbb53WiMS1MFJVFGJSHLwBuY_J4W84STvRUdcXPV3TE7s4A7_6fSdAXXVb69A5bL7mS_3EkGujgr2CnrRQNNdw055D28VHiZyAKrG2vg6e5-C8iHU0ew6nCqJ1bXK7vYhPs3qYlNdmxbxUyUimQZ038ABre8JlNiwsrnIoct_IKnhMNkUPovrcfNo83PwQwRJDabbYnTEtRIwlzVZxOwHXDySMf-xalRzxrQ-PvY1D5-HPfZHvmm-9ij4src9p5FTagMCkEUg9XrgpdhB-Aa0TyCpK8t1re1PjrFZgnIBZ5wTadTlbukYnD0FL83OU_olgBPMmd8Q',
-            e: 'AQAB',
-            kid: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ',
-            x5t: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ'
+            kid: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ'
           }
         ]
       };
