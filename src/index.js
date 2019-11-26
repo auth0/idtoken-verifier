@@ -112,6 +112,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   var azp = jwt.payload.azp;
   var auth_time = jwt.payload.auth_time;
   var nonce = jwt.payload.nonce;
+  var now = this.__clock();
 
   /* eslint-enable vars-on-top */
   var _this = this;
@@ -243,12 +244,27 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         }
       }
 
-      if (_this.maxAge && !isNumber(auth_time)) {
-        return cb(
-          new error.TokenValidationError(
-            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
-          )
-        );
+      if (_this.maxAge) {
+        if (!auth_time || !isNumber(auth_time)) {
+          return cb(
+            new error.TokenValidationError(
+              'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
+            )
+          );
+        }
+
+        var authValidUntil = auth_time + _this.maxAge + _this.leeway;
+        var authTimeDate = new Date(0);
+
+        authTimeDate.setUTCSeconds(authValidUntil);
+
+        if (now > authTimeDate) {
+          return cb(
+            new error.TokenValidationError(
+              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Currrent time (${now}) is after last auth at ${authTimeDate}`
+            )
+          );
+        }
       }
 
       var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top

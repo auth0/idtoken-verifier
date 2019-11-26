@@ -442,6 +442,71 @@ describe('jwt-verification', function() {
             done
           );
         });
+
+        it('should throw an error when auth_time is out of range of max_age', done => {
+          const now = new Date();
+          const maxAge = 1000;
+          const nowSeconds = Math.floor(now.getTime() / 1000) - maxAge * 2;
+          const leeway = 20;
+          const validUntil = nowSeconds + maxAge + leeway;
+          const validUntilDate = new Date(0);
+
+          validUntilDate.setUTCSeconds(validUntil);
+
+          const config = Object.assign({}, DEFAULT_CONFIG, {
+            maxAge,
+            leeway
+          });
+
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
+            auth_time: nowSeconds
+          });
+
+          createJWT(payload, DEFAULT_OPTIONS)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                config,
+                'asfd',
+                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Currrent time (${now}) is after last auth at ${validUntilDate}`,
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
+        it('should be valid when auth_time is within the leeway', done => {
+          const now = new Date();
+          const maxAge = 1000;
+          const nowSeconds = Math.floor(now.getTime() / 1000) - 10;
+          const leeway = 20;
+          const validUntil = nowSeconds + maxAge + leeway;
+          const validUntilDate = new Date(0);
+
+          validUntilDate.setUTCSeconds(validUntil);
+
+          const config = Object.assign({}, DEFAULT_CONFIG, {
+            maxAge,
+            leeway
+          });
+
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
+            auth_time: nowSeconds
+          });
+
+          createJWT(payload, DEFAULT_OPTIONS)
+            .then(token => {
+              new IdTokenVerifier(config).verify(
+                token,
+                'asfd',
+                (err, result) => {
+                  expect(err).to.be(null);
+                  done();
+                }
+              );
+            })
+            .catch(done);
+        });
       });
     });
 
