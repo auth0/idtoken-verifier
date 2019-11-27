@@ -70,7 +70,6 @@ describe('jwks', function() {
 
     it('returns error when the kid is not present in the JWKS', function(done) {
       const responseBody = {
-        // from: https://brucke.auth0.com/.well-known/jwks.json
         keys: [
           {
             kid: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ'
