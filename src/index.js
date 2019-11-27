@@ -225,7 +225,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         if (!azp) {
           return cb(
             new error.TokenValidationError(
-              'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
+              'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
+              false
             )
           );
         }
@@ -237,7 +238,51 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
                 _this.audience +
                 '", found "' +
                 azp +
-                '"'
+                '"',
+              false
+            )
+          );
+        }
+      }
+
+      if (!exp || !isNumber(exp)) {
+        return cb(
+          new error.TokenValidationError(
+            'Expiration Time (exp) claim must be a number present in the ID token',
+            false
+          )
+        );
+      }
+
+      var expTime = exp + _this.leeway;
+      var expTimeDate = new Date(0);
+      expTimeDate.setUTCSeconds(expTime);
+
+      if (now > expTimeDate) {
+        return cb(
+          new error.TokenValidationError(
+            'Expiration Time (exp) claim error in the ID token; current time (' +
+              now +
+              ') is after expiration time (' +
+              expTimeDate +
+              ')',
+            false
+          )
+        );
+      }
+
+      if (nbf && isNumber(nbf)) {
+        var nbfTime = nbf - _this.leeway;
+        var nbfTimeDate = new Date(0);
+        nbfTimeDate.setUTCSeconds(nbfTime);
+
+        if (now < nbfTimeDate) {
+          return cb(
+            new error.TokenValidationError(
+              "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (" +
+                now +
+                ') is before ' +
+                nbfTimeDate
             )
           );
         }
@@ -260,16 +305,10 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         if (now > authTimeDate) {
           return cb(
             new error.TokenValidationError(
-              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Currrent time (${now}) is after last auth at ${authTimeDate}`
+              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time (${now}) is after last auth at ${authTimeDate}`
             )
           );
         }
-      }
-
-      var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
-
-      if (expirationError) {
-        return cb(expirationError, false);
       }
 
       var iatError = _this.verifyExpAndIat(exp, iat);

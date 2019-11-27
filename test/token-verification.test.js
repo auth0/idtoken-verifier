@@ -439,13 +439,21 @@ describe('jwt-verification', function() {
             maxAge: 1000
           });
 
-          helpers.assertTokenValidationError(
-            config,
-            'asfd',
-            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified',
-            defaultToken,
-            done
-          );
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            expiresIn: '1d'
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                config,
+                'asfd',
+                'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified',
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('should throw an error when auth_time is out of range of max_age', done => {
@@ -460,7 +468,8 @@ describe('jwt-verification', function() {
 
           const config = Object.assign({}, DEFAULT_CONFIG, {
             maxAge,
-            leeway
+            leeway,
+            __clock: () => now
           });
 
           const payload = Object.assign({}, DEFAULT_PAYLOAD, {
@@ -472,7 +481,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 config,
                 'asfd',
-                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Currrent time (${now}) is after last auth at ${validUntilDate}`,
+                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time (${now}) is after last auth at ${validUntilDate}`,
                 token,
                 done
               );
@@ -540,7 +549,8 @@ describe('jwt-verification', function() {
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-            __disableExpirationCheck: true
+            __disableExpirationCheck: true,
+            __clock: () => new Date('Wed Dec 28 2016 23:00:00 GMT+0000')
           },
           'asfd',
           done
@@ -554,7 +564,8 @@ describe('jwt-verification', function() {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
             __disableExpirationCheck: true,
-            jwksCache: CacheMock.validKey()
+            jwksCache: CacheMock.validKey(),
+            __clock: () => new Date('Wed Dec 28 2016 23:00:00 GMT+0000')
           },
           'asfd',
           done
