@@ -175,39 +175,15 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         );
       }
 
-      if (Array.isArray(aud)) {
-        if (!aud.includes(_this.audience)) {
-          return cb(
-            new error.TokenValidationError(
-              'Audience (aud) claim mismatch in the ID token; expected ' +
-                _this.audience +
-                ' but was not one of ' +
-                aud.join(', ')
-            )
-          );
-        }
-
-        if (aud.length > 1) {
-          if (!azp) {
-            return cb(
-              new error.TokenValidationError(
-                'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
-              )
-            );
-          }
-
-          if (azp !== _this.audience) {
-            return cb(
-              new error.TokenValidationError(
-                'Authorized Party (azp) claim mismatch in the ID token; expected "' +
-                  _this.audience +
-                  '", found "' +
-                  azp +
-                  '"'
-              )
-            );
-          }
-        }
+      if (Array.isArray(aud) && !aud.includes(_this.audience)) {
+        return cb(
+          new error.TokenValidationError(
+            'Audience (aud) claim mismatch in the ID token; expected ' +
+              _this.audience +
+              ' but was not one of ' +
+              aud.join(', ')
+          )
+        );
       } else if (typeof aud === 'string' && _this.audience !== aud) {
         return cb(
           new error.TokenValidationError(
@@ -240,6 +216,28 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
                 '"'
             ),
             false
+          );
+        }
+      }
+
+      if (Array.isArray(aud) && aud.length > 1) {
+        if (!azp) {
+          return cb(
+            new error.TokenValidationError(
+              'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
+            )
+          );
+        }
+
+        if (azp !== _this.audience) {
+          return cb(
+            new error.TokenValidationError(
+              'Authorized Party (azp) claim mismatch in the ID token; expected "' +
+                _this.audience +
+                '", found "' +
+                azp +
+                '"'
+            )
           );
         }
       }
