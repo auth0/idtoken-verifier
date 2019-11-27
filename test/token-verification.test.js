@@ -16,6 +16,8 @@ import {
   DEFAULT_OPTIONS
 } from './helper/jwt';
 
+const nowSeconds = () => Math.floor(Date.now() / 1000);
+
 describe('jwt-verification', function() {
   describe('verify', () => {
     describe('with a configuration error', () => {
@@ -346,6 +348,9 @@ describe('jwt-verification', function() {
           const nbfDate = new Date();
           nbfDate.setSeconds(nbfDate.getSeconds() + 100);
 
+          const validFromDate = new Date(0);
+          validFromDate.setUTCSeconds(nowSeconds() + 40);
+
           const payload = Object.assign({}, DEFAULT_PAYLOAD, {
             nbf: Math.floor(nbfDate.getTime() / 1000)
           });
@@ -355,7 +360,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
-                `Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (${new Date()}) is before ${nbfDate}`,
+                `Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (${new Date()}) is before ${validFromDate}`,
                 token,
                 done
               );
@@ -408,7 +413,7 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the token issued at claim', done => {
-          const iat = Date.now() / 1000 + 20000;
+          const iat = nowSeconds() + 100;
 
           const payload = Object.assign({}, DEFAULT_PAYLOAD, {
             iat
@@ -420,7 +425,7 @@ describe('jwt-verification', function() {
                 DEFAULT_CONFIG,
                 'asfd',
                 `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
-                  iat * 1000
+                  (iat - 60) * 1000
                 )})`,
                 token,
                 done
@@ -682,13 +687,13 @@ describe('jwt-verification', function() {
 
     it('validates iat', () => {
       //2439-12-07
-      const exp = `${Date.now() / 1000 + 20000}`;
+      const exp = `${nowSeconds() + 20000}`;
       const iat = '14829690311';
       const err = new IdTokenVerifier().verifyExpAndIat(exp, iat);
 
       expect(err.message).to.eql(
         `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
-          iat * 1000
+          (iat - 60) * 1000
         )})`
       );
 

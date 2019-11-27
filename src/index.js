@@ -11,6 +11,7 @@ import DummyCache from './helpers/dummy-cache';
 var supportedAlg = 'RS256';
 var isNumber = n => typeof n === 'number';
 var defaultClock = () => new Date();
+var DEFAULT_LEEWAY = 60;
 
 var tryParseInt = n =>
   isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
@@ -37,7 +38,7 @@ function IdTokenVerifier(parameters) {
   this.expectedAlg = options.expectedAlg || 'RS256';
   this.issuer = options.issuer;
   this.audience = options.audience;
-  this.leeway = options.leeway || 0;
+  this.leeway = options.leeway || DEFAULT_LEEWAY;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
   this.maxAge = options.maxAge;
