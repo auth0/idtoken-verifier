@@ -254,6 +254,14 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         );
       }
 
+      if (!iat || !isNumber(iat)) {
+        return cb(
+          new error.TokenValidationError(
+            'Issued At (iat) claim must be a number present in the ID token'
+          )
+        );
+      }
+
       var expTime = exp + _this.leeway;
       var expTimeDate = new Date(0);
       expTimeDate.setUTCSeconds(expTime);
@@ -267,6 +275,22 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               expTimeDate +
               ')',
             false
+          )
+        );
+      }
+
+      var iatTime = iat - _this.leeway;
+      var iatTimeDate = new Date(0);
+      iatTimeDate.setUTCSeconds(iatTime);
+
+      if (now < iatTimeDate) {
+        return cb(
+          new error.TokenValidationError(
+            'Issued At (iat) claim error in the ID token; current time (' +
+              now +
+              ') is before issued at time (' +
+              iatTimeDate +
+              ')'
           )
         );
       }
@@ -309,12 +333,6 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             )
           );
         }
-      }
-
-      var iatError = _this.verifyExpAndIat(exp, iat);
-
-      if (iatError) {
-        return cb(iatError, false);
       }
 
       return cb(null, jwt.payload);
