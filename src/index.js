@@ -28,7 +28,7 @@ var tryParseInt = n =>
  * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
  * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
- * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
+ * @param {number} [parameters.leeway=60] number of seconds that the clock can be out of sync
  * while validating expiration of the id_token
  */
 function IdTokenVerifier(parameters) {
