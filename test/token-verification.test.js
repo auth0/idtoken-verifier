@@ -360,7 +360,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
-                `Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (${new Date()}) is before ${validFromDate}`,
+                `Not Before Time (nbf) claim error in the ID token; current time (${new Date()}) is before the not before time (${validFromDate})`,
                 token,
                 done
               );
