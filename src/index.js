@@ -390,7 +390,7 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
 
   if (now < nbfDate) {
     return new error.TokenValidationError(
-      "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Currrent time (" +
+      "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Current time (" +
         now +
         ') is before ' +
         nbfDate
