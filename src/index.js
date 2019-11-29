@@ -136,212 +136,212 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(err);
     }
 
-    if (rsaVerifier.verify(headAndPayload, signature)) {
-      if (!iss) {
+    if (!rsaVerifier.verify(headAndPayload, signature)) {
+      return cb(new error.TokenValidationError('Invalid signature.'));
+    }
+
+    if (!iss) {
+      return cb(
+        new error.TokenValidationError(
+          'Issuer (iss) claim must be a string present in the ID token',
+          false
+        )
+      );
+    }
+
+    if (_this.issuer !== iss) {
+      return cb(
+        new error.TokenValidationError(
+          'Issuer (iss) claim mismatch in the ID token, expected "' +
+            _this.issuer +
+            '", found "' +
+            iss +
+            '"'
+        ),
+        false
+      );
+    }
+
+    if (!sub || typeof sub !== 'string') {
+      return cb(
+        new error.TokenValidationError(
+          'Subject (sub) claim must be a string present in the ID token'
+        ),
+        false
+      );
+    }
+
+    if (!aud || (typeof aud !== 'string' && !Array.isArray(aud))) {
+      return cb(
+        new error.TokenValidationError(
+          'Audience (aud) claim must be a string or array of strings present in the ID token'
+        )
+      );
+    }
+
+    if (Array.isArray(aud) && !aud.includes(_this.audience)) {
+      return cb(
+        new error.TokenValidationError(
+          'Audience (aud) claim mismatch in the ID token; expected "' +
+            _this.audience +
+            '" but was not one of "' +
+            aud.join(', ') +
+            '"'
+        )
+      );
+    } else if (typeof aud === 'string' && _this.audience !== aud) {
+      return cb(
+        new error.TokenValidationError(
+          'Audience (aud) claim mismatch in the ID token; expected "' +
+            _this.audience +
+            '" but found "' +
+            aud +
+            '"'
+        ),
+        false
+      );
+    }
+
+    if (requestedNonce) {
+      if (!nonce || typeof nonce !== 'string') {
         return cb(
           new error.TokenValidationError(
-            'Issuer (iss) claim must be a string present in the ID token',
-            false
-          )
+            'Nonce (nonce) claim must be a string present in the ID token'
+          ),
+          false
         );
       }
 
-      if (_this.issuer !== iss) {
+      if (nonce !== requestedNonce) {
         return cb(
           new error.TokenValidationError(
-            'Issuer (iss) claim mismatch in the ID token, expected "' +
-              _this.issuer +
+            'Nonce (nonce) claim value mismatch in the ID token; expected "' +
+              requestedNonce +
               '", found "' +
-              iss +
+              nonce +
               '"'
           ),
           false
         );
       }
+    }
 
-      if (!sub || typeof sub !== 'string') {
+    if (Array.isArray(aud) && aud.length > 1) {
+      if (!azp) {
         return cb(
           new error.TokenValidationError(
-            'Subject (sub) claim must be a string present in the ID token'
-          ),
-          false
-        );
-      }
-
-      if (!aud || (typeof aud !== 'string' && !Array.isArray(aud))) {
-        return cb(
-          new error.TokenValidationError(
-            'Audience (aud) claim must be a string or array of strings present in the ID token'
+            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
+            false
           )
         );
       }
 
-      if (Array.isArray(aud) && !aud.includes(_this.audience)) {
+      if (azp !== _this.audience) {
         return cb(
           new error.TokenValidationError(
-            'Audience (aud) claim mismatch in the ID token; expected "' +
+            'Authorized Party (azp) claim mismatch in the ID token; expected "' +
               _this.audience +
-              '" but was not one of "' +
-              aud.join(', ') +
-              '"'
-          )
-        );
-      } else if (typeof aud === 'string' && _this.audience !== aud) {
-        return cb(
-          new error.TokenValidationError(
-            'Audience (aud) claim mismatch in the ID token; expected "' +
-              _this.audience +
-              '" but found "' +
-              aud +
-              '"'
-          ),
-          false
-        );
-      }
-
-      if (requestedNonce) {
-        if (!nonce || typeof nonce !== 'string') {
-          return cb(
-            new error.TokenValidationError(
-              'Nonce (nonce) claim must be a string present in the ID token'
-            ),
-            false
-          );
-        }
-
-        if (nonce !== requestedNonce) {
-          return cb(
-            new error.TokenValidationError(
-              'Nonce (nonce) claim value mismatch in the ID token; expected "' +
-                requestedNonce +
-                '", found "' +
-                nonce +
-                '"'
-            ),
-            false
-          );
-        }
-      }
-
-      if (Array.isArray(aud) && aud.length > 1) {
-        if (!azp) {
-          return cb(
-            new error.TokenValidationError(
-              'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
-              false
-            )
-          );
-        }
-
-        if (azp !== _this.audience) {
-          return cb(
-            new error.TokenValidationError(
-              'Authorized Party (azp) claim mismatch in the ID token; expected "' +
-                _this.audience +
-                '", found "' +
-                azp +
-                '"',
-              false
-            )
-          );
-        }
-      }
-
-      if (!exp || !isNumber(exp)) {
-        return cb(
-          new error.TokenValidationError(
-            'Expiration Time (exp) claim must be a number present in the ID token',
-            false
-          )
-        );
-      }
-
-      if (!iat || !isNumber(iat)) {
-        return cb(
-          new error.TokenValidationError(
-            'Issued At (iat) claim must be a number present in the ID token'
-          )
-        );
-      }
-
-      var expTime = exp + _this.leeway;
-      var expTimeDate = new Date(0);
-      expTimeDate.setUTCSeconds(expTime);
-
-      if (now > expTimeDate) {
-        return cb(
-          new error.TokenValidationError(
-            'Expiration Time (exp) claim error in the ID token; current time "' +
-              now +
-              '" is after expiration time "' +
-              expTimeDate +
+              '", found "' +
+              azp +
               '"',
             false
           )
         );
       }
+    }
 
-      var iatTime = iat - _this.leeway;
-      var iatTimeDate = new Date(0);
-      iatTimeDate.setUTCSeconds(iatTime);
+    if (!exp || !isNumber(exp)) {
+      return cb(
+        new error.TokenValidationError(
+          'Expiration Time (exp) claim must be a number present in the ID token',
+          false
+        )
+      );
+    }
 
-      if (now < iatTimeDate) {
+    if (!iat || !isNumber(iat)) {
+      return cb(
+        new error.TokenValidationError(
+          'Issued At (iat) claim must be a number present in the ID token'
+        )
+      );
+    }
+
+    var expTime = exp + _this.leeway;
+    var expTimeDate = new Date(0);
+    expTimeDate.setUTCSeconds(expTime);
+
+    if (now > expTimeDate) {
+      return cb(
+        new error.TokenValidationError(
+          'Expiration Time (exp) claim error in the ID token; current time "' +
+            now +
+            '" is after expiration time "' +
+            expTimeDate +
+            '"',
+          false
+        )
+      );
+    }
+
+    var iatTime = iat - _this.leeway;
+    var iatTimeDate = new Date(0);
+    iatTimeDate.setUTCSeconds(iatTime);
+
+    if (now < iatTimeDate) {
+      return cb(
+        new error.TokenValidationError(
+          'Issued At (iat) claim error in the ID token; current time "' +
+            now +
+            '" is before issued at time "' +
+            iatTimeDate +
+            '"'
+        )
+      );
+    }
+
+    if (nbf && isNumber(nbf)) {
+      var nbfTime = nbf - _this.leeway;
+      var nbfTimeDate = new Date(0);
+      nbfTimeDate.setUTCSeconds(nbfTime);
+
+      if (now < nbfTimeDate) {
         return cb(
           new error.TokenValidationError(
-            'Issued At (iat) claim error in the ID token; current time "' +
+            'Not Before Time (nbf) claim error in the ID token; current time "' +
               now +
-              '" is before issued at time "' +
-              iatTimeDate +
+              '" is before the not before time "' +
+              nbfTimeDate +
               '"'
           )
         );
       }
-
-      if (nbf && isNumber(nbf)) {
-        var nbfTime = nbf - _this.leeway;
-        var nbfTimeDate = new Date(0);
-        nbfTimeDate.setUTCSeconds(nbfTime);
-
-        if (now < nbfTimeDate) {
-          return cb(
-            new error.TokenValidationError(
-              'Not Before Time (nbf) claim error in the ID token; current time "' +
-                now +
-                '" is before the not before time "' +
-                nbfTimeDate +
-                '"'
-            )
-          );
-        }
-      }
-
-      if (_this.maxAge) {
-        if (!auth_time || !isNumber(auth_time)) {
-          return cb(
-            new error.TokenValidationError(
-              'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
-            )
-          );
-        }
-
-        var authValidUntil = auth_time + _this.maxAge + _this.leeway;
-        var authTimeDate = new Date(0);
-
-        authTimeDate.setUTCSeconds(authValidUntil);
-
-        if (now > authTimeDate) {
-          return cb(
-            new error.TokenValidationError(
-              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${authTimeDate}"`
-            )
-          );
-        }
-      }
-
-      return cb(null, jwt.payload);
     }
 
-    return cb(new error.TokenValidationError('Invalid signature.'));
+    if (_this.maxAge) {
+      if (!auth_time || !isNumber(auth_time)) {
+        return cb(
+          new error.TokenValidationError(
+            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
+          )
+        );
+      }
+
+      var authValidUntil = auth_time + _this.maxAge + _this.leeway;
+      var authTimeDate = new Date(0);
+
+      authTimeDate.setUTCSeconds(authValidUntil);
+
+      if (now > authTimeDate) {
+        return cb(
+          new error.TokenValidationError(
+            `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${authTimeDate}"`
+          )
+        );
+      }
+    }
+
+    return cb(null, jwt.payload);
   });
 };
 
