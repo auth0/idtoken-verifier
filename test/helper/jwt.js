@@ -37,8 +37,8 @@ export const DEFAULT_PAYLOAD = {
 
 export const DEFAULT_OPTIONS = {
   expiresIn: '1h',
-  audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-  issuer: 'https://wptest.auth0.com/'
+  audience: '__TEST_AUDIENCE__',
+  issuer: '__TEST_ISSUER__'
 };
 
 export const createJWT = (

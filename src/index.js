@@ -38,7 +38,7 @@ function IdTokenVerifier(parameters) {
   this.expectedAlg = options.expectedAlg || 'RS256';
   this.issuer = options.issuer;
   this.audience = options.audience;
-  this.leeway = options.leeway || DEFAULT_LEEWAY;
+  this.leeway = options.leeway === 0 ? 0 : options.leeway || DEFAULT_LEEWAY;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
   this.maxAge = options.maxAge;
@@ -149,11 +149,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (_this.issuer !== iss) {
         return cb(
           new error.TokenValidationError(
-            'Issuer (iss) claim mismatch in the ID token, expected (' +
+            'Issuer (iss) claim mismatch in the ID token, expected "' +
               _this.issuer +
-              '), found (' +
+              '", found "' +
               iss +
-              ')'
+              '"'
           ),
           false
         );
@@ -179,19 +179,21 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (Array.isArray(aud) && !aud.includes(_this.audience)) {
         return cb(
           new error.TokenValidationError(
-            'Audience (aud) claim mismatch in the ID token; expected ' +
+            'Audience (aud) claim mismatch in the ID token; expected "' +
               _this.audience +
-              ' but was not one of ' +
-              aud.join(', ')
+              '" but was not one of "' +
+              aud.join(', ') +
+              '"'
           )
         );
       } else if (typeof aud === 'string' && _this.audience !== aud) {
         return cb(
           new error.TokenValidationError(
-            'Audience (aud) claim mismatch in the ID token; expected ' +
+            'Audience (aud) claim mismatch in the ID token; expected "' +
               _this.audience +
-              ' but found ' +
-              aud
+              '" but found "' +
+              aud +
+              '"'
           ),
           false
         );
@@ -269,11 +271,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (now > expTimeDate) {
         return cb(
           new error.TokenValidationError(
-            'Expiration Time (exp) claim error in the ID token; current time (' +
+            'Expiration Time (exp) claim error in the ID token; current time "' +
               now +
-              ') is after expiration time (' +
+              '" is after expiration time "' +
               expTimeDate +
-              ')',
+              '"',
             false
           )
         );
@@ -286,11 +288,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (now < iatTimeDate) {
         return cb(
           new error.TokenValidationError(
-            'Issued At (iat) claim error in the ID token; current time (' +
+            'Issued At (iat) claim error in the ID token; current time "' +
               now +
-              ') is before issued at time (' +
+              '" is before issued at time "' +
               iatTimeDate +
-              ')'
+              '"'
           )
         );
       }
@@ -303,11 +305,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         if (now < nbfTimeDate) {
           return cb(
             new error.TokenValidationError(
-              'Not Before Time (nbf) claim error in the ID token; current time (' +
+              'Not Before Time (nbf) claim error in the ID token; current time "' +
                 now +
-                ') is before the not before time (' +
+                '" is before the not before time "' +
                 nbfTimeDate +
-                ')'
+                '"'
             )
           );
         }
@@ -330,7 +332,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         if (now > authTimeDate) {
           return cb(
             new error.TokenValidationError(
-              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time (${now}) is after last auth at ${authTimeDate}`
+              `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${authTimeDate}"`
             )
           );
         }

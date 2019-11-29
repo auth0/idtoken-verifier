@@ -11,8 +11,6 @@ import {
   defaultToken,
   createJWT,
   DEFAULT_PAYLOAD,
-  defaultExp,
-  defaultExpDate,
   DEFAULT_OPTIONS
 } from './helper/jwt';
 
@@ -75,16 +73,21 @@ describe('jwt-verification', function() {
     it('should validate the supported algorithm before calling `getRsaVerifier`', done => {
       const spy = sinon.spy(IdTokenVerifier.prototype, 'getRsaVerifier');
 
-      helpers.assertTokenValidationError(
-        {
-          issuer: 'https://wptest.auth0.com/',
-          audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-        },
-        'asfd',
-        `Signature algorithm of "HS256" is not supported. Expected the ID token to be signed with "RS256".`,
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
-        done
-      );
+      const options = Object.assign({}, DEFAULT_OPTIONS, {
+        algorithm: 'HS256'
+      });
+
+      createJWT(DEFAULT_PAYLOAD, options)
+        .then(token => {
+          helpers.assertTokenValidationError(
+            {},
+            'asfd',
+            `Signature algorithm of "HS256" is not supported. Expected the ID token to be signed with "RS256".`,
+            token,
+            done
+          );
+        })
+        .catch(done);
 
       expect(spy.callCount).to.be(0);
       IdTokenVerifier.prototype.getRsaVerifier.restore();
@@ -126,16 +129,20 @@ describe('jwt-verification', function() {
             })
           );
 
-        helpers.assertTokenValidationError(
-          {
-            issuer: 'https://wptest.auth0.com/',
-            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
-          },
-          'asfd',
-          'Invalid signature.',
-          defaultToken,
-          done
-        );
+        const options = Object.assign({}, DEFAULT_OPTIONS, {
+          issuer: '__TEST_ISSUER__',
+          audience: '__TEST_AUDIENCE__'
+        });
+
+        createJWT(DEFAULT_PAYLOAD, options).then(token => {
+          helpers.assertTokenValidationError(
+            DEFAULT_CONFIG,
+            'asfd',
+            'Invalid signature.',
+            token,
+            done
+          );
+        });
       });
 
       describe('when `rsaVerifier.verify` returns true', () => {
@@ -168,14 +175,16 @@ describe('jwt-verification', function() {
         });
 
         it('validates issuer', done => {
-          createJWT(DEFAULT_PAYLOAD)
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            issuer: '__ANOTHER_ISSUER__'
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
             .then(token => {
               helpers.assertTokenValidationError(
-                {
-                  issuer: 'https://example.com/'
-                },
+                DEFAULT_CONFIG,
                 'asfd',
-                `Issuer (iss) claim mismatch in the ID token, expected (https://example.com/), found (https://wptest.auth0.com/)`,
+                `Issuer (iss) claim mismatch in the ID token, expected "__TEST_ISSUER__", found "__ANOTHER_ISSUER__"`,
                 token,
                 done
               );
@@ -186,7 +195,7 @@ describe('jwt-verification', function() {
         it('validates presence of subject in the token', done => {
           const { sub, ...payload } = DEFAULT_PAYLOAD;
 
-          createJWT(payload)
+          createJWT(payload, DEFAULT_OPTIONS)
             .then(token => {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
@@ -216,16 +225,20 @@ describe('jwt-verification', function() {
         });
 
         it('validates audience string', done => {
-          helpers.assertTokenValidationError(
-            {
-              issuer: 'https://wptest.auth0.com/',
-              audience: '98fukfdjlkff'
-            },
-            'asfd',
-            `Audience (aud) claim mismatch in the ID token; expected 98fukfdjlkff but found ${DEFAULT_CONFIG.audience}`,
-            defaultToken,
-            done
-          );
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            issuer: '__TEST_ISSUER__',
+            audience: '__ANOTHER_AUDIENCE__'
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options).then(token => {
+            helpers.assertTokenValidationError(
+              DEFAULT_CONFIG,
+              'asfd',
+              `Audience (aud) claim mismatch in the ID token; expected "__TEST_AUDIENCE__" but found "__ANOTHER_AUDIENCE__"`,
+              token,
+              done
+            );
+          });
         });
 
         it('validates audience as an array', done => {
@@ -238,7 +251,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'oidufldsf',
-                'Audience (aud) claim mismatch in the ID token; expected gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt but was not one of audience-1, audience-2',
+                'Audience (aud) claim mismatch in the ID token; expected "__TEST_AUDIENCE__" but was not one of "audience-1, audience-2"',
                 token,
                 done
               )
@@ -249,7 +262,7 @@ describe('jwt-verification', function() {
         it('should validate nonce presence', done => {
           const { nonce, ...payload } = DEFAULT_PAYLOAD;
 
-          createJWT(payload)
+          createJWT(payload, DEFAULT_OPTIONS)
             .then(token =>
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
@@ -272,13 +285,17 @@ describe('jwt-verification', function() {
         });
 
         it('should validate nonce', done => {
-          helpers.assertTokenValidationError(
-            DEFAULT_CONFIG,
-            'invalid',
-            'Nonce (nonce) claim value mismatch in the ID token; expected "invalid", found "asfd"',
-            defaultToken,
-            done
-          );
+          createJWT(DEFAULT_PAYLOAD)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'invalid',
+                'Nonce (nonce) claim value mismatch in the ID token; expected "invalid", found "asfd"',
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('should fail if the nonce was not a string', done => {
@@ -360,7 +377,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
-                `Not Before Time (nbf) claim error in the ID token; current time (${new Date()}) is before the not before time (${validFromDate})`,
+                `Not Before Time (nbf) claim error in the ID token; current time "${new Date()}" is before the not before time "${validFromDate}"`,
                 token,
                 done
               );
@@ -385,13 +402,29 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the token expiration', done => {
-          helpers.assertTokenValidationError(
-            DEFAULT_CONFIG,
-            'asfd',
-            `Expiration Time (exp) claim error in the ID token; current time (${new Date()}) is after expiration time (${defaultExpDate})`,
-            defaultToken,
-            done
-          );
+          const expDate = new Date(0);
+          const expSeconds = Math.floor(Date.now() / 1000) - 10;
+          expDate.setUTCSeconds(expSeconds);
+
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            expiresIn: '-10s'
+          });
+
+          const config = Object.assign({}, DEFAULT_CONFIG, {
+            leeway: 0
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                config,
+                'asfd',
+                `Expiration Time (exp) claim error in the ID token; current time "${new Date()}" is after expiration time "${expDate}"`,
+                token,
+                done
+              );
+            })
+            .catch(done);
         });
 
         it('should validate the presence of issued-at claim', done => {
@@ -424,9 +457,9 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 DEFAULT_CONFIG,
                 'asfd',
-                `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
+                `Issued At (iat) claim error in the ID token; current time "${new Date()}" is before issued at time "${new Date(
                   (iat - 60) * 1000
-                )})`,
+                )}"`,
                 token,
                 done
               );
@@ -481,7 +514,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 config,
                 'asfd',
-                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time (${now}) is after last auth at ${validUntilDate}`,
+                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${validUntilDate}"`,
                 token,
                 done
               );
