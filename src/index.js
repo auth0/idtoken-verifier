@@ -140,7 +140,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(new error.TokenValidationError('Invalid signature.'));
     }
 
-    if (!iss) {
+    if (!iss || typeof iss !== 'string') {
       return cb(
         new error.TokenValidationError(
           'Issuer (iss) claim must be a string present in the ID token',
