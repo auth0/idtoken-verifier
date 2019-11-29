@@ -227,7 +227,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
     }
 
     if (Array.isArray(aud) && aud.length > 1) {
-      if (!azp) {
+      if (!azp || typeof azp !== 'string') {
         return cb(
           new error.TokenValidationError(
             'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
