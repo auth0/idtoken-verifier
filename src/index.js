@@ -338,7 +338,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (now > authTimeDate) {
         return cb(
           new error.TokenValidationError(
-            `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${authTimeDate}"`
+            `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth time at "${authTimeDate}"`
           )
         );
       }

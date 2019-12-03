@@ -514,7 +514,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 config,
                 'asfd',
-                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth at "${validUntilDate}"`,
+                `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth time at "${validUntilDate}"`,
                 token,
                 done
               );
