@@ -98,7 +98,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   }
 
   /* eslint-disable vars-on-top */
-  var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
+  var headerAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
   var signature = base64.decodeToHEX(jwt.encoded.signature);
 
   var alg = jwt.header.alg;
@@ -136,7 +136,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(err);
     }
 
-    if (!rsaVerifier.verify(headAndPayload, signature)) {
+    if (!rsaVerifier.verify(headerAndPayload, signature)) {
       return cb(new error.TokenValidationError('Invalid signature.'));
     }
 
