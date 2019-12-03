@@ -31,8 +31,7 @@ const createCertificate = () =>
 export const DEFAULT_PAYLOAD = {
   sub: 'id|123',
   payload: true,
-  nonce: 'asfd',
-  azp: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+  nonce: 'asfd'
 };
 
 export const DEFAULT_OPTIONS = {
