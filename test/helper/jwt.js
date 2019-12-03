@@ -30,7 +30,6 @@ const createCertificate = () =>
 
 export const DEFAULT_PAYLOAD = {
   sub: 'id|123',
-  payload: true,
   nonce: 'asfd'
 };
 
