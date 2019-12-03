@@ -53,7 +53,7 @@ describe('jwt-verification', function() {
         helpers.assertTokenValidationError(
           {},
           null,
-          'Cannot decode a malformed JWT',
+          'ID token could not be decoded',
           'asjkdhfgakdsjhf',
           done
         );

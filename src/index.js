@@ -94,7 +94,10 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   var jwt = this.decode(token);
 
   if (jwt instanceof Error) {
-    return cb(jwt, false);
+    return cb(
+      new error.TokenValidationError('ID token could not be decoded'),
+      false
+    );
   }
 
   /* eslint-disable vars-on-top */
