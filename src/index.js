@@ -137,7 +137,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
     }
 
     if (!rsaVerifier.verify(headerAndPayload, signature)) {
-      return cb(new error.TokenValidationError('Invalid signature.'));
+      return cb(new error.TokenValidationError('Invalid ID token signature.'));
     }
 
     if (!iss || typeof iss !== 'string') {
