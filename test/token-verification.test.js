@@ -402,6 +402,7 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the token expiration', done => {
+          const now = new Date();
           const expDate = new Date(0);
           const expSeconds = Math.floor(Date.now() / 1000) - 10;
           expDate.setUTCSeconds(expSeconds);
@@ -411,7 +412,8 @@ describe('jwt-verification', function() {
           });
 
           const config = Object.assign({}, DEFAULT_CONFIG, {
-            leeway: 0
+            leeway: 0,
+            __clock: () => now
           });
 
           createJWT(DEFAULT_PAYLOAD, options)
@@ -419,7 +421,7 @@ describe('jwt-verification', function() {
               helpers.assertTokenValidationError(
                 config,
                 'asfd',
-                `Expiration Time (exp) claim error in the ID token; current time "${new Date()}" is after expiration time "${expDate}"`,
+                `Expiration Time (exp) claim error in the ID token; current time "${now}" is after expiration time "${expDate}"`,
                 token,
                 done
               );
