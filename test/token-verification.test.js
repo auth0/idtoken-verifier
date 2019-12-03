@@ -15,6 +15,7 @@ import {
 } from './helper/jwt';
 
 const nowSeconds = () => Math.floor(Date.now() / 1000);
+const defaultTokenDate = new Date('Wed Dec 28 2016 23:00:00 GMT+0000');
 
 describe('jwt-verification', function() {
   describe('verify', () => {
@@ -585,7 +586,7 @@ describe('jwt-verification', function() {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
             __disableExpirationCheck: true,
-            __clock: () => new Date('Wed Dec 28 2016 23:00:00 GMT+0000')
+            __clock: () => defaultTokenDate
           },
           'asfd',
           done
@@ -600,7 +601,7 @@ describe('jwt-verification', function() {
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
             __disableExpirationCheck: true,
             jwksCache: CacheMock.validKey(),
-            __clock: () => new Date('Wed Dec 28 2016 23:00:00 GMT+0000')
+            __clock: () => defaultTokenDate
           },
           'asfd',
           done
