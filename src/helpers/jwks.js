@@ -1,7 +1,9 @@
+import p from 'es6-promise';
+p.polyfill();
+
 import urljoin from 'url-join';
 import * as base64 from './base64';
 import unfetch from 'unfetch';
-import Promise from 'promise-polyfill';
 
 export function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);
