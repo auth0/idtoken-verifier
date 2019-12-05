@@ -148,11 +148,16 @@ IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
  * Verifies that the `exp` and `nbf` claims are valid in the current moment.
  *
  * @method verifyExpAndNbf
+ * @deprecated Please use verify() instead
  * @param {String} exp value of `exp` claim
  * @param {String} nbf value of `nbf` claim
  * @return {boolean} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
+  console.warn(
+    'This method is deprecated and will be removed in the next major version'
+  );
+
   var now = new Date();
   var expDate = new Date(0);
   var nbfDate = new Date(0);
@@ -185,11 +190,16 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
  * Verifies that the `exp` and `iat` claims are valid in the current moment.
  *
  * @method verifyExpAndIat
+ * @deprecated Please use verify() instead
  * @param {String} exp value of `exp` claim
  * @param {String} iat value of `iat` claim
  * @return {boolean} if token is valid according to `exp` and `iat`
  */
 IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
+  console.warn(
+    'This method is deprecated and will be removed in the next major version'
+  );
+
   var now = new Date();
   var expDate = new Date(0);
   var iatDate = new Date(0);
