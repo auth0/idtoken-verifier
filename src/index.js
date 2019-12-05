@@ -7,14 +7,7 @@ import * as base64 from './helpers/base64';
 import * as jwks from './helpers/jwks';
 import * as error from './helpers/error';
 import DummyCache from './helpers/dummy-cache';
-
-var supportedAlg = 'RS256';
-var isNumber = n => typeof n === 'number';
-var defaultClock = () => new Date();
-var DEFAULT_LEEWAY = 60;
-
-var tryParseInt = n =>
-  isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
+var supportedAlgs = ['RS256'];
 
 /**
  * Creates a new id_token verifier
@@ -28,7 +21,7 @@ var tryParseInt = n =>
  * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
  * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
- * @param {number} [parameters.leeway=60] number of seconds that the clock can be out of sync
+ * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
  * while validating expiration of the id_token
  */
 function IdTokenVerifier(parameters) {
@@ -38,13 +31,9 @@ function IdTokenVerifier(parameters) {
   this.expectedAlg = options.expectedAlg || 'RS256';
   this.issuer = options.issuer;
   this.audience = options.audience;
-  this.leeway = options.leeway === 0 ? 0 : options.leeway || DEFAULT_LEEWAY;
+  this.leeway = options.leeway || 0;
   this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
-  this.maxAge = options.maxAge;
-
-  this.__clock =
-    typeof options.__clock === 'function' ? options.__clock : defaultClock;
 
   if (this.leeway < 0 || this.leeway > 300) {
     throw new error.ConfigurationError(
@@ -52,13 +41,13 @@ function IdTokenVerifier(parameters) {
     );
   }
 
-  if (supportedAlg !== this.expectedAlg) {
+  if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
     throw new error.ConfigurationError(
-      'Signature algorithm of "' +
+      'Algorithm ' +
         this.expectedAlg +
-        '" is not supported. Expected the ID token to be signed with "' +
-        supportedAlg +
-        '".'
+        ' is not supported. (Expected algs: [' +
+        supportedAlgs.join(',') +
+        '])'
     );
   }
 }
@@ -83,52 +72,36 @@ function IdTokenVerifier(parameters) {
  * @param {String} [nonce] nonce value that should match the one in the id_token claims
  * @param {verifyCallback} cb callback used to notify the results of the validation
  */
-IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
-  if (!token) {
-    return cb(
-      new error.TokenValidationError('ID token is required but missing'),
-      false
-    );
-  }
-
+IdTokenVerifier.prototype.verify = function(token, nonce, cb) {
   var jwt = this.decode(token);
 
   if (jwt instanceof Error) {
-    return cb(
-      new error.TokenValidationError('ID token could not be decoded'),
-      false
-    );
+    return cb(jwt, false);
   }
 
   /* eslint-disable vars-on-top */
-  var headerAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
+  var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
   var signature = base64.decodeToHEX(jwt.encoded.signature);
 
   var alg = jwt.header.alg;
   var kid = jwt.header.kid;
 
   var aud = jwt.payload.aud;
-  var sub = jwt.payload.sub;
   var iss = jwt.payload.iss;
   var exp = jwt.payload.exp;
   var nbf = jwt.payload.nbf;
-  var iat = jwt.payload.iat;
-  var azp = jwt.payload.azp;
-  var auth_time = jwt.payload.auth_time;
-  var nonce = jwt.payload.nonce;
-  var now = this.__clock();
-
+  var tnonce = jwt.payload.nonce || null;
   /* eslint-enable vars-on-top */
   var _this = this;
 
   if (_this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
-        'Signature algorithm of "' +
+        'Algorithm ' +
           alg +
-          '" is not supported. Expected the ID token to be signed with "' +
-          supportedAlg +
-          '".'
+          ' is not supported. (Expected algs: [' +
+          supportedAlgs.join(',') +
+          '])'
       ),
       false
     );
@@ -138,213 +111,36 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
     if (err) {
       return cb(err);
     }
-
-    if (!rsaVerifier.verify(headerAndPayload, signature)) {
-      return cb(new error.TokenValidationError('Invalid ID token signature.'));
-    }
-
-    if (!iss || typeof iss !== 'string') {
-      return cb(
-        new error.TokenValidationError(
-          'Issuer (iss) claim must be a string present in the ID token',
-          false
-        )
-      );
-    }
-
-    if (_this.issuer !== iss) {
-      return cb(
-        new error.TokenValidationError(
-          'Issuer (iss) claim mismatch in the ID token, expected "' +
-            _this.issuer +
-            '", found "' +
-            iss +
-            '"'
-        ),
-        false
-      );
-    }
-
-    if (!sub || typeof sub !== 'string') {
-      return cb(
-        new error.TokenValidationError(
-          'Subject (sub) claim must be a string present in the ID token'
-        ),
-        false
-      );
-    }
-
-    if (!aud || (typeof aud !== 'string' && !Array.isArray(aud))) {
-      return cb(
-        new error.TokenValidationError(
-          'Audience (aud) claim must be a string or array of strings present in the ID token'
-        )
-      );
-    }
-
-    if (Array.isArray(aud) && !aud.includes(_this.audience)) {
-      return cb(
-        new error.TokenValidationError(
-          'Audience (aud) claim mismatch in the ID token; expected "' +
-            _this.audience +
-            '" but was not one of "' +
-            aud.join(', ') +
-            '"'
-        )
-      );
-    } else if (typeof aud === 'string' && _this.audience !== aud) {
-      return cb(
-        new error.TokenValidationError(
-          'Audience (aud) claim mismatch in the ID token; expected "' +
-            _this.audience +
-            '" but found "' +
-            aud +
-            '"'
-        ),
-        false
-      );
-    }
-
-    if (requestedNonce) {
-      if (!nonce || typeof nonce !== 'string') {
+    if (rsaVerifier.verify(headAndPayload, signature)) {
+      if (_this.issuer !== iss) {
         return cb(
-          new error.TokenValidationError(
-            'Nonce (nonce) claim must be a string present in the ID token'
-          ),
+          new error.TokenValidationError('Issuer ' + iss + ' is not valid.'),
           false
         );
       }
 
-      if (nonce !== requestedNonce) {
+      if (_this.audience !== aud) {
         return cb(
-          new error.TokenValidationError(
-            'Nonce (nonce) claim value mismatch in the ID token; expected "' +
-              requestedNonce +
-              '", found "' +
-              nonce +
-              '"'
-          ),
+          new error.TokenValidationError('Audience ' + aud + ' is not valid.'),
           false
         );
       }
-    }
 
-    if (Array.isArray(aud) && aud.length > 1) {
-      if (!azp || typeof azp !== 'string') {
+      if (tnonce !== nonce) {
         return cb(
-          new error.TokenValidationError(
-            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
-            false
-          )
-        );
-      }
-
-      if (azp !== _this.audience) {
-        return cb(
-          new error.TokenValidationError(
-            'Authorized Party (azp) claim mismatch in the ID token; expected "' +
-              _this.audience +
-              '", found "' +
-              azp +
-              '"',
-            false
-          )
-        );
-      }
-    }
-
-    if (!exp || !isNumber(exp)) {
-      return cb(
-        new error.TokenValidationError(
-          'Expiration Time (exp) claim must be a number present in the ID token',
+          new error.TokenValidationError('Nonce does not match.'),
           false
-        )
-      );
-    }
-
-    if (!iat || !isNumber(iat)) {
-      return cb(
-        new error.TokenValidationError(
-          'Issued At (iat) claim must be a number present in the ID token'
-        )
-      );
-    }
-
-    var expTime = exp + _this.leeway;
-    var expTimeDate = new Date(0);
-    expTimeDate.setUTCSeconds(expTime);
-
-    if (now > expTimeDate) {
-      return cb(
-        new error.TokenValidationError(
-          'Expiration Time (exp) claim error in the ID token; current time "' +
-            now +
-            '" is after expiration time "' +
-            expTimeDate +
-            '"',
-          false
-        )
-      );
-    }
-
-    var iatTime = iat - _this.leeway;
-    var iatTimeDate = new Date(0);
-    iatTimeDate.setUTCSeconds(iatTime);
-
-    if (now < iatTimeDate) {
-      return cb(
-        new error.TokenValidationError(
-          'Issued At (iat) claim error in the ID token; current time "' +
-            now +
-            '" is before issued at time "' +
-            iatTimeDate +
-            '"'
-        )
-      );
-    }
-
-    if (nbf && isNumber(nbf)) {
-      var nbfTime = nbf - _this.leeway;
-      var nbfTimeDate = new Date(0);
-      nbfTimeDate.setUTCSeconds(nbfTime);
-
-      if (now < nbfTimeDate) {
-        return cb(
-          new error.TokenValidationError(
-            'Not Before Time (nbf) claim error in the ID token; current time "' +
-              now +
-              '" is before the not before time "' +
-              nbfTimeDate +
-              '"'
-          )
-        );
-      }
-    }
-
-    if (_this.maxAge) {
-      if (!auth_time || !isNumber(auth_time)) {
-        return cb(
-          new error.TokenValidationError(
-            'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
-          )
         );
       }
 
-      var authValidUntil = auth_time + _this.maxAge + _this.leeway;
-      var authTimeDate = new Date(0);
+      var expirationError = _this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
 
-      authTimeDate.setUTCSeconds(authValidUntil);
-
-      if (now > authTimeDate) {
-        return cb(
-          new error.TokenValidationError(
-            `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth time at "${authTimeDate}"`
-          )
-        );
+      if (expirationError) {
+        return cb(expirationError, false);
       }
+      return cb(null, jwt.payload);
     }
-
-    return cb(null, jwt.payload);
+    return cb(new error.TokenValidationError('Invalid signature.'));
   });
 };
 
@@ -357,7 +153,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
  * @return {boolean} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
-  var now = this.__clock();
+  var now = new Date();
   var expDate = new Date(0);
   var nbfDate = new Date(0);
 
@@ -365,38 +161,20 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
     return null;
   }
 
-  var parsedExp = tryParseInt(exp);
-
-  if (!parsedExp) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim must be a number present in the ID token'
-    );
-  }
-
-  expDate.setUTCSeconds(parsedExp + this.leeway);
+  expDate.setUTCSeconds(exp + this.leeway);
 
   if (now > expDate) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim error in the ID token; current time (' +
-        now +
-        ') is after expiration time (' +
-        expDate +
-        ')'
-    );
+    return new error.TokenValidationError('Expired token.');
   }
 
   if (typeof nbf === 'undefined') {
     return null;
   }
-
   nbfDate.setUTCSeconds(nbf - this.leeway);
-
   if (now < nbfDate) {
     return new error.TokenValidationError(
-      "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Current time (" +
-        now +
-        ') is before ' +
-        nbfDate
+      'The token is not valid until later in the future. ' +
+        'Please check your computed clock.'
     );
   }
 
@@ -412,7 +190,7 @@ IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
  * @return {boolean} if token is valid according to `exp` and `iat`
  */
 IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
-  var now = this.__clock();
+  var now = new Date();
   var expDate = new Date(0);
   var iatDate = new Date(0);
 
@@ -420,40 +198,19 @@ IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
     return null;
   }
 
-  var parsedExp = tryParseInt(exp);
-
-  if (!parsedExp) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim must be a number present in the ID token'
-    );
-  }
-
-  expDate.setUTCSeconds(parsedExp + this.leeway);
+  expDate.setUTCSeconds(exp + this.leeway);
 
   if (now > expDate) {
     return new error.TokenValidationError('Expired token.');
   }
 
-  var parsedIat = tryParseInt(iat);
-
-  if (!parsedIat) {
-    return new error.TokenValidationError(
-      'Issued At (iat) claim must be a number present in the ID token'
-    );
-  }
-
-  iatDate.setUTCSeconds(parsedIat - this.leeway);
+  iatDate.setUTCSeconds(iat - this.leeway);
 
   if (now < iatDate) {
     return new error.TokenValidationError(
-      'Issued At (iat) claim error in the ID token; current time (' +
-        now +
-        ') is before issued at time (' +
-        iatDate +
-        ')'
+      'The token was issued in the future. Please check your computed clock.'
     );
   }
-
   return null;
 };
 
@@ -554,11 +311,11 @@ IdTokenVerifier.prototype.validateAccessToken = function(
   if (this.expectedAlg !== alg) {
     return cb(
       new error.TokenValidationError(
-        'Signature algorithm of "' +
+        'Algorithm ' +
           alg +
-          '" is not supported. Expected "' +
+          ' is not supported. (Expected alg: ' +
           this.expectedAlg +
-          '"'
+          ')'
       )
     );
   }
