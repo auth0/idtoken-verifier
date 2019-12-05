@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.5.0](https://github.com/auth0/idtoken-verifier/tree/v1.5.0) (2019-12-05)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.0...v1.5.0)
+
+**Added**
+
+- [SDK-1166] Replaced promise-polyfill with es6-promise, applied globally [\#78](https://github.com/auth0/idtoken-verifier/pull/78) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
 ## [v1.4.1](https://github.com/auth0/idtoken-verifier/tree/v1.4.1) (2019-07-09)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.0...v1.4.1)
