@@ -36,8 +36,19 @@ export function getJWKS(options, cb) {
       // eslint-disable-next-line no-plusplus
       for (a = 0; a < data.keys.length && matchingKey === null; a++) {
         key = data.keys[a];
+
         if (key.kid === options.kid) {
           matchingKey = key;
+        }
+
+        if (!matchingKey) {
+          return cb(
+            new Error(
+              'Could not find a public key for Key ID (kid) "' +
+                options.kid +
+                '"'
+            )
+          );
         }
       }
       return cb(null, process(matchingKey));
