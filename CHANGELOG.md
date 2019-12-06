@@ -1,5 +1,9 @@
 # Change Log
 
+## [v1.5.1](https://github.com/auth0/idtoken-verifier/tree/v1.5.1) (2019-12-06)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.1...v1.5.1)
+
 ## [v1.5.0](https://github.com/auth0/idtoken-verifier/tree/v1.5.0) (2019-12-05)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.0...v1.5.0)
