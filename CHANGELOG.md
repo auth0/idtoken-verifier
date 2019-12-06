@@ -2,7 +2,11 @@
 
 ## [v2.0.0](https://github.com/auth0/idtoken-verifier/tree/v2.0.0) (2019-12-06)
 
-[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.0...v2.0.0)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.1...v2.0.0)
+
+This new major version introduces more validation checks on ID tokens for [OIDC conformance](https://openid.net/specs/openid-connect-core-1_0-final.html#IDTokenValidation) and as such **could introduce a breaking change** if you are already validating tokens that are not OIDC conformant.
+
+In addition, methods that were marked as deprecated in [v1.5.0](https://github.com/auth0/idtoken-verifier/releases/v1.5.0) have now been removed. From here, always use the `verify` method to validate ID tokens.
 
 **Changed**
 
