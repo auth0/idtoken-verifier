@@ -39,7 +39,6 @@ function IdTokenVerifier(parameters) {
   this.issuer = options.issuer;
   this.audience = options.audience;
   this.leeway = options.leeway === 0 ? 0 : options.leeway || DEFAULT_LEEWAY;
-  this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
   this.maxAge = options.maxAge;
 

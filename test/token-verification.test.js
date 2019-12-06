@@ -585,7 +585,6 @@ describe('jwt-verification', function() {
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-            __disableExpirationCheck: true,
             __clock: () => defaultTokenDate
           },
           'asfd',
@@ -599,7 +598,6 @@ describe('jwt-verification', function() {
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-            __disableExpirationCheck: true,
             jwksCache: CacheMock.validKey(),
             __clock: () => defaultTokenDate
           },
