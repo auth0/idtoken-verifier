@@ -13,9 +13,6 @@ var isNumber = n => typeof n === 'number';
 var defaultClock = () => new Date();
 var DEFAULT_LEEWAY = 60;
 
-var tryParseInt = n =>
-  isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
-
 /**
  * Creates a new id_token verifier
  * @constructor
@@ -39,7 +36,6 @@ function IdTokenVerifier(parameters) {
   this.issuer = options.issuer;
   this.audience = options.audience;
   this.leeway = options.leeway === 0 ? 0 : options.leeway || DEFAULT_LEEWAY;
-  this.__disableExpirationCheck = options.__disableExpirationCheck || false;
   this.jwksURI = options.jwksURI;
   this.maxAge = options.maxAge;
 
@@ -346,127 +342,6 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
 
     return cb(null, jwt.payload);
   });
-};
-
-/**
- * Verifies that the `exp` and `nbf` claims are valid in the current moment.
- *
- * @method verifyExpAndNbf
- * @deprecated Please use verify() instead
- * @param {String} exp value of `exp` claim
- * @param {String} nbf value of `nbf` claim
- * @return {boolean} if token is valid according to `exp` and `nbf`
- */
-IdTokenVerifier.prototype.verifyExpAndNbf = function(exp, nbf) {
-  console.warn(
-    'This method is deprecated and will be removed in the next major version'
-  );
-
-  var now = new Date();
-  var now = this.__clock();
-  var expDate = new Date(0);
-  var nbfDate = new Date(0);
-
-  if (this.__disableExpirationCheck) {
-    return null;
-  }
-
-  var parsedExp = tryParseInt(exp);
-
-  if (!parsedExp) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim must be a number present in the ID token'
-    );
-  }
-
-  expDate.setUTCSeconds(parsedExp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim error in the ID token; current time (' +
-        now +
-        ') is after expiration time (' +
-        expDate +
-        ')'
-    );
-  }
-
-  if (typeof nbf === 'undefined') {
-    return null;
-  }
-
-  nbfDate.setUTCSeconds(nbf - this.leeway);
-
-  if (now < nbfDate) {
-    return new error.TokenValidationError(
-      "Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Current time (" +
-        now +
-        ') is before ' +
-        nbfDate
-    );
-  }
-
-  return null;
-};
-
-/**
- * Verifies that the `exp` and `iat` claims are valid in the current moment.
- *
- * @method verifyExpAndIat
- * @deprecated Please use verify() instead
- * @param {String} exp value of `exp` claim
- * @param {String} iat value of `iat` claim
- * @return {boolean} if token is valid according to `exp` and `iat`
- */
-IdTokenVerifier.prototype.verifyExpAndIat = function(exp, iat) {
-  console.warn(
-    'This method is deprecated and will be removed in the next major version'
-  );
-
-  var now = new Date();
-  var now = this.__clock();
-  var expDate = new Date(0);
-  var iatDate = new Date(0);
-
-  if (this.__disableExpirationCheck) {
-    return null;
-  }
-
-  var parsedExp = tryParseInt(exp);
-
-  if (!parsedExp) {
-    return new error.TokenValidationError(
-      'Expiration Time (exp) claim must be a number present in the ID token'
-    );
-  }
-
-  expDate.setUTCSeconds(parsedExp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
-  }
-
-  var parsedIat = tryParseInt(iat);
-
-  if (!parsedIat) {
-    return new error.TokenValidationError(
-      'Issued At (iat) claim must be a number present in the ID token'
-    );
-  }
-
-  iatDate.setUTCSeconds(parsedIat - this.leeway);
-
-  if (now < iatDate) {
-    return new error.TokenValidationError(
-      'Issued At (iat) claim error in the ID token; current time (' +
-        now +
-        ') is before issued at time (' +
-        iatDate +
-        ')'
-    );
-  }
-
-  return null;
 };
 
 IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {

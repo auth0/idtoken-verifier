@@ -363,6 +363,7 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the nbf claim', done => {
+          const now = new Date();
           const nbfDate = new Date();
           nbfDate.setSeconds(nbfDate.getSeconds() + 100);
 
@@ -373,12 +374,16 @@ describe('jwt-verification', function() {
             nbf: Math.floor(nbfDate.getTime() / 1000)
           });
 
+          const config = Object.assign({}, DEFAULT_CONFIG, {
+            __clock: () => now
+          });
+
           createJWT(payload, DEFAULT_OPTIONS)
             .then(token => {
               helpers.assertTokenValidationError(
-                DEFAULT_CONFIG,
+                config,
                 'asfd',
-                `Not Before Time (nbf) claim error in the ID token; current time "${new Date()}" is before the not before time "${validFromDate}"`,
+                `Not Before Time (nbf) claim error in the ID token; current time "${now}" is before the not before time "${validFromDate}"`,
                 token,
                 done
               );
@@ -405,7 +410,7 @@ describe('jwt-verification', function() {
         it('should validate the token expiration', done => {
           const now = new Date();
           const expDate = new Date(0);
-          const expSeconds = Math.floor(Date.now() / 1000) - 10;
+          const expSeconds = Math.floor(now.getTime() / 1000) - 10;
           expDate.setUTCSeconds(expSeconds);
 
           const options = Object.assign({}, DEFAULT_OPTIONS, {
@@ -585,7 +590,6 @@ describe('jwt-verification', function() {
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-            __disableExpirationCheck: true,
             __clock: () => defaultTokenDate
           },
           'asfd',
@@ -599,7 +603,6 @@ describe('jwt-verification', function() {
           {
             issuer: 'https://wptest.auth0.com/',
             audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
-            __disableExpirationCheck: true,
             jwksCache: CacheMock.validKey(),
             __clock: () => defaultTokenDate
           },
@@ -702,115 +705,6 @@ describe('jwt-verification', function() {
       expect(result.message).to.eql(
         'Token header or payload is not valid JSON'
       );
-    });
-  });
-
-  describe('verifyExpAndIat', () => {
-    it('disables validation when __disableExpirationCheck is set', () => {
-      const itv = new IdTokenVerifier({ __disableExpirationCheck: true });
-      const result = itv.verifyExpAndIat();
-
-      expect(result).to.be(null);
-    });
-
-    it('validated exp presence', () => {
-      const err = new IdTokenVerifier().verifyExpAndIat();
-
-      expect(err.message).to.eql(
-        'Expiration Time (exp) claim must be a number present in the ID token'
-      );
-
-      expect(err).to.be.a(error.TokenValidationError);
-    });
-
-    it('validates exp', () => {
-      //2016-12-28
-      const exp = '148296903';
-      const err = new IdTokenVerifier().verifyExpAndIat(exp);
-
-      expect(err.message).to.eql('Expired token.');
-      expect(err).to.be.a(error.TokenValidationError);
-    });
-
-    it('validates iat', () => {
-      //2439-12-07
-      const exp = `${nowSeconds() + 20000}`;
-      const iat = '14829690311';
-      const err = new IdTokenVerifier().verifyExpAndIat(exp, iat);
-
-      expect(err.message).to.eql(
-        `Issued At (iat) claim error in the ID token; current time (${new Date()}) is before issued at time (${new Date(
-          (iat - 60) * 1000
-        )})`
-      );
-
-      expect(err).to.be.a(error.TokenValidationError);
-    });
-
-    describe('verifyExpAndNbf', () => {
-      const now = new Date();
-
-      it('disables validation when __disableExpirationCheck is set', () => {
-        const itv = new IdTokenVerifier({ __disableExpirationCheck: true });
-        const result = itv.verifyExpAndNbf();
-
-        expect(result).to.be(null);
-      });
-
-      it('validated exp presence', () => {
-        const err = new IdTokenVerifier().verifyExpAndNbf();
-
-        expect(err.message).to.eql(
-          'Expiration Time (exp) claim must be a number present in the ID token'
-        );
-
-        expect(err).to.be.a(error.TokenValidationError);
-      });
-
-      it('validates exp', () => {
-        //2016-12-28
-        const exp = 148296903;
-        const expDate = new Date(0);
-        const err = new IdTokenVerifier({
-          __clock: () => now
-        }).verifyExpAndNbf(exp);
-
-        expDate.setUTCSeconds(exp + 60);
-
-        expect(err.message).to.eql(
-          `Expiration Time (exp) claim error in the ID token; current time (${now}) is after expiration time (${expDate})`
-        );
-        expect(err).to.be.a(error.TokenValidationError);
-      });
-
-      it('validates nbf', () => {
-        //2439-12-07
-
-        const exp = `${nowSeconds() + 20000}`;
-        const nbf = `${nowSeconds() + 120}`;
-        const nbfDate = new Date(0);
-        const err = new IdTokenVerifier({
-          __clock: () => now
-        }).verifyExpAndNbf(exp, nbf);
-
-        nbfDate.setUTCSeconds(nbf - 60);
-
-        expect(err.message).to.eql(
-          `Not Before time (nbf) claim in the ID token indicates that this token can't be used just yet. Current time (${now}) is before ${nbfDate}`
-        );
-
-        expect(err).to.be.a(error.TokenValidationError);
-      });
-    });
-
-    it('returns null if valid', () => {
-      //2439-12-07
-      const exp = `${Date.now() / 1000 + 20000}`;
-      //1974-09-13
-      const iat = '148296903';
-      const result = new IdTokenVerifier().verifyExpAndIat(exp, iat);
-
-      expect(result).to.be(null);
     });
   });
 });
