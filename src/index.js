@@ -13,9 +13,6 @@ var isNumber = n => typeof n === 'number';
 var defaultClock = () => new Date();
 var DEFAULT_LEEWAY = 60;
 
-var tryParseInt = n =>
-  isNumber(n) ? n : isNaN(parseInt(n)) ? false : parseInt(n);
-
 /**
  * Creates a new id_token verifier
  * @constructor
