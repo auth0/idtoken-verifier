@@ -363,6 +363,7 @@ describe('jwt-verification', function() {
         });
 
         it('should validate the nbf claim', done => {
+          const now = new Date();
           const nbfDate = new Date();
           nbfDate.setSeconds(nbfDate.getSeconds() + 100);
 
@@ -373,12 +374,16 @@ describe('jwt-verification', function() {
             nbf: Math.floor(nbfDate.getTime() / 1000)
           });
 
+          const config = Object.assign({}, DEFAULT_CONFIG, {
+            __clock: () => now
+          });
+
           createJWT(payload, DEFAULT_OPTIONS)
             .then(token => {
               helpers.assertTokenValidationError(
-                DEFAULT_CONFIG,
+                config,
                 'asfd',
-                `Not Before Time (nbf) claim error in the ID token; current time "${new Date()}" is before the not before time "${validFromDate}"`,
+                `Not Before Time (nbf) claim error in the ID token; current time "${now}" is before the not before time "${validFromDate}"`,
                 token,
                 done
               );
@@ -405,7 +410,7 @@ describe('jwt-verification', function() {
         it('should validate the token expiration', done => {
           const now = new Date();
           const expDate = new Date(0);
-          const expSeconds = Math.floor(Date.now() / 1000) - 10;
+          const expSeconds = Math.floor(now.getTime() / 1000) - 10;
           expDate.setUTCSeconds(expSeconds);
 
           const options = Object.assign({}, DEFAULT_OPTIONS, {
