@@ -14,15 +14,18 @@ A lightweight library to decode and verify RS JWT meant for the browser.
 import IdTokenVerifier from 'idtoken-verifier';
 
 const verifier = new IdTokenVerifier({
-    issuer: 'https://my.auth0.com/',
-    audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
+  issuer: 'https://my.auth0.com/',
+  audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt'
 });
 
 verifier.verify(id_token, nonce, (error, payload) => {
-    ...
-});
+  if (error) {
+    // handle the error
+    return;
+  }
 
-var decoded = verifier.decode(id_token);
+  // do something with `payload`
+});
 ```
 
 ### IdTokenVerifier
@@ -43,7 +46,7 @@ Parameters:
 
 ### verifier.verify
 
-This method will decode the token, verify the issuer, audience, expiration, algorithm and nonce claims and after that will verify the token signature.
+This method will decode the ID token, then [verify the token for OIDC compliance](https://openid.net/specs/openid-connect-core-1_0-final.html#IDTokenValidation) using a series of checks on the claims found inside the token.
 
 Parameters
 
