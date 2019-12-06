@@ -18,9 +18,10 @@
     "ci:coverage": "codecov",
     "jsdoc:generate": "jsdoc --configure .jsdoc.json --verbose",
     "release:clean": "node scripts/cleanup.js",
-    "preversion": "node scripts/prepare.js",
+    "preversion": "npm run build && node scripts/prepare.js",
     "version": "node scripts/changelog.js && node scripts/jsdocs.js && node scripts/telemetry.js",
-    "postversion": "npm run release:clean",
+    "postversion": "npm run release:clean && npm run print-bundle-size",
+    "prepublishOnly": "npm run build",
     "upload": "ccu build",
     "print-bundle-size": "node scripts/print-bundle-size",
     "precommit": "pretty-quick --staged"
