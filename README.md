@@ -46,7 +46,7 @@ Parameters:
 
 ### verifier.verify
 
-This method will decode the token then verify the token for OIDC compliance using a series of checks on the claims found in the token.
+This method will decode the token then [verify the token for OIDC compliance](https://openid.net/specs/openid-connect-core-1_0-final.html#IDTokenValidation) using a series of checks on the claims found in the token.
 
 Parameters
 
