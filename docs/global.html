@@ -60,18 +60,6 @@
           ><a href="global.html#verify">verify</a></span
         >
       </li>
-      <li class="nav-item">
-        <span class="nav-item-type type-function">F</span
-        ><span class="nav-item-name"
-          ><a href="global.html#verifyExpAndIat">verifyExpAndIat</a></span
-        >
-      </li>
-      <li class="nav-item">
-        <span class="nav-item-type type-function">F</span
-        ><span class="nav-item-name"
-          ><a href="global.html#verifyExpAndNbf">verifyExpAndNbf</a></span
-        >
-      </li>
     </nav>
 
     <div id="main">
@@ -109,7 +97,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line250">line 250</a>
+                    <a href="index.js.html#line380">line 380</a>
                   </li>
                 </ul>
               </dd>
@@ -193,7 +181,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line292">line 292</a>
+                    <a href="index.js.html#line422">line 422</a>
                   </li>
                 </ul>
               </dd>
@@ -312,7 +300,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line61">line 61</a>
+                    <a href="index.js.html#line68">line 68</a>
                   </li>
                 </ul>
               </dd>
@@ -388,182 +376,6 @@
             </table>
           </div>
 
-          <div class="section-method">
-            <h4 class="name" id="verifyExpAndIat">
-              <span class="type-signature"></span>verifyExpAndIat<span
-                class="signature"
-                >(exp, iat)</span
-              ><span class="type-signature"> &rarr; {boolean}</span>
-            </h4>
-
-            <div class="description">
-              <p>
-                Verifies that the <code>exp</code> and <code>iat</code> claims
-                are valid in the current moment.
-              </p>
-            </div>
-
-            <dl class="details">
-              <dt class="tag-source">Source:</dt>
-              <dd class="tag-source">
-                <ul class="dummy">
-                  <li>
-                    <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line184">line 184</a>
-                  </li>
-                </ul>
-              </dd>
-            </dl>
-
-            <h5>Parameters:</h5>
-
-            <table class="params">
-              <thead>
-                <tr>
-                  <th>Name</th>
-
-                  <th>Type</th>
-
-                  <th class="last">Description</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td class="name"><code>exp</code></td>
-
-                  <td class="type">
-                    <span class="param-type"><code>String</code></span>
-                  </td>
-
-                  <td class="description last">
-                    <p>value of <code>exp</code> claim</p>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td class="name"><code>iat</code></td>
-
-                  <td class="type">
-                    <span class="param-type"><code>String</code></span>
-                  </td>
-
-                  <td class="description last">
-                    <p>value of <code>iat</code> claim</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="section-returns">
-              <h5>Returns:</h5>
-
-              <dl class="param-type">
-                <dt>
-                  Type:
-                </dt>
-                <dd>
-                  <span class="param-type"><code>boolean</code></span>
-                </dd>
-              </dl>
-
-              <div class="param-desc">
-                <p>
-                  if token is valid according to <code>exp</code> and
-                  <code>iat</code>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="section-method">
-            <h4 class="name" id="verifyExpAndNbf">
-              <span class="type-signature"></span>verifyExpAndNbf<span
-                class="signature"
-                >(exp, nbf)</span
-              ><span class="type-signature"> &rarr; {boolean}</span>
-            </h4>
-
-            <div class="description">
-              <p>
-                Verifies that the <code>exp</code> and <code>nbf</code> claims
-                are valid in the current moment.
-              </p>
-            </div>
-
-            <dl class="details">
-              <dt class="tag-source">Source:</dt>
-              <dd class="tag-source">
-                <ul class="dummy">
-                  <li>
-                    <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line147">line 147</a>
-                  </li>
-                </ul>
-              </dd>
-            </dl>
-
-            <h5>Parameters:</h5>
-
-            <table class="params">
-              <thead>
-                <tr>
-                  <th>Name</th>
-
-                  <th>Type</th>
-
-                  <th class="last">Description</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td class="name"><code>exp</code></td>
-
-                  <td class="type">
-                    <span class="param-type"><code>String</code></span>
-                  </td>
-
-                  <td class="description last">
-                    <p>value of <code>exp</code> claim</p>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td class="name"><code>nbf</code></td>
-
-                  <td class="type">
-                    <span class="param-type"><code>String</code></span>
-                  </td>
-
-                  <td class="description last">
-                    <p>value of <code>nbf</code> claim</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="section-returns">
-              <h5>Returns:</h5>
-
-              <dl class="param-type">
-                <dt>
-                  Type:
-                </dt>
-                <dd>
-                  <span class="param-type"><code>boolean</code></span>
-                </dd>
-              </dl>
-
-              <div class="param-desc">
-                <p>
-                  if token is valid according to <code>exp</code> and
-                  <code>nbf</code>
-                </p>
-              </div>
-            </div>
-          </div>
-
           <h3 class="subsection-title">Type Definitions</h3>
 
           <div class="section-members">
@@ -625,7 +437,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line242">line 242</a>
+                    <a href="index.js.html#line372">line 372</a>
                   </li>
                 </ul>
               </dd>
@@ -653,7 +465,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line286">line 286</a>
+                    <a href="index.js.html#line416">line 416</a>
                   </li>
                 </ul>
               </dd>
@@ -713,7 +525,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line55">line 55</a>
+                    <a href="index.js.html#line62">line 62</a>
                   </li>
                 </ul>
               </dd>
@@ -773,7 +585,7 @@
 
     <footer>
       Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on
-      Thu Dec 05 2019 12:09:21 GMT+0000 (Greenwich Mean Time) using the Minami
+      Fri Dec 06 2019 17:47:17 GMT+0000 (Greenwich Mean Time) using the Minami
       theme.
     </footer>
 

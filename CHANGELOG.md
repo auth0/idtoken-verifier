@@ -1,8 +1,40 @@
 # Change Log
 
+## [v2.0.0](https://github.com/auth0/idtoken-verifier/tree/v2.0.0) (2019-12-06)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.1...v2.0.0)
+
+This new major version introduces more validation checks on ID tokens for [OIDC conformance](https://openid.net/specs/openid-connect-core-1_0-final.html#IDTokenValidation) and as such **could introduce a breaking change** if you are already validating tokens that are not OIDC conformant.
+
+In addition, methods that were marked as deprecated in [v1.5.0](https://github.com/auth0/idtoken-verifier/releases/v1.5.0) have now been removed. From here, always use the `verify` method to validate ID tokens.
+
+**Changed**
+
+- Added build step into the versioning process (to be done before release) [\#93](https://github.com/auth0/idtoken-verifier/pull/93) ([stevehobbsdev](https://github.com/stevehobbsdev))
+- Updated dependencies [\#92](https://github.com/auth0/idtoken-verifier/pull/92) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+**Removed**
+
+- Removed deprecated methods + tests [\#90](https://github.com/auth0/idtoken-verifier/pull/90) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+**Security**
+
+- [SDK-974] Improved OIDC compliance [\#89](https://github.com/auth0/idtoken-verifier/pull/89) ([stevehobbsdev](https://github.com/stevehobbsdev))
+- Bump tough-cookie from 2.3.2 to 2.3.4 [\#88](https://github.com/auth0/idtoken-verifier/pull/88) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump stringstream from 0.0.5 to 0.0.6 [\#87](https://github.com/auth0/idtoken-verifier/pull/87) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump extend from 3.0.1 to 3.0.2 [\#86](https://github.com/auth0/idtoken-verifier/pull/86) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump sshpk from 1.13.0 to 1.16.1 [\#85](https://github.com/auth0/idtoken-verifier/pull/85) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump lodash.merge from 4.6.1 to 4.6.2 [\#84](https://github.com/auth0/idtoken-verifier/pull/84) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v1.5.1](https://github.com/auth0/idtoken-verifier/tree/v1.5.1) (2019-12-06)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.0...v1.5.1)
+
+Re-release to correct build directory error
+
 ## [v1.5.0](https://github.com/auth0/idtoken-verifier/tree/v1.5.0) (2019-12-05)
 
-[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.0...v1.5.0)
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.4.1...v1.5.0)
 
 **Added**
 

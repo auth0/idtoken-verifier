@@ -409,20 +409,21 @@ describe('jwt-verification', function() {
 
         it('should validate the token expiration', done => {
           const now = new Date();
-          const expDate = new Date(0);
-          const expSeconds = Math.floor(now.getTime() / 1000) - 10;
-          expDate.setUTCSeconds(expSeconds);
+          const expDate = new Date(now.getTime());
+          expDate.setSeconds(now.getSeconds() - 10);
 
-          const options = Object.assign({}, DEFAULT_OPTIONS, {
-            expiresIn: '-10s'
+          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
+            exp: Math.floor(expDate.getTime() / 1000)
           });
+
+          const { expiresIn, ...options } = DEFAULT_OPTIONS;
 
           const config = Object.assign({}, DEFAULT_CONFIG, {
             leeway: 0,
             __clock: () => now
           });
 
-          createJWT(DEFAULT_PAYLOAD, options)
+          createJWT(payload, options)
             .then(token => {
               helpers.assertTokenValidationError(
                 config,
