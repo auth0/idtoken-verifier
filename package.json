@@ -6,9 +6,14 @@
   "umd:main": "build/idtoken-verifier.umd.js",
   "module": "build/idtoken-verifier.esm.js",
   "source": "src/index.js",
+  "files": [
+    "build",
+    "src"
+  ],
   "scripts": {
     "start": "gulp dev",
     "build": "microbundle --target web --external none",
+    "clean": "rm -rf build",
     "test": "cross-env NODE_ENV=test mocha --require @babel/register test/**/*.test.js --exit",
     "test:watch": "cross-env NODE_ENV=test mocha --require @babel/register --watch --reporter min test/*.test.js",
     "test:coverage": "nyc npm run test",
@@ -20,7 +25,8 @@
     "release:clean": "node scripts/cleanup.js",
     "preversion": "node scripts/prepare.js",
     "version": "node scripts/changelog.js && node scripts/jsdocs.js && node scripts/telemetry.js",
-    "postversion": "npm run release:clean",
+    "prepack": "npm run clean && npm run build",
+    "postversion": "npm run release:clean && npm run print-bundle-size",
     "upload": "ccu build",
     "print-bundle-size": "node scripts/print-bundle-size",
     "precommit": "pretty-quick --staged"
