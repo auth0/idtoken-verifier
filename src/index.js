@@ -283,22 +283,6 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       );
     }
 
-    var iatTime = iat - _this.leeway;
-    var iatTimeDate = new Date(0);
-    iatTimeDate.setUTCSeconds(iatTime);
-
-    if (now < iatTimeDate) {
-      return cb(
-        new error.TokenValidationError(
-          'Issued At (iat) claim error in the ID token; current time "' +
-            now +
-            '" is before issued at time "' +
-            iatTimeDate +
-            '"'
-        )
-      );
-    }
-
     if (nbf && isNumber(nbf)) {
       var nbfTime = nbf - _this.leeway;
       var nbfTimeDate = new Date(0);
