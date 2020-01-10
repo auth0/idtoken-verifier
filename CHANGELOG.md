@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.0.1](https://github.com/auth0/idtoken-verifier/tree/v2.0.1) (2020-01-10)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.0...v2.0.1)
+
+**Removed**
+
+- [SDK-1266] Removed iat future value check [\#95](https://github.com/auth0/idtoken-verifier/pull/95) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
 ## [v2.0.0](https://github.com/auth0/idtoken-verifier/tree/v2.0.0) (2019-12-06)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v1.5.1...v2.0.0)
