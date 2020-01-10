@@ -454,28 +454,6 @@ describe('jwt-verification', function() {
             .catch(done);
         });
 
-        it('should validate the token issued at claim', done => {
-          const iat = nowSeconds() + 100;
-
-          const payload = Object.assign({}, DEFAULT_PAYLOAD, {
-            iat
-          });
-
-          createJWT(payload, DEFAULT_OPTIONS)
-            .then(token => {
-              helpers.assertTokenValidationError(
-                DEFAULT_CONFIG,
-                'asfd',
-                `Issued At (iat) claim error in the ID token; current time "${new Date()}" is before issued at time "${new Date(
-                  (iat - 60) * 1000
-                )}"`,
-                token,
-                done
-              );
-            })
-            .catch(done);
-        });
-
         it('should validate presence of auth_time when max_age was specified', done => {
           const config = Object.assign({}, DEFAULT_CONFIG, {
             maxAge: 1000
