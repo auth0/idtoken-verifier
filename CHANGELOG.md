@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.0.2](https://github.com/auth0/idtoken-verifier/tree/v2.0.2) (2020-02-20)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.1...v2.0.2)
+
+**Security**
+
+- [Snyk] Security upgrade crypto-js from 3.1.9-1 to 3.2.1 [\#98](https://github.com/auth0/idtoken-verifier/pull/98) ([crew-security](https://github.com/crew-security))
+
 ## [v2.0.1](https://github.com/auth0/idtoken-verifier/tree/v2.0.1) (2020-01-10)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.0...v2.0.1)
