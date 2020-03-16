@@ -160,11 +160,15 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       );
     }
 
-    if ((typeof _this.issuer == 'function' && _this.issuer(jwt.payload) !== iss) || (typeof _this.issuer != 'function' && _this.issuer !== iss)) {
+    const expectIss =
+      typeof _this.issuer == 'function'
+        ? _this.issuer(jwt.payload)
+        : _this.issuer;
+    if (expectIss !== iss) {
       return cb(
         new error.TokenValidationError(
           'Issuer (iss) claim mismatch in the ID token, expected "' +
-            (typeof _this.issuer == 'function' ? _this.issuer(jwt.payload) : _this.issuer) +
+            expectIss +
             '", found "' +
             iss +
             '"'
