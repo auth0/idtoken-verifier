@@ -40,16 +40,15 @@ export function getJWKS(options, cb) {
         if (key.kid === options.kid) {
           matchingKey = key;
         }
-
-        if (!matchingKey) {
-          return cb(
-            new Error(
-              'Could not find a public key for Key ID (kid) "' +
-                options.kid +
-                '"'
-            )
-          );
-        }
+      }
+      if (!matchingKey) {
+        return cb(
+          new Error(
+            'Could not find a public key for Key ID (kid) "' +
+              options.kid +
+              '"'
+          )
+        );
       }
       return cb(null, process(matchingKey));
     })
