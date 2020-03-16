@@ -144,5 +144,39 @@ describe('jwks', function() {
         }
       );
     });
+
+    it('returns jwks when the key is not first in the keys list', function(done) {
+      const responseBody = {
+        keys: [
+          {
+            kid: 'some-other-random-key'
+          },
+          {
+            n: '',
+            e: '',
+            kid: 'some-random-key'
+          }
+        ]
+      };
+
+      getProxy(
+        sinon.stub().returns(
+          Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(responseBody)
+          })
+        )
+      ).getJWKS(
+        {
+          jwksURI: 'https://example.com/jwks.json',
+          kid: 'some-random-key'
+        },
+        function(err, data) {
+          expect(err).to.be(null);
+          expect(data).to.have.keys('modulus', 'exp');
+          done();
+        }
+      );
+    });
   });
 });
