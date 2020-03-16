@@ -193,6 +193,26 @@ describe('jwt-verification', function() {
             .catch(done);
         });
 
+        it('validates issuer as function', done => {
+          const options = Object.assign({}, DEFAULT_OPTIONS, {
+            issuer: function(payload) {
+              return '__ANOTHER_ISSUER__';
+            }
+          });
+
+          createJWT(DEFAULT_PAYLOAD, options)
+            .then(token => {
+              helpers.assertTokenValidationError(
+                DEFAULT_CONFIG,
+                'asfd',
+                `Issuer (iss) claim mismatch in the ID token, expected "__TEST_ISSUER__", found "__ANOTHER_ISSUER__"`,
+                token,
+                done
+              );
+            })
+            .catch(done);
+        });
+
         it('validates presence of subject in the token', done => {
           const { sub, ...payload } = DEFAULT_PAYLOAD;
 

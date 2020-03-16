@@ -44,6 +44,9 @@ export const createJWT = (
   options = DEFAULT_OPTIONS
 ) => {
   return createCertificate().then(cert => {
+    if (typeof options.issuer == 'function') {
+      options.issuer = options.issuer(DEFAULT_PAYLOAD);
+    }
     return jwt.sign(payload, cert.serviceKey, {
       algorithm: 'RS256',
       keyid: 'QzE4N0ZBM0VDQzE2RUU0NzI1QzY1MzQ4QTk1MzAwMEI4RDgxNzE4Rg',
