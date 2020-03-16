@@ -14,11 +14,23 @@ var defaultClock = () => new Date();
 var DEFAULT_LEEWAY = 60;
 
 /**
+ * This callback is a function that accepts the decoded (but not yet validated)
+ * payload from the id_token, and returns the expected value for the
+ * `iss` claim in the id_token.
+ * It can be used to validate certain id_token's, such as those returned by
+ * Azure AD when in multi-tenant mode.
+ * @callback IssuerCallback
+ * @param {Object} payload the payload of the id_token (decoded but not yet validated)
+ * @returns {string} the expected value for the `iss` claim in the id_token
+ */
+
+/**
  * Creates a new id_token verifier
  * @constructor
  * @param {Object} parameters
- * @param {String} parameters.issuer name of the issuer of the token
- * that should match the `iss` claim in the id_token
+ * @param {String|IssuerCallback} parameters.issuer name of the issuer of the token
+ * that should match the `iss` claim in the id_token, or a callback
+ * that returns the expected value
  * @param {String} parameters.audience identifies the recipients that the JWT is intended for
  * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
@@ -148,11 +160,11 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       );
     }
 
-    if (_this.issuer !== iss) {
+    if ((typeof _this.issuer == 'function' && _this.issuer(jwt.payload) !== iss) || (typeof _this.issuer != 'function' && _this.issuer !== iss)) {
       return cb(
         new error.TokenValidationError(
           'Issuer (iss) claim mismatch in the ID token, expected "' +
-            _this.issuer +
+            (typeof _this.issuer == 'function' ? _this.issuer(jwt.payload) : _this.issuer) +
             '", found "' +
             iss +
             '"'
