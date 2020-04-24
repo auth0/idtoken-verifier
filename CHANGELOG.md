@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.0.3](https://github.com/auth0/idtoken-verifier/tree/v2.0.3) (2020-04-23)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.2...v2.0.3)
+
+**Fixed**
+
+- Fixed bug with keys not first in keybag [\#101](https://github.com/auth0/idtoken-verifier/pull/101) ([ItalyPaleAle](https://github.com/ItalyPaleAle))
+
 ## [v2.0.2](https://github.com/auth0/idtoken-verifier/tree/v2.0.2) (2020-02-20)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.1...v2.0.2)
