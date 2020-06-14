@@ -616,7 +616,7 @@ describe('jwt-verification', function() {
       var err = 'error';
 
       sinon.stub(mockJwks, 'getJWKS').callsFake(function(obj, cb) {
-        cb(err);
+        return Promise.reject(err);
       });
 
       var revert = IdTokenVerifier.__set__({ jwks: mockJwks });

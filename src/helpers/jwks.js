@@ -1,6 +1,3 @@
-import p from 'es6-promise';
-p.polyfill();
-
 import urljoin from 'url-join';
 import * as base64 from './base64';
 import unfetch from 'unfetch';
@@ -50,9 +47,17 @@ export function getJWKS(options, cb) {
           )
         );
       }
-      return cb(null, process(matchingKey));
+      if (cb) {
+        return cb(null, process(matchingKey));
+      } else {
+        return process(matchingKey);
+      }
     })
     .catch(function(e) {
-      cb(e);
+      if (cb) {
+        cb(e);
+      } else {
+        throw e;
+      }
     });
 }
