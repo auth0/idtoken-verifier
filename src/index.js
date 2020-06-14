@@ -355,8 +355,10 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
           new Error('Empty keyInfo in response')
         );
       }
-      _this.jwksCache.set(cachekey, keyInfo);
-      return cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+      return _this.jwksCache.set(cachekey, keyInfo)
+        .then(function() {
+          return cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+        });
     })
     .catch(function(err) {
       return cb && cb(err);
