@@ -2,6 +2,7 @@ import expect from 'expect.js';
 import nodeFetch from 'node-fetch';
 
 import CacheMock from './mock/cache-mock';
+import {AsyncCache} from './mock/async-cache';
 import helpers, { DEFAULT_CONFIG } from './helper/token-validation';
 import sinon from 'sinon';
 
@@ -589,6 +590,20 @@ describe('jwt-verification', function() {
           done
         );
       });
+
+      it('should work with asynchronous caches and verify the token', done => {
+        helpers.assertTokenValid(
+          defaultToken,
+          {
+            issuer: 'https://wptest.auth0.com/',
+            audience: 'gYSNlU4YC4V1YPdqq8zPQcup6rJw1Mbt',
+            jwksCache: new AsyncCache(CacheMock.validKey()),
+            __clock: () => defaultTokenDate
+          },
+          'asfd',
+          done
+        );
+      });
     });
   });
 
@@ -620,17 +635,16 @@ describe('jwt-verification', function() {
       });
 
       var revert = IdTokenVerifier.__set__({ jwks: mockJwks });
-      var callback = sinon.spy();
+      var callback = function(res) {
+        try {
+          expect(res).to.be.equal(err);
+        } finally {
+          revert();
+        }
+      };
       var verifier = new IdTokenVerifier({ jwksCache: CacheMock.validKey() });
 
       verifier.getRsaVerifier('iss', 'kid', callback);
-
-      try {
-        sinon.assert.calledOnce(callback);
-        expect(callback.calledWith(err)).to.be.ok();
-      } finally {
-        revert();
-      }
     });
   });
 

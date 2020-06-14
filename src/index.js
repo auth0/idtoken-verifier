@@ -350,12 +350,16 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
       }
     })
     .then(function(keyInfo) {
+      if (!keyInfo || !keyInfo.modulus || !keyInfo.exp) {
+        return cb && cb(
+          new Error('Empty keyInfo in response')
+        );
+      }
       _this.jwksCache.set(cachekey, keyInfo);
-      return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+      return cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
     })
     .catch(function(err) {
-      console.log(err, cb);
-      return cb(err);
+      return cb && cb(err);
     });
 };
 
