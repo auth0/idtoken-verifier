@@ -1,3 +1,6 @@
+import p from 'es6-promise';
+p.polyfill();
+
 import sha256 from 'crypto-js/sha256';
 import cryptoBase64 from 'crypto-js/enc-base64';
 import cryptoHex from 'crypto-js/enc-hex';
@@ -332,25 +335,32 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
   var _this = this;
   var cachekey = iss + kid;
 
-  if (!this.jwksCache.has(cachekey)) {
-    jwks.getJWKS(
-      {
-        jwksURI: this.jwksURI,
-        iss: iss,
-        kid: kid
-      },
-      function(err, keyInfo) {
-        if (err) {
-          return cb(err);
-        }
-        _this.jwksCache.set(cachekey, keyInfo);
-        return cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+  Promise.resolve(this.jwksCache.has(cachekey))
+    .then(function(hasKey){
+      if (!hasKey) {
+        return jwks.getJWKS(
+          {
+            jwksURI: _this.jwksURI,
+            iss: iss,
+            kid: kid
+          }
+        );
+      } else {
+        return _this.jwksCache.get(cachekey);
       }
-    );
-  } else {
-    var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
-    cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-  }
+    })
+    .then(function(keyInfo) {
+      if (!keyInfo || !keyInfo.modulus || !keyInfo.exp) {
+        throw new Error('Empty keyInfo in response')
+      }
+      return Promise.resolve(_this.jwksCache.set(cachekey, keyInfo))
+        .then(function() {
+          cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+        });
+    })
+    .catch(function(err) {
+      cb && cb(err);
+    });
 };
 
 /**
