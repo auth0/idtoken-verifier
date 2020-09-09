@@ -5,6 +5,7 @@
 [![Coverage][codecov-image]][codecov-url]
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier?ref=badge_shield)
 
 A lightweight library to decode and verify RS JWT meant for the browser.
 
@@ -99,3 +100,6 @@ This project is licensed under the MIT license. See the [LICENSE](LICENSE) file 
 [license-url]: #license
 [downloads-image]: http://img.shields.io/npm/dm/idtoken-verifier.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/idtoken-verifier
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier?ref=badge_large)
