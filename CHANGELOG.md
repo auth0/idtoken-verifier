@@ -1,5 +1,21 @@
 # Change Log
 
+## [v2.1.0](https://github.com/auth0/idtoken-verifier/tree/v2.1.0) (2020-09-11)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.1.0...v2.1.0)
+
+**Changed**
+
+- Asynchronous JWKS cache [\#107](https://github.com/auth0/idtoken-verifier/pull/107) ([ItalyPaleAle](https://github.com/ItalyPaleAle))
+- Migrate to NPM package lock over Yarn, and update dependencies [\#114](https://github.com/auth0/idtoken-verifier/pull/114) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+**Security**
+
+- Bump bl from 3.0.0 to 3.0.1 [\#111](https://github.com/auth0/idtoken-verifier/pull/111) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump codecov from 3.6.5 to 3.7.1 [\#109](https://github.com/auth0/idtoken-verifier/pull/109) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bump lodash from 4.17.15 to 4.17.19 [\#108](https://github.com/auth0/idtoken-verifier/pull/108) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump handlebars from 4.5.3 to 4.7.6 [\#106](https://github.com/auth0/idtoken-verifier/pull/106) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 ## [v2.0.3](https://github.com/auth0/idtoken-verifier/tree/v2.0.3) (2020-04-23)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.0.2...v2.0.3)
