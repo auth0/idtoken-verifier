@@ -56,3 +56,6 @@ build
 .release
 .release-tmp-*/
 out/
+
+# Yarn lock file
+yarn.lock
