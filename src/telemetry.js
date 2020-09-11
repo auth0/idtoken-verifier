@@ -1,1 +1,1 @@
-export default { version: '2.0.3', name: 'idtoken-verifier' };
+export default { version: '2.1.0', name: 'idtoken-verifier' };
