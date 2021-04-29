@@ -64,8 +64,8 @@ function IdTokenVerifier(parameters) {
 
 /**
  * @callback verifyCallback
- * @param {Error} [err] error returned if the verify cannot be performed
- * @param {boolean} [status] if the token is valid or not
+ * @param {?Error} err error returned if the verify cannot be performed
+ * @param {?object} payload payload returned if the token is valid
  */
 
 /**
@@ -86,7 +86,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   if (!token) {
     return cb(
       new error.TokenValidationError('ID token is required but missing'),
-      false
+      null
     );
   }
 
@@ -95,7 +95,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   if (jwt instanceof Error) {
     return cb(
       new error.TokenValidationError('ID token could not be decoded'),
-      false
+      null
     );
   }
 
@@ -129,25 +129,28 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
           supportedAlg +
           '".'
       ),
-      false
+      null
     );
   }
 
   this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
     if (err) {
-      return cb(err);
+      return cb(err, null);
     }
 
     if (!rsaVerifier.verify(headerAndPayload, signature)) {
-      return cb(new error.TokenValidationError('Invalid ID token signature.'));
+      return cb(
+        new error.TokenValidationError('Invalid ID token signature.'),
+        null
+      );
     }
 
     if (!iss || typeof iss !== 'string') {
       return cb(
         new error.TokenValidationError(
-          'Issuer (iss) claim must be a string present in the ID token',
-          false
-        )
+          'Issuer (iss) claim must be a string present in the ID token'
+        ),
+        null
       );
     }
 
@@ -160,7 +163,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             iss +
             '"'
         ),
-        false
+        null
       );
     }
 
@@ -169,7 +172,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         new error.TokenValidationError(
           'Subject (sub) claim must be a string present in the ID token'
         ),
-        false
+        null
       );
     }
 
@@ -177,7 +180,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(
         new error.TokenValidationError(
           'Audience (aud) claim must be a string or array of strings present in the ID token'
-        )
+        ),
+        null
       );
     }
 
@@ -189,7 +193,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             '" but was not one of "' +
             aud.join(', ') +
             '"'
-        )
+        ),
+        null
       );
     } else if (typeof aud === 'string' && _this.audience !== aud) {
       return cb(
@@ -200,7 +205,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             aud +
             '"'
         ),
-        false
+        null
       );
     }
 
@@ -210,7 +215,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
           new error.TokenValidationError(
             'Nonce (nonce) claim must be a string present in the ID token'
           ),
-          false
+          null
         );
       }
 
@@ -223,7 +228,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               nonce +
               '"'
           ),
-          false
+          null
         );
       }
     }
@@ -232,9 +237,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (!azp || typeof azp !== 'string') {
         return cb(
           new error.TokenValidationError(
-            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
-            false
-          )
+            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
+          ),
+          null
         );
       }
 
@@ -245,9 +250,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               _this.audience +
               '", found "' +
               azp +
-              '"',
-            false
-          )
+              '"'
+          ),
+          null
         );
       }
     }
@@ -255,9 +260,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
     if (!exp || !isNumber(exp)) {
       return cb(
         new error.TokenValidationError(
-          'Expiration Time (exp) claim must be a number present in the ID token',
-          false
-        )
+          'Expiration Time (exp) claim must be a number present in the ID token'
+        ),
+        null
       );
     }
 
@@ -265,7 +270,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(
         new error.TokenValidationError(
           'Issued At (iat) claim must be a number present in the ID token'
-        )
+        ),
+        null
       );
     }
 
@@ -280,9 +286,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             now +
             '" is after expiration time "' +
             expTimeDate +
-            '"',
-          false
-        )
+            '"'
+        ),
+        null
       );
     }
 
@@ -299,7 +305,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               '" is before the not before time "' +
               nbfTimeDate +
               '"'
-          )
+          ),
+          null
         );
       }
     }
@@ -309,7 +316,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         return cb(
           new error.TokenValidationError(
             'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
-          )
+          ),
+          null
         );
       }
 
@@ -322,7 +330,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         return cb(
           new error.TokenValidationError(
             `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth time at "${authTimeDate}"`
-          )
+          ),
+          null
         );
       }
     }
@@ -336,27 +345,26 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
   var cachekey = iss + kid;
 
   Promise.resolve(this.jwksCache.has(cachekey))
-    .then(function(hasKey){
+    .then(function(hasKey) {
       if (!hasKey) {
-        return jwks.getJWKS(
-          {
-            jwksURI: _this.jwksURI,
-            iss: iss,
-            kid: kid
-          }
-        );
+        return jwks.getJWKS({
+          jwksURI: _this.jwksURI,
+          iss: iss,
+          kid: kid
+        });
       } else {
         return _this.jwksCache.get(cachekey);
       }
     })
     .then(function(keyInfo) {
       if (!keyInfo || !keyInfo.modulus || !keyInfo.exp) {
-        throw new Error('Empty keyInfo in response')
+        throw new Error('Empty keyInfo in response');
       }
-      return Promise.resolve(_this.jwksCache.set(cachekey, keyInfo))
-        .then(function() {
+      return Promise.resolve(_this.jwksCache.set(cachekey, keyInfo)).then(
+        function() {
           cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-        });
+        }
+      );
     })
     .catch(function(err) {
       cb && cb(err);
