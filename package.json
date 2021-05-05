@@ -6,6 +6,7 @@
   "umd:main": "build/idtoken-verifier.umd.js",
   "module": "build/idtoken-verifier.esm.js",
   "source": "src/index.js",
+  "types": "types/index.d.ts",
   "files": [
     "build",
     "src"
