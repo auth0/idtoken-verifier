@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import nodeFetch from 'node-fetch';
 
 import CacheMock from './mock/cache-mock';
-import {AsyncCache} from './mock/async-cache';
+import { AsyncCache } from './mock/async-cache';
 import helpers, { DEFAULT_CONFIG } from './helper/token-validation';
 import sinon from 'sinon';
 
@@ -281,7 +281,7 @@ describe('jwt-verification', function() {
           createJWT()
             .then(token => {
               var verifier = new IdTokenVerifier(DEFAULT_CONFIG);
-              verifier.verify(token, undefined, done);
+              verifier.verify(token, done);
             })
             .catch(done);
         });
