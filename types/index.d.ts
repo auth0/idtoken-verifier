@@ -6,13 +6,19 @@ export interface JWK {
 }
 
 /**
+ * Generic that indicates that the value can be a generic type T
+ * or a Promise that resolves with T
+ */
+type PromiseOrSync<T> = T | Promise<T>;
+
+/**
  * Interface for a JWK cache.
  * Can use a Map object.
  */
 export interface JWKSCache {
-  get(key: string): JWK | undefined;
-  has(key: string): boolean;
-  set(key: string, value: JWK): this;
+  get(key: string): PromiseOrSync<JWK | undefined>;
+  has(key: string): PromiseOrSync<boolean>;
+  set(key: string, value: JWK): PromiseOrSync<this>;
 }
 
 /**
