@@ -9,7 +9,8 @@
   "types": "types/index.d.ts",
   "files": [
     "build",
-    "src"
+    "src",
+    "types"
   ],
   "scripts": {
     "start": "gulp dev",
