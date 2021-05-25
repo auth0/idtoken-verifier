@@ -99,6 +99,38 @@ describe('jwks', function() {
       );
     });
 
+    it('returns error when the kid is not present in the JWKS (using promises)', function(done) {
+      const responseBody = {
+        keys: [
+          {
+            kid: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ'
+          }
+        ]
+      };
+
+      const p = getProxy(
+        sinon.stub().returns(
+          Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(responseBody)
+          })
+        )
+      ).getJWKS({
+        jwksURI: 'https://example.com/jwks.json',
+        kid: 'some-random-key'
+      });
+
+      p.then(function() {
+        throw new Error('promise succeeded - should have been rejected');
+      }).catch(function(err) {
+        expect(err.message).to.eql(
+          `Could not find a public key for Key ID (kid) "some-random-key"`
+        );
+
+        done();
+      });
+    });
+
     it('returns jwks', function(done) {
       const responseBody = {
         // from: https://brucke.auth0.com/.well-known/jwks.json
@@ -177,6 +209,38 @@ describe('jwks', function() {
           done();
         }
       );
+    });
+
+    it('returns jwks when the key is not first in the keys list (using promises)', function(done) {
+      const responseBody = {
+        keys: [
+          {
+            kid: 'some-other-random-key'
+          },
+          {
+            n: '',
+            e: '',
+            kid: 'some-random-key'
+          }
+        ]
+      };
+
+      const p = getProxy(
+        sinon.stub().returns(
+          Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(responseBody)
+          })
+        )
+      ).getJWKS({
+        jwksURI: 'https://example.com/jwks.json',
+        kid: 'some-random-key'
+      });
+
+      p.then(function(data) {
+        expect(data).to.have.keys('modulus', 'exp');
+        done();
+      });
     });
   });
 });
