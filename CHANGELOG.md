@@ -1,5 +1,19 @@
 # Change Log
 
+## [v2.1.1](https://github.com/auth0/idtoken-verifier/tree/v2.1.1) (2021-05-25)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.1.1...v2.1.1)
+
+**Fixed**
+
+- Fixed: exception when key not found in JWKS [\#121](https://github.com/auth0/idtoken-verifier/pull/121) ([ItalyPaleAle](https://github.com/ItalyPaleAle))
+- Remove inconsistencies in verify method's callback invocations [\#120](https://github.com/auth0/idtoken-verifier/pull/120) ([ItalyPaleAle](https://github.com/ItalyPaleAle))
+
+**Security**
+
+- Fix vulnerability with crypto-js 3.3.0 and run audit fix [\#128](https://github.com/auth0/idtoken-verifier/pull/128) ([frederikprijck](https://github.com/frederikprijck))
+- [Security] Bump y18n from 4.0.0 to 4.0.1 [\#119](https://github.com/auth0/idtoken-verifier/pull/119) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 ## [v2.1.0](https://github.com/auth0/idtoken-verifier/tree/v2.1.0) (2020-09-11)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.1.0...v2.1.0)
