@@ -20,7 +20,7 @@ function assertTokenValidationError(
   verifier.verify(id_token, nonce, function(err, result) {
     expect(err).to.be.a(error.TokenValidationError);
     expect(err.message).to.eql(message);
-    expect(result).to.not.be.ok();
+    expect(result).to.eql(null);
     done();
   });
 }
@@ -40,7 +40,7 @@ function assertTokenValid(token, configuration, nonce, done) {
   var verifier = new IdTokenVerifier(configuration);
 
   verifier.verify(token, nonce, function(err, result) {
-    expect(err).to.be(null);
+    expect(err).to.eql(null);
     expect(result).to.eql({
       iss: 'https://wptest.auth0.com/',
       sub: 'auth0|55d48c57d5b0ad0223c408d7',
