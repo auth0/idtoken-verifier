@@ -118,10 +118,8 @@ declare class IdTokenVerifier {
    * @param requestedNonce nonce value that should match the one in the id_token claims
    * @param cb callback used to notify the results of the validation
    */
-  verify(token: string, requestedNonce: any, cb: verifyCallback): any;
+  verify(token: string, requestedNonce: string, cb: verifyCallback): any;
   verify(token: string, cb: verifyCallback): any;
-
-  getRsaVerifier(iss: any, kid: any, cb: any): void;
 
   /**
    * Decodes a well formed JWT without any verification
