@@ -39,12 +39,8 @@ export function getJWKS(options, cb) {
         }
       }
       if (!matchingKey) {
-        return cb(
-          new Error(
-            'Could not find a public key for Key ID (kid) "' +
-              options.kid +
-              '"'
-          )
+        throw new Error(
+          'Could not find a public key for Key ID (kid) "' + options.kid + '"'
         );
       }
       if (cb) {

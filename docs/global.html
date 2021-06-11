@@ -97,7 +97,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line374">line 374</a>
+                    <a href="index.js.html#line387">line 387</a>
                   </li>
                 </ul>
               </dd>
@@ -121,7 +121,7 @@
                   <td class="name"><code>token</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="description last">
@@ -181,7 +181,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line416">line 416</a>
+                    <a href="index.js.html#line429">line 429</a>
                   </li>
                 </ul>
               </dd>
@@ -205,7 +205,7 @@
                   <td class="name"><code>access_token</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="description last">
@@ -217,7 +217,7 @@
                   <td class="name"><code>alg</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="description last">
@@ -232,7 +232,7 @@
                   <td class="name"><code>atHash</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="description last">
@@ -269,8 +269,9 @@
           <div class="section-method">
             <h4 class="name" id="verify">
               <span class="type-signature"></span>verify<span class="signature"
-                >(token, nonce<span class="signature-attributes">opt</span>,
-                cb)</span
+                >(token, requestedNonce<span class="signature-attributes"
+                  >opt</span
+                >, cb)</span
               ><span class="type-signature"></span>
             </h4>
 
@@ -300,7 +301,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line71">line 71</a>
+                    <a href="index.js.html#line72">line 72</a>
                   </li>
                 </ul>
               </dd>
@@ -326,7 +327,7 @@
                   <td class="name"><code>token</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="attributes"></td>
@@ -337,10 +338,10 @@
                 </tr>
 
                 <tr>
-                  <td class="name"><code>nonce</code></td>
+                  <td class="name"><code>requestedNonce</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>String</code></span>
+                    <span class="param-type"><code>string</code></span>
                   </td>
 
                   <td class="attributes">&lt;optional><br /></td>
@@ -437,7 +438,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line366">line 366</a>
+                    <a href="index.js.html#line379">line 379</a>
                   </li>
                 </ul>
               </dd>
@@ -465,7 +466,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line410">line 410</a>
+                    <a href="index.js.html#line423">line 423</a>
                   </li>
                 </ul>
               </dd>
@@ -512,10 +513,8 @@
             <h4 class="name" id="verifyCallback">
               <span class="type-signature"></span>verifyCallback<span
                 class="signature"
-                >(err<span class="signature-attributes">opt</span>, status<span
-                  class="signature-attributes"
-                  >opt</span
-                >)</span
+                >(err<span class="signature-attributes">nullable</span>,
+                payload<span class="signature-attributes">nullable</span>)</span
               ><span class="type-signature"></span>
             </h4>
 
@@ -525,7 +524,7 @@
                 <ul class="dummy">
                   <li>
                     <a href="index.js.html">index.js</a>,
-                    <a href="index.js.html#line65">line 65</a>
+                    <a href="index.js.html#line66">line 66</a>
                   </li>
                 </ul>
               </dd>
@@ -554,7 +553,7 @@
                     <span class="param-type"><code>Error</code></span>
                   </td>
 
-                  <td class="attributes">&lt;optional><br /></td>
+                  <td class="attributes">&lt;nullable><br /></td>
 
                   <td class="description last">
                     <p>error returned if the verify cannot be performed</p>
@@ -562,16 +561,16 @@
                 </tr>
 
                 <tr>
-                  <td class="name"><code>status</code></td>
+                  <td class="name"><code>payload</code></td>
 
                   <td class="type">
-                    <span class="param-type"><code>boolean</code></span>
+                    <span class="param-type"><code>object</code></span>
                   </td>
 
-                  <td class="attributes">&lt;optional><br /></td>
+                  <td class="attributes">&lt;nullable><br /></td>
 
                   <td class="description last">
-                    <p>if the token is valid or not</p>
+                    <p>payload returned if the token is valid</p>
                   </td>
                 </tr>
               </tbody>
@@ -584,8 +583,8 @@
     <br class="clear" />
 
     <footer>
-      Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a> on
-      Fri Sep 11 2020 14:22:03 GMT+0100 (British Summer Time) using the Minami
+      Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on
+      Wed May 26 2021 13:39:42 GMT+0100 (British Summer Time) using the Minami
       theme.
     </footer>
 

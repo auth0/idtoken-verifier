@@ -20,15 +20,16 @@ var DEFAULT_LEEWAY = 60;
  * Creates a new id_token verifier
  * @constructor
  * @param {Object} parameters
- * @param {String} parameters.issuer name of the issuer of the token
+ * @param {string} parameters.issuer name of the issuer of the token
  * that should match the `iss` claim in the id_token
- * @param {String} parameters.audience identifies the recipients that the JWT is intended for
+ * @param {string} parameters.audience identifies the recipients that the JWT is intended for
  * and should match the `aud` claim
  * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
- * @param {String} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
- * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
+ * @param {string} [parameters.jwksURI] A valid, direct URI to fetch the JSON Web Key Set (JWKS).
+ * @param {string} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
  * and will be used to validate
  * @param {number} [parameters.leeway=60] number of seconds that the clock can be out of sync
+ * @param {number} [parameters.maxAge] max age
  * while validating expiration of the id_token
  */
 function IdTokenVerifier(parameters) {
@@ -64,8 +65,8 @@ function IdTokenVerifier(parameters) {
 
 /**
  * @callback verifyCallback
- * @param {Error} [err] error returned if the verify cannot be performed
- * @param {boolean} [status] if the token is valid or not
+ * @param {?Error} err error returned if the verify cannot be performed
+ * @param {?object} payload payload returned if the token is valid
  */
 
 /**
@@ -78,15 +79,19 @@ function IdTokenVerifier(parameters) {
  * - if token is not expired and valid (if the `nbf` claim is in the past)
  *
  * @method verify
- * @param {String} token id_token to verify
- * @param {String} [nonce] nonce value that should match the one in the id_token claims
+ * @param {string} token id_token to verify
+ * @param {string} [requestedNonce] nonce value that should match the one in the id_token claims
  * @param {verifyCallback} cb callback used to notify the results of the validation
  */
 IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
+  if (!cb && requestedNonce && typeof requestedNonce == 'function') {
+    cb = requestedNonce;
+    requestedNonce = undefined;
+  }
   if (!token) {
     return cb(
       new error.TokenValidationError('ID token is required but missing'),
-      false
+      null
     );
   }
 
@@ -95,7 +100,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
   if (jwt instanceof Error) {
     return cb(
       new error.TokenValidationError('ID token could not be decoded'),
-      false
+      null
     );
   }
 
@@ -129,25 +134,28 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
           supportedAlg +
           '".'
       ),
-      false
+      null
     );
   }
 
   this.getRsaVerifier(iss, kid, function(err, rsaVerifier) {
     if (err) {
-      return cb(err);
+      return cb(err, null);
     }
 
     if (!rsaVerifier.verify(headerAndPayload, signature)) {
-      return cb(new error.TokenValidationError('Invalid ID token signature.'));
+      return cb(
+        new error.TokenValidationError('Invalid ID token signature.'),
+        null
+      );
     }
 
     if (!iss || typeof iss !== 'string') {
       return cb(
         new error.TokenValidationError(
-          'Issuer (iss) claim must be a string present in the ID token',
-          false
-        )
+          'Issuer (iss) claim must be a string present in the ID token'
+        ),
+        null
       );
     }
 
@@ -160,7 +168,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             iss +
             '"'
         ),
-        false
+        null
       );
     }
 
@@ -169,7 +177,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         new error.TokenValidationError(
           'Subject (sub) claim must be a string present in the ID token'
         ),
-        false
+        null
       );
     }
 
@@ -177,7 +185,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(
         new error.TokenValidationError(
           'Audience (aud) claim must be a string or array of strings present in the ID token'
-        )
+        ),
+        null
       );
     }
 
@@ -189,7 +198,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             '" but was not one of "' +
             aud.join(', ') +
             '"'
-        )
+        ),
+        null
       );
     } else if (typeof aud === 'string' && _this.audience !== aud) {
       return cb(
@@ -200,7 +210,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             aud +
             '"'
         ),
-        false
+        null
       );
     }
 
@@ -210,7 +220,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
           new error.TokenValidationError(
             'Nonce (nonce) claim must be a string present in the ID token'
           ),
-          false
+          null
         );
       }
 
@@ -223,7 +233,7 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               nonce +
               '"'
           ),
-          false
+          null
         );
       }
     }
@@ -232,9 +242,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       if (!azp || typeof azp !== 'string') {
         return cb(
           new error.TokenValidationError(
-            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values',
-            false
-          )
+            'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
+          ),
+          null
         );
       }
 
@@ -245,9 +255,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               _this.audience +
               '", found "' +
               azp +
-              '"',
-            false
-          )
+              '"'
+          ),
+          null
         );
       }
     }
@@ -255,9 +265,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
     if (!exp || !isNumber(exp)) {
       return cb(
         new error.TokenValidationError(
-          'Expiration Time (exp) claim must be a number present in the ID token',
-          false
-        )
+          'Expiration Time (exp) claim must be a number present in the ID token'
+        ),
+        null
       );
     }
 
@@ -265,7 +275,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
       return cb(
         new error.TokenValidationError(
           'Issued At (iat) claim must be a number present in the ID token'
-        )
+        ),
+        null
       );
     }
 
@@ -280,9 +291,9 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
             now +
             '" is after expiration time "' +
             expTimeDate +
-            '"',
-          false
-        )
+            '"'
+        ),
+        null
       );
     }
 
@@ -299,7 +310,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
               '" is before the not before time "' +
               nbfTimeDate +
               '"'
-          )
+          ),
+          null
         );
       }
     }
@@ -309,7 +321,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         return cb(
           new error.TokenValidationError(
             'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
-          )
+          ),
+          null
         );
       }
 
@@ -322,7 +335,8 @@ IdTokenVerifier.prototype.verify = function(token, requestedNonce, cb) {
         return cb(
           new error.TokenValidationError(
             `Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time "${now}" is after last auth time at "${authTimeDate}"`
-          )
+          ),
+          null
         );
       }
     }
@@ -336,27 +350,26 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
   var cachekey = iss + kid;
 
   Promise.resolve(this.jwksCache.has(cachekey))
-    .then(function(hasKey){
+    .then(function(hasKey) {
       if (!hasKey) {
-        return jwks.getJWKS(
-          {
-            jwksURI: _this.jwksURI,
-            iss: iss,
-            kid: kid
-          }
-        );
+        return jwks.getJWKS({
+          jwksURI: _this.jwksURI,
+          iss: iss,
+          kid: kid
+        });
       } else {
         return _this.jwksCache.get(cachekey);
       }
     })
     .then(function(keyInfo) {
       if (!keyInfo || !keyInfo.modulus || !keyInfo.exp) {
-        throw new Error('Empty keyInfo in response')
+        throw new Error('Empty keyInfo in response');
       }
-      return Promise.resolve(_this.jwksCache.set(cachekey, keyInfo))
-        .then(function() {
+      return Promise.resolve(_this.jwksCache.set(cachekey, keyInfo)).then(
+        function() {
           cb && cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-        });
+        }
+      );
     })
     .catch(function(err) {
       cb && cb(err);
@@ -375,7 +388,7 @@ IdTokenVerifier.prototype.getRsaVerifier = function(iss, kid, cb) {
  * Decodes a well formed JWT without any verification
  *
  * @method decode
- * @param {String} token decodes the token
+ * @param {string} token decodes the token
  * @return {DecodedToken} if token is valid according to `exp` and `nbf`
  */
 IdTokenVerifier.prototype.decode = function(token) {
@@ -419,10 +432,10 @@ IdTokenVerifier.prototype.decode = function(token) {
  * should be decoded and verified before using thisfunction
  *
  * @method validateAccessToken
- * @param {String} access_token the access_token
- * @param {String} alg The algorithm defined in the header of the
+ * @param {string} access_token the access_token
+ * @param {string} alg The algorithm defined in the header of the
  * previously verified id_token under the "alg" claim.
- * @param {String} atHash The "at_hash" value included in the payload
+ * @param {string} atHash The "at_hash" value included in the payload
  * of the previously verified id_token.
  * @param {validateAccessTokenCallback} cb callback used to notify the results of the validation.
  */
