@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.2.0](https://github.com/auth0/idtoken-verifier/tree/v2.2.0) (2021-06-18)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.0...v2.2.0)
+
+**Added**
+
+- Added TypeScript typings [\#122](https://github.com/auth0/idtoken-verifier/pull/122) ([ItalyPaleAle](https://github.com/ItalyPaleAle))
+
 ## [v2.1.2](https://github.com/auth0/idtoken-verifier/tree/v2.1.2) (2021-05-26)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.1.2...v2.1.2)
