@@ -2,5 +2,5 @@
     "files": {
         "src/telemetry.js": []
     },
-    "postbump": "node scripts/jsdocs.js && npm run print-bundle-size"
+    "postbump": "npm run build && node scripts/jsdocs.js"
 }

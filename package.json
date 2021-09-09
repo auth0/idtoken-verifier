@@ -14,8 +14,9 @@
   ],
   "scripts": {
     "start": "gulp dev",
+    "prebuild": "rm -rf build",
     "build": "microbundle --target web --external none",
-    "clean": "rm -rf build",
+    "postbuild": "node scripts/print-bundle-size",
     "test": "cross-env NODE_ENV=test mocha --require @babel/register test/**/*.test.js --exit",
     "test:watch": "cross-env NODE_ENV=test mocha --require @babel/register --watch --reporter min test/*.test.js",
     "test:coverage": "nyc npm run test",
@@ -24,9 +25,8 @@
     "ci:test": "nyc npm run test -- --forbid-only --reporter mocha-junit-reporter",
     "ci:coverage": "codecov",
     "jsdoc:generate": "jsdoc --configure .jsdoc.json --verbose",
-    "prepack": "npm run clean && npm run build",
+    "prepack": "npm run build",
     "upload": "ccu build",
-    "print-bundle-size": "node scripts/print-bundle-size",
     "precommit": "pretty-quick --staged"
   },
   "author": "Auth0",
