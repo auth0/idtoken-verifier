@@ -74,11 +74,13 @@ declare class IdTokenVerifier {
   jwksURI: any;
   maxAge: any;
   __clock: any;
+
   /**
    * @callback verifyCallback
    * @param {?Error} err error returned if the verify cannot be performed
    * @param {?object} payload payload returned if the token is valid
    */
+
   /**
    * Verifies an id_token
    *
@@ -90,10 +92,25 @@ declare class IdTokenVerifier {
    *
    * @method verify
    * @param {string} token id_token to verify
-   * @param {string} [requestedNonce] nonce value that should match the one in the id_token claims
+   * @param {string} requestedNonce nonce value that should match the one in the id_token claims
    * @param {verifyCallback} cb callback used to notify the results of the validation
    */
-  verify(token: string, requestedNonce?: string, cb: verifyCallback): any;
+  verify(token: string, requestedNonce: string, cb: verifyCallback): any;
+
+  /**
+   * Verifies an id_token
+   *
+   * It will validate:
+   * - signature according to the algorithm configured in the verifier.
+   * - if `iss` and `aud` claims matches the configured issuer and audience
+   * - if token is not expired and valid (if the `nbf` claim is in the past)
+   *
+   * @method verify
+   * @param {string} token id_token to verify
+   * @param {verifyCallback} cb callback used to notify the results of the validation
+   */
+  verify(token: string, cb: verifyCallback): any;
+
   getRsaVerifier(iss: any, kid: any, cb: any): void;
   /**
    * @typedef DecodedToken

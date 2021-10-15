@@ -15,7 +15,7 @@
   "scripts": {
     "start": "gulp dev",
     "prebuild": "rm -rf build",
-    "build": "microbundle --target web --external none",
+    "build": "microbundle --target web --external none --generateTypes false",
     "postbuild": "node scripts/print-bundle-size",
     "test": "cross-env NODE_ENV=test mocha --require @babel/register test/**/*.test.js --exit",
     "test:watch": "cross-env NODE_ENV=test mocha --require @babel/register --watch --reporter min test/*.test.js",
