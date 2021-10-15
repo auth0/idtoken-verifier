@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.2.2](https://github.com/auth0/idtoken-verifier/tree/v2.2.2) (2021-10-15)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.1...v2.2.2)
+
+**Fixed**
+
+- Fix types for overloaded verify method [\#145](https://github.com/auth0/idtoken-verifier/pull/145) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
 ## [v2.2.1](https://github.com/auth0/idtoken-verifier/tree/v2.2.1) (2021-08-24)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.1...v2.2.1)
