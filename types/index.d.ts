@@ -92,7 +92,7 @@ declare class IdTokenVerifier {
    *
    * @method verify
    * @param {string} token id_token to verify
-   * @param {string} [requestedNonce] nonce value that should match the one in the id_token claims
+   * @param {string} requestedNonce nonce value that should match the one in the id_token claims
    * @param {verifyCallback} cb callback used to notify the results of the validation
    */
   verify(token: string, requestedNonce: string, cb: verifyCallback): any;
