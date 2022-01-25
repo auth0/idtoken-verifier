@@ -71,7 +71,7 @@
     "mocha": "^6.2.3",
     "mocha-junit-reporter": "^1.23.3",
     "moment": "^2.29.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "nyc": "^14.1.1",
     "pem": "^1.14.4",
     "prettier": "^1.18.2",
