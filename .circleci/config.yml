@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   ship: auth0/ship@0.3.0
+  codecov: codecov/codecov@3
 jobs:
   build:
     docker:
@@ -22,9 +23,7 @@ jobs:
       - run:
           name: Run ES5 check
           command: npm run test:es-check:es5 && npm run test:es-check:es2015:module
-      - run:
-          name: Generate Coverage
-          command: npm run ci:coverage
+      - codecov/upload
       - store_artifacts:
           path: dist
       - store_artifacts:
