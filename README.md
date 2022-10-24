@@ -1,4 +1,4 @@
-# idtoken-verifier
+![idtoken-verifier](https://cdn.auth0.com/website/sdks/banners/idtoken-verifier-banner.png)
 
 A lightweight library to decode and verify RSA ID tokens meant for the browser.
 
