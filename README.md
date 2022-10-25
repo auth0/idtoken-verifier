@@ -1,15 +1,33 @@
-# idtoken-verifier
+![idtoken-verifier](https://cdn.auth0.com/website/sdks/banners/idtoken-verifier-banner.png)
+
+A lightweight library to decode and verify RSA ID tokens meant for the browser.
 
 [![Build Status][circleci-image]][circleci-url]
 [![NPM version][npm-image]][npm-url]
 [![Coverage][codecov-image]][codecov-url]
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier?ref=badge_shield)
 
-A lightweight library to decode and verify RS JWT meant for the browser.
+:books: [Documentation](#documentation) - :rocket: [Getting Started](#getting-started) - :computer: [API Reference](#api-reference) - :speech_balloon: [Feedback](#feedback)
 
-## Usage
+## Documentation
+
+- [API Reference](https://auth0.github.io/idtoken-verifier)
+- [Docs Site](https://auth0.com/docs) - explore our Docs site and learn more about Auth0
+
+## Getting Started
+
+### Installation
+
+Using [npm](https://npmjs.org/) in your project directory run the following command:
+
+```
+npm install idtoken-verifier
+```
+
+### Verify an ID token
+
+Import the library, create an instance of `IdTokenVerifier` and call the `verify` method to verify an ID token:
 
 ```js
 import IdTokenVerifier from 'idtoken-verifier';
@@ -29,64 +47,47 @@ verifier.verify(id_token, nonce, (error, payload) => {
 });
 ```
 
-### IdTokenVerifier
+## API Reference
 
-Initializes the verifier.
+- [IdTokenVerifier constructor](https://auth0.github.io/idtoken-verifier/IdTokenVerifier.html)
+- [verify](https://auth0.github.io/idtoken-verifier/global.html#verify)
+- [decode](https://auth0.github.io/idtoken-verifier/global.html#decode)
+- [validateAccessToken](https://auth0.github.io/idtoken-verifier/global.html#validateAccessToken)
 
-Parameters:
+## Feedback
 
-- configuration
-  - issuer: the issuer you trust to sign the tokens.
-  - audience: the audience the token is issued for.
-  - leeway: when there is a clock skew times between the signing and verifying servers. The leeway should not be bigger than five minutes.
-  - jwksCache: the verifier will try to fetch the JWKS from the `/.well-known/jwks.json` endpoint (or `jwksURI` if provided) each time it verifies a token. You can provide a cache to store the keys and avoid repeated requests. For the contract, check [this example](https://github.com/auth0/jwt-js-rsa-verification/blob/master/src/helpers/dummy-cache.js). Hint: for in-memory cache, an easy way is to just provide `new Map()`, which is a valid object for jwksCache.
-  - jwksURI: A valid, direct URI to fetch the JSON Web Key Set (JWKS). Defaults to `${id_token.iss}/.well-known/jwks.json`
-- callback
-  - error: the validation error if any, null otherwise
-  - payload: the decoded jwt payload
+### Contributing
 
-### verifier.verify
+We appreciate feedback and contribution to this repo! Before you get started, please see the following:
 
-This method will decode the ID token, then [verify the token for OIDC compliance](https://openid.net/specs/openid-connect-core-1_0-final.html#IDTokenValidation) using a series of checks on the claims found inside the token.
+- [Auth0's general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md)
+- [Auth0's code of conduct guidelines](https://github.com/auth0/open-source-template/blob/master/CODE-OF-CONDUCT.md)
+- [The contribution guide](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md)
 
-Parameters
+### Raise an issue
 
-- id_token: the id_token to verify.
-- nonce: the nonce previously sent to tha authorization server.
-- callback
+To provide feedback or report a bug, please [raise an issue on our issue tracker](https://github.com/auth0/idtoken-verifier/issues).
 
-### verifier.decode
+### Vulnerability Reporting
 
-This method will decode the token header and payload _WITHOUT_ doing any verification.
+Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
 
-Parameters
+## What is Auth0?
 
-- id_token: the id_token to decode.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_dark_mode.png" width="150">
+    <source media="(prefers-color-scheme: light)" srcset="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+    <img alt="Auth0 Logo" src="https://cdn.auth0.com/website/sdks/logos/auth0_light_mode.png" width="150">
+  </picture>
+</p>
+<p align="center">
+  Auth0 is an easy to implement, adaptable authentication and authorization platform. To learn more checkout <a href="https://auth0.com/why-auth0">Why Auth0?</a>
+</p>
+<p align="center">
+  This project is licensed under the Apache 2.0 license. See the <a href="./LICENSE"> LICENSE</a> file for more info.
+</p>
 
-Return
-
-- header: the decoded header.
-- payload: the decoded payload.
-- encoded: the parts without decode
-  - header: the header string.
-  - payload: the payload string.
-  - signature: the signature string.
-
-## Support
-
-To make it as lightweight as posible, it only provides support for RS256 tokens. It can be easily extensible to other RS\* algorithms.
-
-## Issue Reporting
-
-If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
-
-## Author
-
-[Auth0](https://auth0.com)
-
-## License
-
-This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more info.
 
 <!-- Vaaaaarrrrsss -->
 
@@ -100,6 +101,3 @@ This project is licensed under the MIT license. See the [LICENSE](LICENSE) file 
 [license-url]: #license
 [downloads-image]: http://img.shields.io/npm/dm/idtoken-verifier.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/idtoken-verifier
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fauth0%2Fidtoken-verifier?ref=badge_large)
