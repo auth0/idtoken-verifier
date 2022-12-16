@@ -13,7 +13,7 @@
     "types"
   ],
   "scripts": {
-    "start": "gulp dev",
+    "start": "npm run build -- --watch",
     "prebuild": "rm -rf build",
     "build": "microbundle --target web --external none --generateTypes false",
     "postbuild": "node scripts/print-bundle-size",
@@ -62,13 +62,11 @@
     "husky": "^3.0.0",
     "istanbul": "^0.4.5",
     "jsdoc": "^3.6.7",
-    "jsdoc-to-markdown": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "microbundle": "^0.13.3",
     "minami": "^1.2.3",
     "mocha": "^10.1.0",
     "mocha-junit-reporter": "^1.23.3",
-    "moment": "^2.29.1",
     "node-fetch": "^2.6.7",
     "nyc": "^14.1.1",
     "pem": "^1.14.4",
