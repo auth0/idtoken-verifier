@@ -1,5 +1,17 @@
 # Change Log
 
+## [v2.2.3](https://github.com/auth0/idtoken-verifier/tree/v2.2.3) (2023-02-06)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.2...v2.2.3)
+
+**Changed**
+
+- [SDK-3693] Readme Redesign [\#159](https://github.com/auth0/idtoken-verifier/pull/159) ([stevehobbsdev](https://github.com/stevehobbsdev))
+
+**Security**
+
+- Bump jsonwebtoken from 8.5.1 to 9.0.0 [\#165](https://github.com/auth0/idtoken-verifier/pull/165) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.2.2](https://github.com/auth0/idtoken-verifier/tree/v2.2.2) (2021-10-15)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.1...v2.2.2)
