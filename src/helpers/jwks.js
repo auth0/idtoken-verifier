@@ -21,8 +21,11 @@ function checkStatus(response) {
   return Promise.reject(error);
 }
 
-export function getJWKS(options, cb) {
-  const localFetch = typeof fetch == 'undefined' ? unfetch : fetch;
+function getFetchInstance() {
+  return typeof fetch == 'undefined' ? unfetch : fetch;
+}
+
+export function getJWKS(options, cb, localFetch = getFetchInstance()) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
   return localFetch(url)
     .then(checkStatus)

@@ -1,4 +1,4 @@
-import expect from 'expect.js';
+const { assert } = require('@sinonjs/referee-sinon');
 import nodeFetch from 'node-fetch';
 
 import CacheMock from './mock/cache-mock';
@@ -91,13 +91,13 @@ describe('jwt-verification', function() {
         })
         .catch(done);
 
-      expect(spy.callCount).to.be(0);
+      assert.equals(spy.callCount, 0);
       IdTokenVerifier.prototype.getRsaVerifier.restore();
     });
 
     describe('with a valid configuration', () => {
       afterEach(() => {
-        expect(IdTokenVerifier.prototype.getRsaVerifier.callCount).to.be(1);
+        assert.equals(IdTokenVerifier.prototype.getRsaVerifier.callCount, 1);
         IdTokenVerifier.prototype.getRsaVerifier.restore();
       });
 
@@ -114,7 +114,7 @@ describe('jwt-verification', function() {
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6RTROMFpCTTBWRFF6RTJSVVUwTnpJMVF6WTFNelE0UVRrMU16QXdNRUk0UkRneE56RTRSZyJ9.eyJpc3MiOiJodHRwczovL3dwdGVzdC5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NTVkNDhjNTdkNWIwYWQwMjIzYzQwOGQ3IiwiYXVkIjoiZ1lTTmxVNFlDNFYxWVBkcXE4elBRY3VwNnJKdzFNYnQiLCJleHAiOjE0ODI5NjkwMzEsImlhdCI6MTQ4MjkzMzAzMSwibm9uY2UiOiJhc2ZkIn0.PPoh-pITcZ8qbF5l5rMZwXiwk5efbESuqZ0IfMUcamB6jdgLwTxq-HpOT_x5q6-sO1PBHchpSo1WHeDYMlRrOFd9bh741sUuBuXdPQZ3Zb0i2sNOAC2RFB1E11mZn7uNvVPGdPTg-Y5xppz30GSXoOJLbeBszfrVDCmPhpHKGGMPL1N6HV-3EEF77L34YNAi2JQ-b70nFK_dnYmmv0cYTGUxtGTHkl64UEDLi3u7bV-kbGky3iOOCzXKzDDY6BBKpCRTc2KlbrkO2A2PuDn27WVv1QCNEFHvJN7HxiDDzXOsaUmjrQ3sfrHhzD7S9BcCRkekRfD9g95SKD5J0Fj8NA',
           'test_nonce',
           err => {
-            expect(err).to.be.eql(error);
+            assert.equals(err, error);
             done();
           }
         );
@@ -535,7 +535,7 @@ describe('jwt-verification', function() {
                 token,
                 'asfd',
                 (err, result) => {
-                  expect(err).to.be(null);
+                  assert.equals(err, null);
                   done();
                 }
               );
@@ -611,7 +611,7 @@ describe('jwt-verification', function() {
     it('should pass options.jwksURI through ', function(done) {
       var mockJwks = {
         getJWKS: function(options) {
-          expect(options.jwksURI).to.be('https://example.com/');
+          assert.equals(options.jwksURI, 'https://example.com/');
           done();
         }
       };
@@ -637,7 +637,7 @@ describe('jwt-verification', function() {
       var revert = IdTokenVerifier.__set__({ jwks: mockJwks });
       var callback = function(res) {
         try {
-          expect(res).to.be.equal(err);
+          assert.equals(res, err);
         } finally {
           revert();
         }
@@ -655,7 +655,7 @@ describe('jwt-verification', function() {
       var verifier = new IdTokenVerifier();
       var result = verifier.decode(id_token);
 
-      expect(result).to.eql({
+      assert.equals(result, {
         header: {
           typ: 'JWT',
           alg: 'RS256',
@@ -685,8 +685,8 @@ describe('jwt-verification', function() {
       var verifier = new IdTokenVerifier();
       var result = verifier.decode(id_token);
 
-      expect(result).to.be.an(error.TokenValidationError);
-      expect(result.message).to.eql('Cannot decode a malformed JWT');
+      assert.hasPrototype(result, error.TokenValidationError.prototype);
+      assert.equals(result.message, 'Cannot decode a malformed JWT');
     });
 
     it('should return an error when trying to decode (not verify) a token with invalid JSON contents', function() {
@@ -694,8 +694,9 @@ describe('jwt-verification', function() {
       var verifier = new IdTokenVerifier();
       var result = verifier.decode(id_token);
 
-      expect(result).to.be.an(error.TokenValidationError);
-      expect(result.message).to.eql(
+      assert.hasPrototype(result, error.TokenValidationError.prototype);
+      assert.equals(
+        result.message,
         'Token header or payload is not valid JSON'
       );
     });
@@ -712,8 +713,8 @@ describe('access_token validation', function() {
         var itv = new IdTokenVerifier();
 
         itv.validateAccessToken(access_token, alg, at_hash, function(err) {
-          expect(err.name).to.be('TokenValidationError');
-          expect(err.message).to.be('Invalid access_token');
+          assert.equals(err.name, 'TokenValidationError');
+          assert.equals(err.message, 'Invalid access_token');
           done();
         });
       });
@@ -727,12 +728,11 @@ describe('access_token validation', function() {
     var itv = new IdTokenVerifier();
 
     itv.validateAccessToken(access_token, alg, at_hash, function(err) {
-      expect(err.name).to.be('TokenValidationError');
-
-      expect(err.message).to.be(
+      assert.equals(err.name, 'TokenValidationError');
+      assert.equals(
+        err.message,
         'Signature algorithm of "HS256" is not supported. Expected "RS256"'
       );
-
       done();
     });
   });
@@ -744,8 +744,8 @@ describe('access_token validation', function() {
     var itv = new IdTokenVerifier();
 
     itv.validateAccessToken(access_token, alg, at_hash, function(err) {
-      expect(err.name).to.be('TokenValidationError');
-      expect(err.message).to.be('Invalid access_token');
+      assert.equals(err.name, 'TokenValidationError');
+      assert.equals(err.message, 'Invalid access_token');
       done();
     });
   });
@@ -757,7 +757,7 @@ describe('access_token validation', function() {
     var itv = new IdTokenVerifier();
 
     itv.validateAccessToken(access_token, alg, at_hash, function(err) {
-      expect(err).to.be(null);
+      assert.isNull(err);
       done();
     });
   });
