@@ -84,4 +84,6 @@ jobs:
           path: .
           key: ${{ env.CACHE_KEY }}
 
-      - run: npm run test:es-check:es5 && npm run test:es-check:es2015:module
+      - run: npm run test:es-check:es5
+
+      - run: npm run test:es-check:es2015:module
