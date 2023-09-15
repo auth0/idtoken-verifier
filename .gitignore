@@ -58,3 +58,4 @@ out/
 yarn.lock
 
 .DS_Store
+test-results.xml
