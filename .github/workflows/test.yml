@@ -59,7 +59,7 @@ jobs:
           path: .
           key: ${{ env.CACHE_KEY }}
 
-      - run: npm run test:ci
+      - run: npm run ci:test
         env:
           MOCHA_FILE: junit/test-results.xml
 
