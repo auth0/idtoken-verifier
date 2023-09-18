@@ -21,13 +21,9 @@ export function checkStatus(response) {
   return Promise.reject(error);
 }
 
-export function getFetchInstance() {
-  return typeof fetch == 'undefined' ? unfetch : fetch;
-}
-
 export function getJWKS(options, cb) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
-  var localFetch = getFetchInstance();
+  var localFetch = fetch == 'undefined' ? unfetch : fetch;
   return localFetch(url)
     .then(checkStatus)
     .then(function(data) {

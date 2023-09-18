@@ -1,31 +1,31 @@
 const { assert, sinon } = require('@sinonjs/referee-sinon');
-import * as jwksHelper from '../src/helpers/jwks';
+const { getJWKS } = require('../src/helpers/jwks');
 
 describe('jwks', function() {
+  afterEach(function() {
+    global.fetch = undefined;
+  });
+
   describe('getJWKS', function() {
     describe('requests correct url', function() {
       it('with jwksURI', function(done) {
-        sinon
-          .stub(getFetchInstance)
-          .returns(sinon.stub().resolves({ ok: true }));
+        const fetchStub = sinon.stub().resolves({ ok: true });
+        global.fetch = fetchStub;
 
-        jwksHelper.getJWKS(
-          { jwksURI: 'https://example.com/jwks.json' },
-          function(err, data) {
-            assert.isTrue(
-              fetchStub.calledWith('https://example.com/jwks.json')
-            );
-            done();
-          }
-        );
+        getJWKS({ jwksURI: 'https://example.com/jwks.json' }, function(
+          err,
+          data
+        ) {
+          assert.isTrue(fetchStub.calledWith('https://example.com/jwks.json'));
+          done();
+        });
       });
 
       it('without jwksURI', function(done) {
-        sinon
-          .stub(getFetchInstance)
-          .returns(sinon.stub().resolves({ ok: true }));
+        const fetchStub = sinon.stub().resolves({ ok: true });
+        global.fetch = fetchStub;
 
-        jwksHelper.getJWKS({ iss: 'https://iss.com/' }, function(err, data) {
+        getJWKS({ iss: 'https://iss.com/' }, function(err, data) {
           assert.isTrue(
             fetchStub.calledWith('https://iss.com/.well-known/jwks.json')
           );
@@ -34,38 +34,33 @@ describe('jwks', function() {
       });
     });
 
-    it('returns error in the callback when fetch fails', function() {
-      sinon.stub(jwksHelper, 'getFetchInstance').resolves({
-        ok: true,
-        json: () => sinon.stub().rejects({ error: true })
-      });
+    it('returns error in the callback when fetch fails', function(done) {
+      global.fetch = () => {
+        return Promise.reject({ error: true });
+      };
 
-      return assert.rejects(
-        new Promise((resolve, reject) => {
-          jwksHelper.getJWKS(
-            {
-              jwksURI: 'https://example.com/jwks.json',
-              kid: 'some-random-key'
-            },
-            function(err) {
-              reject(err);
-            }
-          );
-        }),
-        { error: true }
+      getJWKS(
+        {
+          jwksURI: 'https://example.com/jwks.json',
+          kid: 'some-random-key'
+        },
+        function(err) {
+          assert.equals(err, { error: true });
+          done();
+        }
       );
     });
 
     it('returns error in the callback when jwks response is not ok', function() {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().rejects({
+      global.fetch = () => {
+        return Promise.reject({
           ok: false,
           statusText: 'the-error'
-        })
-      );
+        });
+      };
 
       return assert.rejects(
-        jwksHelper.getJWKS(
+        getJWKS(
           {
             jwksURI: 'https://example.com/jwks.json',
             kid: 'some-random-key'
@@ -77,8 +72,8 @@ describe('jwks', function() {
     });
 
     it('returns error when the kid is not present in the JWKS', function() {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().resolves({
+      global.fetch = () => {
+        return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
@@ -88,10 +83,10 @@ describe('jwks', function() {
                 }
               ]
             })
-        })
-      );
+        });
+      };
 
-      return jwksHelper.getJWKS(
+      return getJWKS(
         {
           jwksURI: 'https://example.com/jwks.json',
           kid: 'some-random-key'
@@ -106,8 +101,8 @@ describe('jwks', function() {
     });
 
     it('returns error when the kid is not present in the JWKS (using promises)', function(done) {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().resolves({
+      global.fetch = () => {
+        return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
@@ -117,29 +112,27 @@ describe('jwks', function() {
                 }
               ]
             })
-        })
-      );
-
-      jwksHelper
-        .getJWKS(
-          {
-            jwksURI: 'https://example.com/jwks.json',
-            kid: 'some-random-key'
-          },
-          null
-        )
-        .catch(err => {
-          assert.equals(
-            err.message,
-            `Could not find a public key for Key ID (kid) "some-random-key"`
-          );
-          done();
         });
+      };
+
+      getJWKS(
+        {
+          jwksURI: 'https://example.com/jwks.json',
+          kid: 'some-random-key'
+        },
+        null
+      ).catch(err => {
+        assert.equals(
+          err.message,
+          `Could not find a public key for Key ID (kid) "some-random-key"`
+        );
+        done();
+      });
     });
 
     it('returns jwks', function() {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().resolves({
+      global.fetch = () => {
+        return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
@@ -160,10 +153,10 @@ describe('jwks', function() {
                 }
               ]
             })
-        })
-      );
+        });
+      };
 
-      return jwksHelper.getJWKS(
+      return getJWKS(
         {
           jwksURI: 'https://example.com/jwks.json',
           kid: 'NEVBNUNBOTgxRkE5NkQzQzc4OTBEMEFFRDQ5N0Q2Qjk0RkQ1MjFGMQ'
@@ -181,8 +174,8 @@ describe('jwks', function() {
     });
 
     it('returns jwks when the key is not first in the keys list', function() {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().resolves({
+      global.fetch = () => {
+        return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
@@ -197,10 +190,10 @@ describe('jwks', function() {
                 }
               ]
             })
-        })
-      );
+        });
+      };
 
-      return jwksHelper.getJWKS(
+      return getJWKS(
         {
           jwksURI: 'https://example.com/jwks.json',
           kid: 'some-random-key'
@@ -213,8 +206,8 @@ describe('jwks', function() {
     });
 
     it('returns jwks when the key is not first in the keys list (using promises)', function(done) {
-      sinon.stub(getFetchInstance).returns(
-        sinon.stub().resolves({
+      global.fetch = () => {
+        return Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
@@ -229,21 +222,19 @@ describe('jwks', function() {
                 }
               ]
             })
-        })
-      );
-
-      jwksHelper
-        .getJWKS(
-          {
-            jwksURI: 'https://example.com/jwks.json',
-            kid: 'some-random-key'
-          },
-          null
-        )
-        .then(function(data) {
-          assert.keys(data, ['modulus', 'exp']);
-          done();
         });
+      };
+
+      getJWKS(
+        {
+          jwksURI: 'https://example.com/jwks.json',
+          kid: 'some-random-key'
+        },
+        null
+      ).then(function(data) {
+        assert.keys(data, ['modulus', 'exp']);
+        done();
+      });
     });
   });
 });
