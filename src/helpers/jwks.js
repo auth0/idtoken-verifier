@@ -12,7 +12,7 @@ export function process(jwks) {
   };
 }
 
-export function checkStatus(response) {
+function checkStatus(response) {
   if (response.ok) {
     return response.json();
   }
