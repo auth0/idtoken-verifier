@@ -12,7 +12,7 @@ export function process(jwks) {
   };
 }
 
-function checkStatus(response) {
+export function checkStatus(response) {
   if (response.ok) {
     return response.json();
   }
@@ -21,12 +21,13 @@ function checkStatus(response) {
   return Promise.reject(error);
 }
 
-function getFetchInstance() {
+export function getFetchInstance() {
   return typeof fetch == 'undefined' ? unfetch : fetch;
 }
 
-export function getJWKS(options, cb, localFetch = getFetchInstance()) {
+export function getJWKS(options, cb) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
+  var localFetch = getFetchInstance();
   return localFetch(url)
     .then(checkStatus)
     .then(function(data) {
