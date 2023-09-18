@@ -58,7 +58,6 @@
     "cli-table": "^0.3.6",
     "cross-env": "^7.0.3",
     "es-check": "^7.1.1",
-    "expect.js": "^0.3.1",
     "gzip-size": "^5.1.1",
     "husky": "^3.0.0",
     "istanbul": "^0.4.5",
