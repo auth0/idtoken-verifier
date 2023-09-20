@@ -22,8 +22,8 @@ function checkStatus(response) {
 }
 
 export function getJWKS(options, cb) {
-  const localFetch = typeof fetch == 'undefined' ? unfetch : fetch;
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
+  var localFetch = fetch == 'undefined' ? unfetch : fetch;
   return localFetch(url)
     .then(checkStatus)
     .then(function(data) {
