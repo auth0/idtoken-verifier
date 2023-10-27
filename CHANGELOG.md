@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.2.4](https://github.com/auth0/idtoken-verifier/tree/v2.2.4) (2023-10-26)
+
+[Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.3...v2.2.4)
+
+**Security**
+
+- Bump crypto-js from 4.1.1 to 4.2.0 [\#176](https://github.com/auth0/idtoken-verifier/pull/176) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.2.3](https://github.com/auth0/idtoken-verifier/tree/v2.2.3) (2023-02-06)
 
 [Full Changelog](https://github.com/auth0/idtoken-verifier/compare/v2.2.2...v2.2.3)
