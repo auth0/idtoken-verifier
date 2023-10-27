@@ -36,7 +36,6 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      vtag: ${{ steps.vtag.outputs.vtag }} # The fully constructed release tag to use for publishing
       dry-run: ${{ steps.dry-run.outputs.dry-run }} # The dry-run flag to use for publishing, if applicable
 
     steps:
@@ -109,6 +108,6 @@ jobs:
         run: npm ci
 
       - name: Publish release to NPM
-        run: npm publish --provenance --tag ${{ needs.configure.outputs.vtag }} ${{ needs.configure.outputs.dry-run }}
+        run: npm publish --provenance --tag ${{ github.event.inputs.tag }} ${{ needs.configure.outputs.dry-run }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
