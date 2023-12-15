@@ -1,6 +1,7 @@
 {
     "files": {
-        "src/telemetry.js": []
+        "src/telemetry.js": [],
+        ".version": []
     },
     "postbump": "npm run build && node scripts/jsdocs.js"
 }
