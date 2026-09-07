@@ -23,7 +23,18 @@ function checkStatus(response) {
 
 export function getJWKS(options, cb) {
   var url = options.jwksURI || urljoin(options.iss, '.well-known', 'jwks.json');
-  var localFetch = fetch == 'undefined' ? unfetch : fetch;
+
+  if (url.indexOf('https://') !== 0) {
+    var protocolError = new Error(
+      'The JWKS URI "' + url + '" must use the HTTPS protocol'
+    );
+    if (cb) {
+      return cb(protocolError);
+    }
+    return Promise.reject(protocolError);
+  }
+
+  var localFetch = typeof fetch === 'undefined' ? unfetch : fetch;
   return localFetch(url)
     .then(checkStatus)
     .then(function(data) {
