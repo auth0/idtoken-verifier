@@ -3,7 +3,7 @@
 A lightweight library to decode and verify RSA ID tokens meant for the browser.
 
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/auth0/idtoken-verifier)
+[![Build Status][circleci-image]][circleci-url] [![NPM version][npm-image]][npm-url] [![Coverage][codecov-image]][codecov-url] [![License][license-image]][license-url] [![Downloads][downloads-image]][downloads-url] [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/auth0/idtoken-verifier)
 
 :books: [Documentation](#documentation) - :rocket: [Getting Started](#getting-started) - :computer: [API Reference](#api-reference) - :speech_balloon: [Feedback](#feedback)
 
